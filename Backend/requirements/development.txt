@@ -1,0 +1,21 @@
+-r base.txt
+
+# Debugging
+django-debug-toolbar
+ipython
+Werkzeug           # for runserver_plus with SSL support
+
+# Testing
+pytest
+pytest-django
+pytest-cov
+pytest-xdist       # parallel test execution
+factory-boy        # model factories
+faker
+freezegun          # freeze time in tests
+
+# Code quality
+ruff               # linter + formatter
+mypy
+django-stubs
+djangorestframework-stubs

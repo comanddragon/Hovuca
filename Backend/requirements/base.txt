@@ -1,0 +1,38 @@
+# Core
+django
+djangorestframework
+
+# Auth
+djangorestframework-simplejwt
+
+# Real-time
+channels[daphne]
+dj_database_url
+channels-redis
+
+# Task queue
+celery[redis]
+celery-types
+django-celery-beat
+django-celery-results
+
+# API
+django-cors-headers
+django-filter
+drf-spectacular
+
+# Storage
+django-storages[s3]
+Pillow
+
+# Database
+psycopg2-binary
+
+# Config
+python-decouple
+
+# Utilities
+django-extensions
+
+dotenv
+twisted[tls,http2]

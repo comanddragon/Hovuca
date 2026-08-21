@@ -1,0 +1,37 @@
+{% extends "emails/base.html" %}
+
+{% block subject %}Welcome to HOVUCA 🎉{% endblock %}
+
+{% block body %}
+  <p class="greeting">Welcome aboard, {{ user.first_name }}! 🎉</p>
+
+  <p>
+    We're thrilled to have you join the HOVUCA community. Your account is all
+    set up and ready to go.
+  </p>
+
+  <div class="info-box">
+    <strong>Your account details</strong><br />
+    Name: {{ user.get_full_name }}<br />
+    Email: {{ user.email }}
+  </div>
+
+  <p>Here's what you can do right now:</p>
+
+  <p>
+    📚 &nbsp;<strong>Explore Courses</strong> — browse our e-learning library and enrol in programmes that match your goals.<br /><br />
+    🤝 &nbsp;<strong>Volunteer</strong> — discover opportunities to give back and make a real difference.<br /><br />
+    💛 &nbsp;<strong>Donate</strong> — support our campaigns and help us reach more communities.
+  </p>
+
+  <div class="btn-wrap">
+    <a href="{{ login_url }}" class="btn">Go to your dashboard →</a>
+  </div>
+
+  <hr class="divider" />
+
+  <p style="font-size:13px; color:#7A8394;">
+    If you didn't create this account, please ignore this email or
+    <a href="{{ frontend_url|default:'#' }}/contact" style="color:#1B6B4A;">contact our support team</a>.
+  </p>
+{% endblock %}

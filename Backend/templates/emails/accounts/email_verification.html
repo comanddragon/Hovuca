@@ -1,0 +1,37 @@
+{% extends "emails/base.html" %}
+
+{% block subject %}Verify your HOVUCA email address{% endblock %}
+
+{% block body %}
+  <p class="greeting">Almost there, {{ user.first_name }}!</p>
+
+  <p>
+    Thanks for signing up. Please verify your email address to activate your
+    account and get full access to the HOVUCA platform.
+  </p>
+
+  <div class="btn-wrap">
+    <a href="{{ verify_url }}" class="btn">Verify my email →</a>
+  </div>
+
+  <div class="info-box">
+    ✅ &nbsp;Verifying your email keeps your account secure and ensures you
+    receive important updates about your courses and volunteer activities.
+  </div>
+
+  <hr class="divider" />
+
+  <p>
+    If the button above doesn't work, copy and paste this URL into your browser:
+  </p>
+  <p style="font-size:12px; word-break:break-all; color:#7A8394; background:#F5F7FA; padding:10px 14px; border-radius:6px;">
+    {{ verify_url }}
+  </p>
+
+  <hr class="divider" />
+
+  <p style="font-size:13px; color:#7A8394;">
+    If you didn't create a HOVUCA account, please ignore this email.
+    Need help? <a href="{{ frontend_url|default:'#' }}/contact" style="color:#1B6B4A;">Contact support</a>.
+  </p>
+{% endblock %}
