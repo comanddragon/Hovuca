@@ -1,108 +1,104 @@
-"""
-Development settings — debug-friendly, local services, relaxed security.
-Activate with: DJANGO_SETTINGS_MODULE=config.settings.development
-"""
-
 from .base import *  # noqa: F401, F403
 
-# ---------------------------------------------------------------------------
-# Core overrides
-# ---------------------------------------------------------------------------
 
 DEBUG = True
+
 ALLOWED_HOSTS = ["*"]
+
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("DB_NAME", default="hovuca"),
-        "USER": config("DB_USER", default="silkkeith"),
-        "PASSWORD": config("DB_PASSWORD", default="85213"),
+        "USER": config("DB_USER", default="postgres"),
+        "PASSWORD": config("DB_PASSWORD", default=""),
         "HOST": config("DB_HOST", default="localhost"),
         "PORT": config("DB_PORT", default="5432"),
-        "CONN_MAX_AGE": config("DB_CONN_MAX_AGE", default=60, cast=int),
+        "CONN_MAX_AGE": config(
+            "DB_CONN_MAX_AGE",
+            default=60,
+            cast=int,
+        ),
         "OPTIONS": {
             "connect_timeout": 10,
         },
-    }
+    },
 }
-# ---------------------------------------------------------------------------
-# Developer toolbar & extensions
-# ---------------------------------------------------------------------------
 
-INSTALLED_APPS += [  # noqa: F405
+
+INSTALLED_APPS += [
     "django_extensions",
     "debug_toolbar",
 ]
 
-MIDDLEWARE += [  # noqa: F405
+MIDDLEWARE += [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "apps.core.middleware.RequestLoggingMiddleware",
 ]
 
-INTERNAL_IPS = ["127.0.0.1", "localhost"]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost",
+]
 
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
 }
 
-# ---------------------------------------------------------------------------
-# Email — print to console
-# ---------------------------------------------------------------------------
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# ---------------------------------------------------------------------------
-# Media & Static — local filesystem
-# ---------------------------------------------------------------------------
 
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+        ),
+    },
+}
 
-# ---------------------------------------------------------------------------
-# CORS — allow all origins
-# ---------------------------------------------------------------------------
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# ---------------------------------------------------------------------------
-# Channels — in-memory (no Redis needed)
-# ---------------------------------------------------------------------------
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+    },
 }
 
-# ---------------------------------------------------------------------------
-# JWT — longer lifetime for developer convenience
-# ---------------------------------------------------------------------------
-
-from datetime import timedelta  # noqa: E402
-from decouple import config     # noqa: E402
 
 SIMPLE_JWT = {
-    **SIMPLE_JWT,  # noqa: F405
+    **SIMPLE_JWT,
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        days=config("JWT_DEV_ACCESS_DAYS", default=1, cast=int)
+        days=config(
+            "JWT_DEV_ACCESS_DAYS",
+            default=1,
+            cast=int,
+        ),
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=config("JWT_DEV_REFRESH_DAYS", default=30, cast=int)
+        days=config(
+            "JWT_DEV_REFRESH_DAYS",
+            default=30,
+            cast=int,
+        ),
     ),
 }
 
-# ---------------------------------------------------------------------------
-# DRF — enable browsable API
-# ---------------------------------------------------------------------------
 
-REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] += [  # noqa: F405
-    "rest_framework.renderers.BrowsableAPIRenderer",
-]
+REST_FRAMEWORK = {
+    **REST_FRAMEWORK,
+    "DEFAULT_RENDERER_CLASSES": [
+        *REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+}
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
 
 LOGGING = {
     "version": 1,
@@ -126,31 +122,31 @@ LOGGING = {
         "file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
-            "filename": LOG_ROOT / "root.log",  # noqa: F405
+            "filename": LOG_ROOT / "root.log",
             "formatter": "verbose",
         },
         "django_file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
-            "filename": LOG_ROOT / "django.log",  # noqa: F405
+            "filename": LOG_ROOT / "django.log",
             "formatter": "verbose",
         },
         "apps_file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
-            "filename": LOG_ROOT / "apps.log",  # noqa: F405
+            "filename": LOG_ROOT / "apps.log",
             "formatter": "verbose",
         },
         "celery_file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
-            "filename": LOG_ROOT / "celery.log",  # noqa: F405
+            "filename": LOG_ROOT / "celery.log",
             "formatter": "verbose",
         },
         "ws_file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
-            "filename": LOG_ROOT / "ws.log",  # noqa: F405
+            "filename": LOG_ROOT / "ws.log",
             "formatter": "verbose",
         },
     },
