@@ -32,8 +32,8 @@ export function Footer() {
                     />
                 </svg>
             </div>
-            <footer className="border-t-0 border-border bg-muted pt-24">
-                <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+            <footer className="border-t-0 border-border bg-muted">
+                <div className="mx-auto max-w-7xl px-4 pb-12 pt-4 sm:px-6">
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {/* Brand */}
                         <div className="space-y-4 text-foreground">

@@ -22,70 +22,57 @@ import { getAvatarUrl, getInitials } from "@/lib/utils";
 import {
     Bell,
     BookOpen,
-    CheckCircle,
-    Clock,
-    Info,
-    HandHeart,
     LayoutDashboard,
     LogOut,
     LogIn,
     Menu,
-    Newspaper,
     User,
     X,
-    Phone,
     ChevronDown,
-    Layers,
-    Camera,
-    Library,
-    Users,
-    CircleDollarSign, Book, Lightbulb, ListIcon,
 } from "lucide-react";
 import { useNotificationStore } from "@/store";
 import Logo from "@/components/layout/Logo";
 
-type NavChild = { href: string; label: string; icon: React.ElementType };
+type NavChild = { href: string; label: string };
 type NavLink = {
     href: string;
     label: string;
-    icon: React.ElementType;
     children?: NavChild[];
 };
 
 const navLinks: NavLink[] = [
-    { href: "/about", label: "About", icon: Lightbulb },
+    { href: "/about", label: "About" },
     {
         href: "/projects",
         label: "Projects",
-        icon: Layers,
         children: [
-            { href: "/projects", label: "All Projects", icon: Layers },
-            { href: "/projects/ongoing", label: "Ongoing", icon: Clock },
-            { href: "/projects/completed", label: "Completed", icon: CheckCircle },
+            { href: "/projects", label: "All Projects" },
+            { href: "/projects/ongoing", label: "Ongoing" },
+            { href: "/projects/completed", label: "Completed" },
         ],
     },
-    { href: "", label: "Topics", icon: ListIcon },
+    { href: "", label: "Topics" },
     {
-        href: "", label: "Resources", icon: Library,
+        href: "", label: "Resources",
         children: [
-            { href: "/blog", label: "News/Posts", icon: Newspaper },
-            { href: "", label: "Documents", icon: Book },
-            { href: "/courses", label: "Courses", icon: BookOpen },
-            { href: "/gallery", label: "Image Gallery", icon: Camera },
+            { href: "/blog", label: "News/Posts" },
+            { href: "", label: "Documents" },
+            { href: "/courses", label: "Courses" },
+            { href: "/gallery", label: "Image Gallery" },
 
         ],
     },
     {
-        href: "", label: "Get Involved", icon: HandHeart,
+        href: "", label: "Get Involved",
         children: [
-            { href: "", label: "Sponsor an Event", icon: CircleDollarSign },
-            { href: "/donate", label: "Sponsor a Child", icon: CircleDollarSign },
-            { href: "/donate", label: "HIre Our Equipment", icon: CircleDollarSign },
-            { href: "/volunteer", label: "Volunteer", icon: Users },
+            { href: "", label: "Sponsor an Event" },
+            { href: "/donate", label: "Sponsor a Child" },
+            { href: "/donate", label: "HIre Our Equipment" },
+            { href: "/volunteer", label: "Volunteer" },
         ],
     },
-    { href: "/contact", label: "Contact", icon: Phone },
-    { href: "/donate", label: "Donate", icon: CircleDollarSign },
+    { href: "/contact", label: "Contact" },
+    { href: "/donate", label: "Donate" },
 ];
 
 // ── Desktop nav item ─────────────────────────────────────────────────────────
@@ -93,7 +80,6 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
     const isActive =
         (link.href !== "" && pathname.startsWith(link.href)) ||
         link.children?.some((child) => child.href !== "" && pathname.startsWith(child.href));
-    const Icon = link.icon;
 
     if (link.children?.length) {
         return (
@@ -107,29 +93,24 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                                 : "text-foreground hover:bg-muted hover:text-muted-foreground"
                         )}
                     >
-                        <Icon className="h-3.5 w-3.5" />
                         {link.label}
                         <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                     </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48">
-                    {link.children.map((child) => {
-                        const ChildIcon = child.icon;
-                        return (
-                            <DropdownMenuItem key={child.href} asChild>
-                                <Link
-                                    href={child.href}
-                                    className={cn(
-                                        "flex items-center gap-2",
-                                        pathname === child.href && "text-primary font-medium"
-                                    )}
-                                >
-                                    <ChildIcon className="h-4 w-4 text-muted-foreground" />
-                                    {child.label}
-                                </Link>
-                            </DropdownMenuItem>
-                        );
-                    })}
+                    {link.children.map((child) => (
+                        <DropdownMenuItem key={child.label} asChild>
+                            <Link
+                                href={child.href}
+                                className={cn(
+                                    "flex items-center gap-2",
+                                    pathname === child.href && "text-primary font-medium"
+                                )}
+                            >
+                                {child.label}
+                            </Link>
+                        </DropdownMenuItem>
+                    ))}
                 </DropdownMenuContent>
             </DropdownMenu>
         );
@@ -138,7 +119,6 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
     if (!link.href) {
         return (
             <span className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-light text-foreground">
-                <Icon className="h-3.5 w-3.5" />
                 {link.label}
             </span>
         );
@@ -154,7 +134,6 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                     : "text-foreground hover:bg-muted hover:text-muted-foreground"
             )}
         >
-            <Icon className="h-3.5 w-3.5" />
             {link.label}
         </Link>
     );
@@ -275,7 +254,7 @@ export function Navbar() {
             {mobileOpen && (
                 <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
                     <div className="flex flex-col gap-1 pt-2">
-                        {navLinks.map(({ href, label, icon: Icon, children }) => {
+                        {navLinks.map(({ href, label, children }) => {
                             const isActive = href !== "" && pathname.startsWith(href);
                             // ✅ track by label, not href
                             const isExpanded = mobileExpanded === label;
@@ -293,7 +272,6 @@ export function Navbar() {
                                                 : "text-muted-foreground hover:bg-muted"
                                         )}
                                     >
-                                        <Icon className="h-4 w-4" />
                                         {label}
                                     </Link>
                                 );
@@ -311,7 +289,6 @@ export function Navbar() {
                                                 : "text-muted-foreground hover:bg-muted"
                                         )}
                                     >
-                                        <Icon className="h-4 w-4" />
                                         {label}
                                         <ChevronDown
                                             className={cn(
@@ -323,28 +300,24 @@ export function Navbar() {
 
                                     {isExpanded && (
                                         <div className="ml-6 mt-1 flex flex-col gap-1 border-l border-border pl-3">
-                                            {children.map((child) => {
-                                                const ChildIcon = child.icon;
-                                                return (
-                                                    <Link
-                                                        key={child.href}
-                                                        href={child.href}
-                                                        onClick={() => {
-                                                            setMobileOpen(false);
-                                                            setMobileExpanded(null);
-                                                        }}
-                                                        className={cn(
-                                                            "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
-                                                            pathname === child.href
-                                                                ? "text-primary font-medium"
-                                                                : "text-muted-foreground hover:text-foreground"
-                                                        )}
-                                                    >
-                                                        <ChildIcon className="h-3.5 w-3.5" />
-                                                        {child.label}
-                                                    </Link>
-                                                );
-                                            })}
+                                            {children.map((child) => (
+                                                <Link
+                                                    key={child.label}
+                                                    href={child.href}
+                                                    onClick={() => {
+                                                        setMobileOpen(false);
+                                                        setMobileExpanded(null);
+                                                    }}
+                                                    className={cn(
+                                                        "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
+                                                        pathname === child.href
+                                                            ? "text-primary font-medium"
+                                                            : "text-muted-foreground hover:text-foreground"
+                                                    )}
+                                                >
+                                                    {child.label}
+                                                </Link>
+                                            ))}
                                         </div>
                                     )}
                                 </div>

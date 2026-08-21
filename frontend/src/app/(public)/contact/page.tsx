@@ -13,7 +13,7 @@ import {
     ArrowRight,
     MessageSquare,
     Users,
-    HeartHandshake,
+    HeartHandshake, MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -466,66 +466,6 @@ export default function ContactPage() {
                     </div>
                 </motion.div>
             </section>
-
-            {/* ── CTA ───────────────────────────────────────────────────────── */}
-            <section className="relative bg-sidebar-foreground text-background py-36 overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(251,191,36,0.07),transparent)]" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
-
-                <div className="relative mx-auto max-w-3xl px-6 text-center">
-                    <motion.p
-                        className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/30"
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
-                    >
-                        Join the movement
-                    </motion.p>
-                    <motion.h2
-                        className="font-display font-extralight leading-[1.08] tracking-tight mb-8"
-                        style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        Ready to make
-                        <br />
-                        <span className="italic text-amber-200/80">a difference?</span>
-                    </motion.h2>
-                    <motion.p
-                        className="text-base text-white/40 font-light mb-14 max-w-md mx-auto leading-relaxed"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.12, duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        Join thousands of changemakers transforming their communities across Cameroon.
-                    </motion.p>
-                    <motion.div
-                        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.24, duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        <Link
-                            href="/register"
-                            className="px-9 py-3.5 bg-amber-300 text-neutral-900 text-sm font-medium tracking-wide hover:bg-amber-200 transition-colors duration-200 rounded-sm min-w-[160px] text-center"
-                        >
-                            Get Started
-                        </Link>
-                        <Link
-                            href="/donate"
-                            className="px-9 py-3.5 border border-white/20 text-white/70 text-sm font-light tracking-wide hover:border-white/50 hover:text-white transition-colors duration-200 rounded-sm min-w-[160px] text-center"
-                        >
-                            Donate Now
-                        </Link>
-                    </motion.div>
-                </div>
-            </section>
-
         </main>
     );
 }

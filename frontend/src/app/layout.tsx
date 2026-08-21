@@ -4,12 +4,19 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Toaster } from "sonner";
 import {NotificationProvider} from "@/components/shared/NotificationProvider";
-import {Poppins} from 'next/font/google'
+import {Poppins, Fraunces} from 'next/font/google'
 
 const poppins = Poppins({
     subsets: ["latin"],
     weight: ["300", "400", "500", "600", "700", "800", "900"],
     variable: "--font-poppins",
+    display: "swap",
+});
+
+const fraunces = Fraunces({
+    subsets: ["latin"],
+    style: ["normal", "italic"],
+    variable: "--font-fraunces",
     display: "swap",
 });
 
