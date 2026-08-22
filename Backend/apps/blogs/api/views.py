@@ -1,10 +1,9 @@
 import uuid
 
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.storage import default_storage
-from django.core.validators import validate_image_file_extension
 from django.db import transaction
 from django.utils import timezone
+from PIL import Image, UnidentifiedImageError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -28,6 +27,7 @@ from .serializers import (
 )
 
 MAX_INLINE_IMAGE_BYTES = 5 * 1024 * 1024  # 5MB
+ALLOWED_INLINE_IMAGE_FORMATS = {"JPEG": "jpg", "PNG": "png", "GIF": "gif", "WEBP": "webp"}
 
 
 # ---------------------------------------------------------------------------
@@ -277,12 +277,20 @@ class ArticleViewSet(viewsets.ModelViewSet):
             raise ValidationError({"file": "No file provided."})
         if file.size > MAX_INLINE_IMAGE_BYTES:
             raise ValidationError({"file": "Image must be 5MB or smaller."})
-        try:
-            validate_image_file_extension(file)
-        except DjangoValidationError:
-            raise ValidationError({"file": "Unsupported image type."})
 
-        ext = file.name.rsplit(".", 1)[-1].lower()
+        # Verify the bytes are actually a supported image — never trust the
+        # client-supplied filename/extension or Content-Type header.
+        try:
+            img = Image.open(file)
+            img_format = img.format
+            img.verify()
+        except (UnidentifiedImageError, OSError):
+            raise ValidationError({"file": "Unsupported image type."})
+        if img_format not in ALLOWED_INLINE_IMAGE_FORMATS:
+            raise ValidationError({"file": "Unsupported image type."})
+        file.seek(0)
+
+        ext = ALLOWED_INLINE_IMAGE_FORMATS[img_format]
         path = default_storage.save(f"blog/inline/{uuid.uuid4()}.{ext}", file)
         url = request.build_absolute_uri(default_storage.url(path))
         return Response({"url": url}, status=status.HTTP_201_CREATED)

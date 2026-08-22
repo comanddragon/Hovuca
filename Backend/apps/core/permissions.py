@@ -42,8 +42,12 @@ class IsOwnerOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.role == "admin":
             return True
-        # Support models with `user` or `donor` FK
-        owner = getattr(obj, "user", None) or getattr(obj, "donor", None)
+        # Support models with `user`, `donor`, or `author` FK
+        owner = (
+            getattr(obj, "user", None)
+            or getattr(obj, "donor", None)
+            or getattr(obj, "author", None)
+        )
         return owner == request.user
 
 

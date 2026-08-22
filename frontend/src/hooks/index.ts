@@ -51,6 +51,7 @@ import {keepPreviousData} from "@tanstack/query-core";
 export const keys = {
     me: ["me"] as const,
     articles: (f?: object) => ["articles", f] as const,
+    adminArticles: (f?: object) => ["admin-articles", f] as const,
     article: (slug: string) => ["article", slug] as const,
     categories: ["categories"] as const,
     tags: ["tags"] as const,
@@ -182,6 +183,18 @@ export function useResetPassword() {
 export function useArticles(filters?: Parameters<typeof blogService.getArticles>[0]) {
     return useQuery({
         queryKey: keys.articles(filters),
+        queryFn: () => blogService.getArticles(filters),
+        placeholderData: keepPreviousData,
+    });
+}
+
+// Admin/staff article list — same endpoint as useArticles, but the backend's
+// get_queryset already returns every status (not just published) for
+// admin/staff callers, so this just needs its own cache key to avoid mixing
+// with the public-facing article list's cached results.
+export function useAdminArticles(filters?: Parameters<typeof blogService.getArticles>[0]) {
+    return useQuery({
+        queryKey: keys.adminArticles(filters),
         queryFn: () => blogService.getArticles(filters),
         placeholderData: keepPreviousData,
     });

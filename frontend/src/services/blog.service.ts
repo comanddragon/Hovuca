@@ -8,6 +8,7 @@ interface ArticleFilters {
     search?: string;
     is_featured?: boolean;
     author?: string;
+    status?: string;
     page_size?: number;
 }
 

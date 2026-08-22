@@ -169,7 +169,7 @@ export function Navbar() {
                 </div>
 
                 {/* Right side */}
-                <div className="flex items-center gap-2">
+                <div className="font-display flex items-center gap-2">
 
                     {isAuthenticated && user ? (
                         <>
