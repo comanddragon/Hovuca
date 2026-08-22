@@ -1,7 +1,14 @@
+import uuid
+
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.storage import default_storage
+from django.core.validators import validate_image_file_extension
 from django.db import transaction
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -19,6 +26,8 @@ from .serializers import (
     CommentWriteSerializer,
     ToggleResponseSerializer,
 )
+
+MAX_INLINE_IMAGE_BYTES = 5 * 1024 * 1024  # 5MB
 
 
 # ---------------------------------------------------------------------------
@@ -104,6 +113,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     POST   /api/v1/blog/articles/{slug}/archive/    [staff/admin]
     GET    /api/v1/blog/articles/featured/          [public]
     GET    /api/v1/blog/articles/my-articles/       [authenticated]
+    POST   /api/v1/blog/articles/upload-image/      [staff/admin]
 
     Filters: ?category=<slug>  ?tag=<slug>  ?author=<uuid>  ?search=<str>
              ?status=<str>  ?is_featured=true
@@ -249,6 +259,33 @@ class ArticleViewSet(viewsets.ModelViewSet):
         else:
             bookmarked = True
         return Response({"bookmarked": bookmarked})
+
+    # ------------------------------------------------------------------
+    # Inline image upload (rich text editor)
+    # ------------------------------------------------------------------
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=[IsStaffOrAdmin],
+        parser_classes=[MultiPartParser],
+    )
+    def upload_image(self, request):
+        """POST /api/v1/blog/articles/upload-image/ — for inline images in the article body."""
+        file = request.FILES.get("file")
+        if not file:
+            raise ValidationError({"file": "No file provided."})
+        if file.size > MAX_INLINE_IMAGE_BYTES:
+            raise ValidationError({"file": "Image must be 5MB or smaller."})
+        try:
+            validate_image_file_extension(file)
+        except DjangoValidationError:
+            raise ValidationError({"file": "Unsupported image type."})
+
+        ext = file.name.rsplit(".", 1)[-1].lower()
+        path = default_storage.save(f"blog/inline/{uuid.uuid4()}.{ext}", file)
+        url = request.build_absolute_uri(default_storage.url(path))
+        return Response({"url": url}, status=status.HTTP_201_CREATED)
 
     # ------------------------------------------------------------------
     # Featured articles

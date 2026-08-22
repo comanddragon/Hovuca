@@ -169,6 +169,17 @@
 .card {
     @apply bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl;
 }
+
+/* ── Editorial drop cap (article first paragraph) ─────────────── */
+.article-content > p:first-of-type::first-letter {
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    line-height: 3.5rem;
+    font-weight: 300;
+    float: left;
+    margin: 0.25rem 0.75rem 0 0;
+    color: var(--primary);
+}
 /* ── Smooth scrolling ─────────────────────────────────────────── */
 html {
     scroll-behavior: smooth;

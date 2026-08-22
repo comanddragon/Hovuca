@@ -13,7 +13,7 @@ import {
     ArrowRight,
     MessageSquare,
     Users,
-    HeartHandshake, MessageCircle,
+    HeartHandshake,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

@@ -1,6 +1,25 @@
+import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
 from django.utils.text import slugify
 from apps.core.models import BaseModel
+
+ARTICLE_BODY_ALLOWED_TAGS = [
+    "p", "br", "hr",
+    "h1", "h2", "h3", "h4",
+    "strong", "em", "u", "s",
+    "ul", "ol", "li",
+    "blockquote", "a", "img",
+    "code", "pre",
+]
+
+ARTICLE_BODY_ALLOWED_ATTRS = {
+    "a": ["href", "title", "target", "rel"],
+    "img": ["src", "alt", "style", "width", "height"],
+    "*": ["class"],
+}
+
+ARTICLE_BODY_ALLOWED_STYLES = ["width", "height"]
 
 
 class Category(BaseModel):
@@ -126,6 +145,16 @@ class Article(BaseModel):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        if self.body:
+            self.body = bleach.clean(
+                self.body,
+                tags=ARTICLE_BODY_ALLOWED_TAGS,
+                attributes=ARTICLE_BODY_ALLOWED_ATTRS,
+                css_sanitizer=CSSSanitizer(
+                    allowed_css_properties=ARTICLE_BODY_ALLOWED_STYLES
+                ),
+                strip=True,
+            )
         # Auto-calculate reading time (avg 200 words/min)
         word_count = len(self.body.split())
         self.reading_time_minutes = max(1, round(word_count / 200))
