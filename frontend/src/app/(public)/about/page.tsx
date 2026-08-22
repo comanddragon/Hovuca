@@ -157,7 +157,7 @@ export default function AboutPage() {
                             About HOVUCA
                         </motion.div>
 
-                        <h1 className="text-6xl md:text-8xl font-light text-white mb-12 leading-[0.9] tracking-tight">
+                        <h1 className="text-6xl md:text-8xl font-display font-light text-white mb-12 leading-[0.9] tracking-tight">
                             Who <span className="font-extralight text-white/90">We Are</span>
                         </h1>
 
@@ -229,7 +229,7 @@ export default function AboutPage() {
                             <div className="aos-fade-in mb-6 text-muted-foreground text-sm font-light tracking-widest uppercase">
                                 What drives us
                             </div>
-                            <h2 className="aos-fade-up text-4xl md:text-5xl font-light text-foreground mb-8 tracking-tight">
+                            <h2 className="aos-fade-up text-4xl md:text-5xl font-display font-light text-foreground mb-8 tracking-tight">
                                 Our Mission
                             </h2>
                             <div className="space-y-6 text-muted-foreground font-light leading-relaxed">
@@ -292,7 +292,7 @@ export default function AboutPage() {
                             <div className="aos-fade-in mb-6 text-muted-foreground text-sm font-light tracking-widest uppercase">
                                 Where we&apos;re going
                             </div>
-                            <h2 className="aos-fade-up text-4xl md:text-5xl font-light text-foreground mb-8 tracking-tight">
+                            <h2 className="aos-fade-up text-4xl md:text-5xl font-display font-light text-foreground mb-8 tracking-tight">
                                 Our Vision
                             </h2>
                             <div className="space-y-6 text-muted-foreground font-light leading-relaxed">
@@ -323,7 +323,7 @@ export default function AboutPage() {
                         <div className="aos-fade-in mb-8 text-muted-foreground text-sm font-light tracking-widest uppercase">
                             How we operate
                         </div>
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-light text-foreground mb-8 tracking-tight">
+                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-8 tracking-tight">
                             Our Principles
                         </h2>
                         <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
@@ -368,7 +368,7 @@ export default function AboutPage() {
                         <div className="aos-fade-in mb-8 text-muted-foreground text-sm font-light tracking-widest uppercase">
                             Our focus areas
                         </div>
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-light text-foreground mb-8 tracking-tight">
+                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-8 tracking-tight">
                             Our Objectives
                         </h2>
                         <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
@@ -405,7 +405,7 @@ export default function AboutPage() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false }}
                     >
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-light text-foreground mb-12 tracking-tight">
+                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-12 tracking-tight">
                             Help us protect every child
                         </h2>
 

@@ -87,7 +87,7 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                 <DropdownMenuTrigger asChild>
                     <button
                         className={cn(
-                            "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-light transition-colors outline-none",
+                            "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors outline-none",
                             isActive
                                 ? "bg-primary/10 text-primary"
                                 : "text-foreground hover:bg-muted hover:text-muted-foreground"
@@ -97,13 +97,13 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                         <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                     </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuContent align="start" className="w-48 space-y-2">
                     {link.children.map((child) => (
                         <DropdownMenuItem key={child.label} asChild>
                             <Link
                                 href={child.href}
                                 className={cn(
-                                    "flex items-center gap-2",
+                                    "flex items-center gap-2 font-display",
                                     pathname === child.href && "text-primary font-medium"
                                 )}
                             >
@@ -118,7 +118,7 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
 
     if (!link.href) {
         return (
-            <span className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-light text-foreground">
+            <span className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-display font-medium text-foreground">
                 {link.label}
             </span>
         );
@@ -128,7 +128,7 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
         <Link
             href={link.href}
             className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-light transition-colors",
+                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors",
                 isActive
                     ? "bg-primary/10 text-primary"
                     : "text-foreground hover:bg-muted hover:text-muted-foreground"
@@ -266,7 +266,7 @@ export function Navbar() {
                                         href={href}
                                         onClick={() => setMobileOpen(false)}
                                         className={cn(
-                                            "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                                            "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors",
                                             isActive
                                                 ? "bg-primary/10 text-primary"
                                                 : "text-muted-foreground hover:bg-muted"
@@ -283,7 +283,7 @@ export function Navbar() {
                                         // ✅ toggle by label, not href
                                         onClick={() => setMobileExpanded(isExpanded ? null : label)}
                                         className={cn(
-                                            "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                                            "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors",
                                             isActive
                                                 ? "bg-primary/10 text-primary"
                                                 : "text-muted-foreground hover:bg-muted"
@@ -309,7 +309,7 @@ export function Navbar() {
                                                         setMobileExpanded(null);
                                                     }}
                                                     className={cn(
-                                                        "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
+                                                        "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-display transition-colors",
                                                         pathname === child.href
                                                             ? "text-primary font-medium"
                                                             : "text-muted-foreground hover:text-foreground"

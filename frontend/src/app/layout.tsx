@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={poppins.variable}>
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${poppins.variable} ${fraunces.variable}`}>
         <body>
         <Providers>
             <NotificationProvider />
