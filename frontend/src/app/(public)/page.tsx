@@ -1,284 +1,287 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import BlogsCarousel from "@/components/home/BlogCarousel";
-import FeaturedProjects from "@/components/home/FeaturedProjects";
-import Stats from "@/components/home/Stats";
+import {
+    ArrowRight,
+    BookOpen,
+    FileText,
+    HandHeart,
+    Heart,
+    Sparkles,
+    Users,
+} from "lucide-react";
 import DonorCarousel from "@/components/home/DonorCarousel";
+import { useArticles, usePrograms, useResources } from "@/hooks";
+
+const palette = {
+    purple: "#35145f",
+    coral: "#ff6868",
+    yellow: "#ffd84d",
+    blue: "#88d9ed",
+    mint: "#dff4ee",
+    cream: "#fff8eb",
+};
+
+const actions = [
+    {
+        title: "Support a child",
+        description: "Help provide education, protection, health support, and practical care to a child who needs it.",
+        href: "/donate",
+        icon: Heart,
+        color: palette.coral,
+    },
+    {
+        title: "Volunteer with us",
+        description: "Share your time and skills with programs led alongside children, girls, and local communities.",
+        href: "/volunteer",
+        icon: Users,
+        color: palette.yellow,
+    },
+    {
+        title: "Explore resources",
+        description: "Read our policies, advocacy briefs, reports, and practical learning materials.",
+        href: "/documents",
+        icon: FileText,
+        color: palette.blue,
+    },
+    {
+        title: "Read our stories",
+        description: "Meet the people, ideas, and community actions shaping a safer future for young people.",
+        href: "/blog",
+        icon: BookOpen,
+        color: "#cbb8ff",
+    },
+];
+
+const storyImages = ["/blogs/2.jpg", "/blogs/1.jpeg", "/blogs/4.jpeg"];
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+    return (
+        <p className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[#35145f]">
+            {children}<span className="h-0.5 w-12 bg-[#ff6868]" />
+        </p>
+    );
+}
 
 export default function HomePage() {
+    const { data: programData } = usePrograms({ page: 1, page_size: 3 });
+    const { data: articleData } = useArticles({ page: 1, page_size: 3 });
+    const { data: resources = [] } = useResources();
     const [email, setEmail] = useState("");
     const [subscribed, setSubscribed] = useState(false);
 
-    const handleSubscribe = (e: React.SubmitEvent) => {
-        e.preventDefault();
-        if (email) {
-            setSubscribed(true);
-            setEmail("");
-        }
-    };
+    const programs = programData?.results ?? [];
+    const articles = articleData?.results ?? [];
 
     return (
-        <main className="w-full bg-white">
-
-            {/* ── Hero ──────────────────────────────────────────────────────────── */}
-            {/* Single viewport wrapper */}
-            <div className="flex flex-col bg-purple-950" style={{ minHeight: "calc(100vh - 64px)" }}>
-
-                {/* ── Hero ──────────────────────────────────────────────────────── */}
-                <section className="relative flex-1 flex items-center justify-center overflow-hidden">
-
-                    {/* Background image with dark overlay */}
-                    <motion.div
-                        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-                        style={{
-                            backgroundImage:
-                                "url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1600&q=80')",
-                        }}
-                        initial={{ scale: 1.12, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 0.22 }}
-                        transition={{ duration: 3.2, ease: "easeOut" }}
-                    />
-
-                    {/* Radial vignette */}
-                    <div className="absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.7)_100%)]" />
-
-                    {/* Subtle warm accent line — top */}
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent z-20" />
-
-                    {/* Content */}
-                    <motion.div
-                        className="relative z-20 w-full flex items-center"
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <div className="mx-auto max-w-5xl px-6 text-center text-white">
-
-                            {/* Eyebrow */}
-                            <motion.p
-                                className="mb-8 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-white/40"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2, duration: 0.6 }}
-                            >
-                                <span className="block w-6 h-px bg-amber-300/50" />
-                                {`Hovuca's Initiative`}
-                                <span className="block w-6 h-px bg-amber-300/50" />
-                            </motion.p>
-
-                            {/* Main headline */}
-                            <motion.h1
-                                className="font-display font-extralight leading-[1.06] tracking-tight"
-                                style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}
-                                initial={{ opacity: 0, y: 40 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.35, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                            >
-                                Empowering young
-                                <br />
-                                <motion.span
-                                    className="block italic text-amber-200 font-extralight"
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.55, duration: 0.9 }}
-                                >
-                                    changemakers
-                                </motion.span>
-                                <span className="text-white/50">Nationwide</span>
-                            </motion.h1>
-
-                            {/* Sub */}
-                            <motion.p
-                                className="mx-auto mt-10 max-w-lg text-base text-white/55 font-light leading-relaxed"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.65, duration: 0.7 }}
-                            >
-                                We support the next generation of leaders to transform bold ideas
-                                into meaningful social impact across Cameroon.
-                            </motion.p>
+        <main className="overflow-hidden bg-white text-[#241536]">
+            <section className="relative bg-[#35145f] text-white">
+                <div className="absolute left-0 top-0 h-3 w-1/3 bg-[#ff6868]" />
+                <div className="absolute right-0 top-0 h-3 w-1/3 bg-[#88d9ed]" />
+                <div className="mx-auto grid min-h-[720px] max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+                    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }}>
+                        <p className="mb-7 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#ffd84d]">
+                            <Sparkles className="h-4 w-4" /> Hope starts here
+                        </p>
+                        <h1 className="max-w-2xl font-display text-[clamp(3.4rem,7vw,6.9rem)] font-semibold leading-[0.92] tracking-[-0.045em]">
+                            Every child can shape a brighter future.
+                        </h1>
+                        <p className="mt-8 max-w-xl text-lg leading-8 text-white/78">
+                            HOVUCA works with vulnerable children, girls, and communities across Cameroon to strengthen protection, education, health, and opportunity.
+                        </p>
+                        <div className="mt-10 flex flex-wrap gap-4">
+                            <Link href="/donate" className="inline-flex items-center gap-2 bg-[#ff6868] px-7 py-4 text-sm font-bold text-white transition-transform hover:-translate-y-1">
+                                Support our work <ArrowRight className="h-4 w-4" />
+                            </Link>
+                            <Link href="/about" className="inline-flex items-center gap-2 border-2 border-white px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-white hover:text-[#35145f]">
+                                Meet HOVUCA
+                            </Link>
                         </div>
                     </motion.div>
 
-                    {/* Scroll indicator */}
-                    <motion.div
-                        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.4 }}
-                    >
-                        <span className="text-[9px] tracking-[0.35em] text-white/30 uppercase">Scroll</span>
-                        <motion.div
-                            className="w-px h-9 bg-gradient-to-b from-white/30 to-transparent"
-                            style={{ originY: 0 }}
-                            animate={{ scaleY: [0, 1, 0] }}
-                            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                        />
+                    <motion.div className="relative mx-auto w-full max-w-2xl pb-12 pl-6 pt-8" initial={{ opacity: 0, x: 36 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15, duration: 0.7 }}>
+                        <div className="absolute right-0 top-0 h-28 w-28 bg-[#ffd84d]" />
+                        <div className="absolute bottom-0 left-0 h-40 w-40 bg-[#88d9ed]" />
+                        <div className="relative aspect-[4/3] overflow-hidden border-[10px] border-white">
+                            <Image src="/heros/hero1.png" alt="HOVUCA peer educators celebrating after a training" fill priority sizes="(max-width: 1024px) 90vw, 50vw" className="object-cover" />
+                        </div>
+                        <div className="absolute -bottom-1 right-4 max-w-[220px] bg-[#ff6868] p-5 text-sm font-bold leading-6 text-white shadow-xl">
+                            Young people are not just beneficiaries. They are partners in change.
+                        </div>
                     </motion.div>
-                </section>
+                </div>
+            </section>
 
-                {/* ── Donor Carousel ────────────────────────────────────────────── */}
-                <DonorCarousel />
-
-            </div>
-
-            {/* ── Stats ─────────────────────────────────────────────────────────── */}
-            <Stats />
-
-            {/* ── Featured Projects ─────────────────────────────────────────────── */}
-            <FeaturedProjects />
-
-            {/* ── Blog Carousel ─────────────────────────────────────────────────── */}
-            <BlogsCarousel />
-
-            {/* ── Newsletter ────────────────────────────────────────────────────── */}
-            <motion.section
-                className="relative bg-neutral-50 py-24 lg:py-32 overflow-hidden"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-            >
-                {/* Decorative top border */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-300 to-transparent" />
-
-                <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        className="text-center mb-12"
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        {/* Eyebrow */}
-                        <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-neutral-400">
-                            Stay in the loop
-                        </p>
-                        <h2
-                            className="font-display font-light text-black mb-5 tracking-tight"
-                            style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-                        >
-                            Stay updated
+            <section className="bg-[#dff4ee] py-20 md:py-28">
+                <div className="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+                    <div>
+                        <SectionLabel>Why we exist</SectionLabel>
+                        <h2 className="max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight text-[#35145f] md:text-6xl">
+                            We create room for children to be safe, heard, and supported.
                         </h2>
-                        <p className="text-base text-neutral-500 font-light leading-relaxed max-w-sm mx-auto">
-                            Impact stories, program announcements, and opportunities — straight
-                            to your inbox.
+                        <p className="mt-7 max-w-2xl text-lg leading-8 text-[#4d3d5f]">
+                            Through research, education, advocacy, and community partnerships, we help remove the barriers that keep vulnerable children—especially girls—from reaching their potential.
                         </p>
-                    </motion.div>
-
-                    <motion.form
-                        onSubmit={handleSubscribe}
-                        className="flex max-w-md mx-auto gap-0"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15, duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        {subscribed ? (
-                            <p className="flex-1 text-center text-emerald-700 font-light py-3 text-sm tracking-wide">
-                                🎉 You&apos;re subscribed — thank you!
-                            </p>
-                        ) : (
-                            <>
-                                <input
-                                    aria-label="Email address"
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="flex-1 px-4 py-3.5 border border-neutral-300 border-r-0 text-sm placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 bg-white transition-colors font-light"
-                                    placeholder="Your email address"
-                                />
-                                <button
-                                    type="submit"
-                                    className="px-6 py-3.5 bg-slate-700 text-white text-sm font-light tracking-wide hover:bg-purple-700 transition-colors duration-200 whitespace-nowrap border border-neutral-900"
-                                >
-                                    Subscribe
-                                </button>
-                            </>
-                        )}
-                    </motion.form>
-
-                    <p className="text-center mt-5 text-[11px] text-neutral-400 font-light tracking-wide">
-                        No spam. Unsubscribe anytime.
-                    </p>
-                </div>
-            </motion.section>
-
-            {/* ── CTA ───────────────────────────────────────────────────────────── */}
-            <motion.section
-            className="relative bg-sidebar-foreground text-background py-36 overflow-hidden"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-            >
-                {/* Warm ambient glow */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(251,191,36,0.07),transparent)]" />
-                {/* Top border */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
-
-                <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-
-                    <motion.p
-                        className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/30"
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
-                    >
-                        Join the movement
-                    </motion.p>
-
-                    <motion.h2
-                        className="font-display font-extralight leading-[1.08] tracking-tight mb-8"
-                        style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        Ready to make
-                        <br />
-                        <span className="italic text-amber-200/80">a difference?</span>
-                    </motion.h2>
-
-                    <motion.p
-                        className="text-base text-white/40 font-light mb-14 max-w-xl mx-auto leading-relaxed"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.12, duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        Join thousands of changemakers transforming their communities.
-                        Start your journey today.
-                    </motion.p>
-
-                    <motion.div
-                        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.24, duration: 0.6 }}
-                        viewport={{ once: true }}
-                    >
-                        <Link
-                            href="/register"
-                            className="px-9 py-3.5 bg-amber-300 text-neutral-900 text-sm font-medium tracking-wide hover:bg-amber-200 transition-colors duration-200 rounded-sm min-w-[160px] text-center"
-                        >
-                            Get Started
+                        <Link href="/about" className="mt-8 inline-flex items-center gap-2 font-bold text-[#35145f] underline decoration-[#ff6868] decoration-4 underline-offset-8">
+                            Learn about our mission <ArrowRight className="h-4 w-4" />
                         </Link>
-                        <Link
-                            href="/donate"
-                            className="px-9 py-3.5 border border-white/20 text-white/70 text-sm font-light tracking-wide hover:border-white/50 hover:text-white transition-colors duration-200 rounded-sm min-w-[160px] text-center"
-                        >
-                            Donate Now
-                        </Link>
-                    </motion.div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 self-end">
+                        {[
+                            ["25+", "projects launched", palette.yellow],
+                            ["12", "active projects", palette.coral],
+                            ["50K+", "lives reached", palette.blue],
+                            ["1", "shared vision", "#cbb8ff"],
+                        ].map(([value, label, color]) => (
+                            <div key={label} className="flex min-h-44 flex-col justify-end p-6" style={{ backgroundColor: color }}>
+                                <strong className="font-display text-4xl font-semibold text-[#35145f] md:text-5xl">{value}</strong>
+                                <span className="mt-2 text-sm font-bold uppercase tracking-wide text-[#35145f]">{label}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </motion.section>
+            </section>
 
+            <section className="py-20 md:py-28">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="max-w-3xl">
+                        <SectionLabel>Get involved</SectionLabel>
+                        <h2 className="font-display text-4xl font-semibold tracking-tight text-[#35145f] md:text-6xl">Choose how you want to make a difference.</h2>
+                    </div>
+                    <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+                        {actions.map(({ title, description, href, icon: Icon, color }, index) => (
+                            <motion.article key={title} whileHover={{ y: -8 }} className="group flex min-h-[360px] flex-col p-7" style={{ backgroundColor: color }}>
+                                <div className="flex items-start justify-between">
+                                    <Icon className="h-9 w-9 text-[#35145f]" />
+                                    <span className="font-display text-5xl font-semibold text-[#35145f]/20">0{index + 1}</span>
+                                </div>
+                                <div className="mt-auto">
+                                    <h3 className="font-display text-3xl font-semibold leading-tight text-[#35145f]">{title}</h3>
+                                    <p className="mt-4 text-sm leading-6 text-[#35145f]/80">{description}</p>
+                                    <Link href={href} className="mt-6 inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#35145f] text-white transition-transform group-hover:translate-x-2" aria-label={title}>
+                                        <ArrowRight className="h-5 w-5" />
+                                    </Link>
+                                </div>
+                            </motion.article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="bg-[#fff8eb] py-20 md:py-28">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+                        <div>
+                            <SectionLabel>What we do</SectionLabel>
+                            <h2 className="font-display text-4xl font-semibold tracking-tight text-[#35145f] md:text-6xl">Programs built around real lives.</h2>
+                        </div>
+                        <Link href="/programs" className="inline-flex items-center gap-2 font-bold text-[#35145f]">View all programs <ArrowRight className="h-4 w-4" /></Link>
+                    </div>
+                    <div className="mt-12 grid gap-6 lg:grid-cols-3">
+                        {(programs.length ? programs : [
+                            { id: "1", slug: "child-protection", title: "Child protection", excerpt: "Stronger community systems that protect children from violence, neglect, and exploitation." },
+                            { id: "2", slug: "girls-empowerment", title: "Girls' empowerment", excerpt: "Knowledge, confidence, and opportunities that help girls exercise their rights." },
+                            { id: "3", slug: "health-nutrition", title: "Health and wellbeing", excerpt: "Practical support and advocacy for healthier children, adolescents, and families." },
+                        ]).slice(0, 3).map((program, index) => (
+                            <Link key={program.id} href={`/programs/${program.slug}`} className="group relative min-h-[330px] overflow-hidden bg-[#35145f] p-8 text-white">
+                                <div className="absolute right-0 top-0 h-24 w-24" style={{ backgroundColor: [palette.coral, palette.yellow, palette.blue][index] }} />
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">Program 0{index + 1}</span>
+                                <div className="absolute inset-x-8 bottom-8">
+                                    <h3 className="font-display text-4xl font-semibold leading-tight">{program.title}</h3>
+                                    <p className="mt-4 line-clamp-3 text-sm leading-6 text-white/70">{program.excerpt}</p>
+                                    <span className="mt-6 inline-flex items-center gap-2 font-bold text-[#ffd84d]">Discover the program <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" /></span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="relative bg-[#35145f] py-20 text-white md:py-28">
+                <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-[#ff6868] lg:block" />
+                <div className="relative mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+                    <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#88d9ed]">Knowledge for action</p>
+                        <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-6xl">Resources you can use and share.</h2>
+                        <p className="mt-6 max-w-lg text-lg leading-8 text-white/70">Policies, reports, advocacy materials, and presentations from our work in Cameroon.</p>
+                        <Link href="/documents" className="mt-8 inline-flex items-center gap-2 bg-[#ffd84d] px-6 py-3.5 text-sm font-bold text-[#35145f]">Browse all documents <ArrowRight className="h-4 w-4" /></Link>
+                    </div>
+                    <div className="grid gap-4 self-center">
+                        {(resources.length ? resources.slice(0, 3) : [
+                            { id: "1", title: "Child Protection Policy", category: "Policy", slug: "child-protection-policy" },
+                            { id: "2", title: "Promotion of the Rights of the Child in Cameroon", category: "Publication", slug: "rights-of-the-child" },
+                            { id: "3", title: "Advocacy Brief", category: "Advocacy", slug: "advocacy-brief" },
+                        ]).map((resource, index) => (
+                            <Link href="/documents" key={resource.id} className="group flex items-center gap-5 bg-white p-5 text-[#35145f] shadow-lg">
+                                <span className="flex h-14 w-14 shrink-0 items-center justify-center" style={{ backgroundColor: [palette.blue, palette.yellow, "#cbb8ff"][index] }}><FileText className="h-6 w-6" /></span>
+                                <span className="min-w-0 flex-1"><small className="font-bold uppercase tracking-wide text-[#ff6868]">{resource.category}</small><strong className="mt-1 block font-display text-xl leading-tight">{resource.title}</strong></span>
+                                <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-2" />
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="py-20 md:py-28">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+                        <div>
+                            <SectionLabel>Latest voices</SectionLabel>
+                            <h2 className="font-display text-4xl font-semibold tracking-tight text-[#35145f] md:text-6xl">Stories from our community.</h2>
+                        </div>
+                        <Link href="/blog" className="inline-flex items-center gap-2 font-bold text-[#35145f]">Read all stories <ArrowRight className="h-4 w-4" /></Link>
+                    </div>
+                    <div className="mt-12 grid gap-8 lg:grid-cols-3">
+                        {articles.slice(0, 3).map((article, index) => (
+                            <article key={article.id} className="group">
+                                <Link href={`/blog/${article.slug}`} className="block">
+                                    <div className="relative aspect-[4/3] overflow-hidden bg-[#dff4ee]">
+                                        <Image src={article.cover_image || storyImages[index]} alt={article.cover_image_alt || article.title} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        <span className="absolute left-0 top-0 bg-[#ffd84d] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#35145f]">{article.category?.name || "HOVUCA story"}</span>
+                                    </div>
+                                    <h3 className="mt-6 font-display text-3xl font-semibold leading-tight text-[#35145f] group-hover:text-[#ff6868]">{article.title}</h3>
+                                    <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#5e5269]">{article.excerpt}</p>
+                                </Link>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="border-y border-[#35145f]/10 bg-[#eef8fb] py-12">
+                <p className="mb-6 text-center text-xs font-bold uppercase tracking-[0.22em] text-[#35145f]">Partners in the work</p>
+                <DonorCarousel />
+            </section>
+
+            <section className="bg-[#ffd84d] py-20 md:py-24">
+                <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8">
+                    <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#35145f]">Stay connected</p>
+                        <h2 className="mt-4 max-w-3xl font-display text-4xl font-semibold leading-tight text-[#35145f] md:text-6xl">Get hopeful stories and opportunities in your inbox.</h2>
+                    </div>
+                    {subscribed ? (
+                        <div className="bg-white p-7 text-lg font-bold text-[#35145f]">Thank you. You&apos;re on the list!</div>
+                    ) : (
+                        <form onSubmit={(event) => { event.preventDefault(); setSubscribed(true); setEmail(""); }} className="flex flex-col gap-3 sm:flex-row">
+                            <label htmlFor="home-email" className="sr-only">Email address</label>
+                            <input id="home-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email address" className="min-h-14 flex-1 border-2 border-[#35145f] bg-white px-5 text-[#35145f] outline-none placeholder:text-[#35145f]/45" />
+                            <button type="submit" className="min-h-14 bg-[#35145f] px-7 font-bold text-white">Subscribe</button>
+                        </form>
+                    )}
+                </div>
+            </section>
+
+            <section className="bg-[#ff6868] py-20 text-white md:py-28">
+                <div className="mx-auto flex max-w-5xl flex-col items-center px-6 text-center">
+                    <HandHeart className="h-12 w-12" />
+                    <h2 className="mt-6 font-display text-5xl font-semibold leading-tight md:text-7xl">Together, we can protect possibility.</h2>
+                    <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">Your support helps children and young people learn, speak up, stay safe, and build the future they imagine.</p>
+                    <Link href="/donate" className="mt-9 inline-flex items-center gap-2 bg-[#35145f] px-8 py-4 font-bold text-white">Donate to HOVUCA <ArrowRight className="h-4 w-4" /></Link>
+                </div>
+            </section>
         </main>
     );
 }

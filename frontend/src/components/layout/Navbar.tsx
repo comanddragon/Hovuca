@@ -38,6 +38,7 @@ type NavLink = {
     href: string;
     label: string;
     children?: NavChild[];
+    cta?: boolean;
 };
 
 const navLinks: NavLink[] = [
@@ -45,34 +46,27 @@ const navLinks: NavLink[] = [
     {
         href: "/projects",
         label: "Projects",
-        children: [
-            { href: "/projects", label: "All Projects" },
-            { href: "/projects/ongoing", label: "Ongoing" },
-            { href: "/projects/completed", label: "Completed" },
-        ],
     },
-    { href: "", label: "Topics" },
+    { href: "/programs", label: "Programs" },
     {
         href: "", label: "Resources",
         children: [
-            { href: "/blog", label: "News/Posts" },
-            { href: "", label: "Documents" },
+            { href: "/blog", label: "Stories & news" },
+            { href: "/documents", label: "Documents" },
             { href: "/courses", label: "Courses" },
-            { href: "/gallery", label: "Image Gallery" },
+            { href: "/gallery", label: "Gallery" },
 
         ],
     },
     {
-        href: "", label: "Get Involved",
+        href: "", label: "Get involved",
         children: [
-            { href: "", label: "Sponsor an Event" },
-            { href: "/donate", label: "Sponsor a Child" },
-            { href: "/donate", label: "HIre Our Equipment" },
-            { href: "/volunteer", label: "Volunteer" },
+            { href: "/donate", label: "Donate" },
+            { href: "/contact", label: "Partner with us" },
         ],
     },
     { href: "/contact", label: "Contact" },
-    { href: "/donate", label: "Donate" },
+    { href: "/donate", label: "Donate", cta: true },
 ];
 
 // ── Desktop nav item ─────────────────────────────────────────────────────────
@@ -87,10 +81,10 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                 <DropdownMenuTrigger asChild>
                     <button
                         className={cn(
-                            "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors outline-none",
+                            "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition-colors outline-none",
                             isActive
                                 ? "bg-primary/10 text-primary"
-                                : "text-foreground hover:bg-muted hover:text-muted-foreground"
+                                : "text-[#35145f] hover:bg-[#f0e8f7]"
                         )}
                     >
                         {link.label}
@@ -103,7 +97,7 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                             <Link
                                 href={child.href}
                                 className={cn(
-                                    "flex items-center gap-2 font-display",
+                                    "flex items-center gap-2 font-semibold",
                                     pathname === child.href && "text-primary font-medium"
                                 )}
                             >
@@ -128,10 +122,11 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
         <Link
             href={link.href}
             className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-display font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition-all",
+                link.cta && "ml-1 bg-[#35145f] px-5 text-white shadow-sm hover:-translate-y-0.5 hover:bg-[#4d2477]",
                 isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground hover:bg-muted hover:text-muted-foreground"
+                    ? link.cta ? "bg-[#35145f] text-white" : "bg-[#f0e8f7] text-[#35145f]"
+                    : link.cta ? "" : "text-[#35145f] hover:bg-[#f0e8f7]"
             )}
         >
             {link.label}
@@ -151,18 +146,19 @@ export function Navbar() {
     const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
     return (
-        <header className="sticky top-0 z-50 border-b border-border bg-background/25 backdrop-blur-md">
-            <nav className="mx-auto flex h-20 lg:h-24 max-w-7xl items-center justify-between px-4 sm:px-6">
+        <header className="sticky top-0 z-50 border-b border-[#35145f]/10 bg-[#fffaf3]/95 backdrop-blur-xl">
+            <nav className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-4 sm:px-6">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-3">
                     <Logo />
-                    <span className="font-display text-xl font-semibold text-foreground">
-                        Hovuca
+                    <span className="hidden sm:block">
+                        <span className="block font-display text-xl font-extrabold leading-none tracking-[-0.03em] text-[#35145f]">HOVUCA</span>
+                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-[#755d82]">Hope for vulnerable children</span>
                     </span>
                 </Link>
 
                 {/* Desktop nav */}
-                <div className="hidden items-center gap-1 md:flex">
+                <div className="hidden items-center gap-0.5 xl:flex">
                     {navLinks.map((link) => (
                         <DesktopNavItem key={link.label} link={link} pathname={pathname} />
                     ))}
@@ -229,7 +225,7 @@ export function Navbar() {
                             </DropdownMenu>
                         </>
                     ) : (
-                        <div className="hidden items-center gap-2 md:flex">
+                        <div className="hidden items-center gap-2 xl:flex">
                             <Button variant="ghost" size="sm" asChild>
                                 <Link href="/login">Sign in</Link>
                             </Button>
@@ -242,7 +238,7 @@ export function Navbar() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="md:hidden"
+                        className="xl:hidden text-[#35145f]"
                         onClick={() => setMobileOpen((v) => !v)}
                     >
                         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -252,7 +248,7 @@ export function Navbar() {
 
             {/* Mobile menu */}
             {mobileOpen && (
-                <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
+                <div className="border-t border-[#35145f]/10 bg-[#fffaf3] px-4 pb-5 xl:hidden">
                     <div className="flex flex-col gap-1 pt-2">
                         {navLinks.map(({ href, label, children }) => {
                             const isActive = href !== "" && pathname.startsWith(href);

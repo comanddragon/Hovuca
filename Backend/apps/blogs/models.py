@@ -173,6 +173,30 @@ class Article(BaseModel):
         return self.comments.filter(is_approved=True, deleted_at__isnull=True).count()
 
 
+class Resource(BaseModel):
+    """A public downloadable document or publication."""
+
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, max_length=280)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=80, default="Document")
+    file = models.FileField(upload_to="resources/documents/")
+    published_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "resources"
+        ordering = ["-published_at", "title"]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+
 class Comment(BaseModel):
     """A threaded comment on an Article. Supports one level of replies."""
 

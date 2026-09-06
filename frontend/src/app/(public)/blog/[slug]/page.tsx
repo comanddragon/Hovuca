@@ -1,56 +1,38 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useArticle, useComments, useAddComment, useLikeArticle, useBookmarkArticle } from "@/hooks";
+import { ArrowLeft, Bookmark, BookmarkCheck, Clock, Eye, Heart, MessageSquare, Share2 } from "lucide-react";
+
+import { useAddComment, useArticle, useBookmarkArticle, useComments, useLikeArticle } from "@/hooks";
+import { formatDate, getAvatarUrl, getInitials, timeAgo } from "@/lib/utils";
+import { useArticleInteraction, useArticleStore } from "@/store/article.store";
+import { useAuthStore } from "@/store/auth.store";
 import { PageLoader } from "@/components/shared";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate, getAvatarUrl, getInitials, timeAgo } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth.store";
-import { useState } from "react";
-import { Bookmark, BookmarkCheck, Clock, Eye, Heart, MessageSquare, ArrowLeft, Share2 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { useArticleStore, useArticleInteraction } from "@/store/article.store";
 
-// ─── Smart renderer: HTML body OR plain-text/Markdown ────────────────────────
 function ArticleBody({ content }: { content: string }) {
     const isHtml = /<\s*[a-z][\s\S]*?>/i.test(content.trim());
+    const proseClass = "prose prose-neutral max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-3xl prose-p:text-[1.0625rem] prose-p:leading-8 prose-p:text-neutral-700 prose-a:text-[#5d2d84] prose-a:font-semibold prose-blockquote:border-l-[#5d2d84] prose-blockquote:text-neutral-600 prose-img:rounded-xl";
 
     if (isHtml) {
-        return (
-            <div
-                className="
-                    prose prose-neutral dark:prose-invert max-w-none
-                    prose-headings:font-display prose-headings:font-light prose-headings:tracking-tight
-                    prose-h1:text-4xl prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-                    prose-p:leading-[1.85] prose-p:text-foreground/85 prose-p:font-light
-                    prose-strong:text-foreground prose-strong:font-semibold
-                    prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                    prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-blockquote:font-light prose-blockquote:italic prose-blockquote:text-lg
-                    prose-ul:text-foreground/85 prose-ol:text-foreground/85 prose-li:font-light
-                    prose-img:rounded-2xl prose-img:shadow-lg
-                    prose-code:rounded-md prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono
-                    prose-pre:bg-muted prose-pre:rounded-2xl prose-pre:border prose-pre:border-border
-                "
-                dangerouslySetInnerHTML={{ __html: content }}
-            />
-        );
+        return <div className={proseClass} dangerouslySetInnerHTML={{ __html: content }} />;
     }
 
     return (
-        <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-light prose-p:leading-[1.85] prose-p:font-light prose-p:text-foreground/85">
-            {content.split("\n").map((line, i) => {
-                if (!line.trim()) return <br key={i} />;
-                if (line.startsWith("# "))   return <h1 key={i}>{line.slice(2)}</h1>;
-                if (line.startsWith("## "))  return <h2 key={i}>{line.slice(3)}</h2>;
-                if (line.startsWith("### ")) return <h3 key={i}>{line.slice(4)}</h3>;
-                if (line.startsWith("- ") || line.startsWith("* ")) return <li key={i}>{line.slice(2)}</li>;
-                if (line.startsWith("> "))   return <blockquote key={i}><p>{line.slice(2)}</p></blockquote>;
-                return <p key={i}>{line}</p>;
+        <div className={proseClass}>
+            {content.split("\n").map((line, index) => {
+                if (!line.trim()) return <br key={index} />;
+                if (line.startsWith("# ")) return <h1 key={index}>{line.slice(2)}</h1>;
+                if (line.startsWith("## ")) return <h2 key={index}>{line.slice(3)}</h2>;
+                if (line.startsWith("### ")) return <h3 key={index}>{line.slice(4)}</h3>;
+                if (line.startsWith("- ") || line.startsWith("* ")) return <li key={index}>{line.slice(2)}</li>;
+                if (line.startsWith("> ")) return <blockquote key={index}><p>{line.slice(2)}</p></blockquote>;
+                return <p key={index}>{line}</p>;
             })}
         </div>
     );
@@ -64,305 +46,125 @@ export default function ArticlePage() {
     const { mutate: bookmark } = useBookmarkArticle();
     const { mutate: addComment, isPending: commenting } = useAddComment(article?.id ?? "");
     const { isAuthenticated } = useAuthStore();
-    const [commentBody, setCommentBody] = useState("");
-
-    // ── Sync store from server data ───────────────────────────────────────────
-    // Runs whenever article loads or like_count changes (after confirmLike
-    // the query is NOT invalidated for likes, so this only runs on initial
-    // load and on bookmark-triggered refetches).
     const { syncFromServer, clearArticle } = useArticleStore();
+    const { liked, bookmarked, likeCount } = useArticleInteraction(slug);
+    const [commentBody, setCommentBody] = useState("");
 
     useEffect(() => {
         if (!article) return;
-        syncFromServer(
-            article.slug,
-            article.is_liked,       // ✅ real value from API
-            article.is_bookmarked,  // ✅ real value from API
-            article.like_count,
-        );
-    }, [article?.slug, article?.is_liked, article?.is_bookmarked, article?.like_count]); // eslint-disable-line react-hooks/exhaustive-deps
+        syncFromServer(article.slug, article.is_liked, article.is_bookmarked, article.like_count);
+    }, [article, syncFromServer]);
 
-    useEffect(() => {
-        return () => { if (slug) clearArticle(slug); };
-    }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    // Read from store — reflects optimistic updates immediately
-    const { liked, bookmarked, likeCount } = useArticleInteraction(slug);
+    useEffect(() => () => {
+        if (slug) clearArticle(slug);
+    }, [clearArticle, slug]);
 
     if (isLoading) return <PageLoader />;
-    if (!article) return (
-        <div className="flex min-h-[60vh] items-center justify-center">
-            <p className="text-muted-foreground font-light">Article not found.</p>
-        </div>
-    );
+    if (!article) {
+        return <div className="flex min-h-[60vh] items-center justify-center text-neutral-500">Article not found.</div>;
+    }
 
-    const handleComment = () => {
+    const submitComment = () => {
         if (!commentBody.trim()) return;
         addComment({ body: commentBody }, { onSuccess: () => setCommentBody("") });
     };
 
-    const handleLike = () => {
-        if (!isAuthenticated) return;
-        like(article.slug);
-    };
-
-    const handleBookmark = () => {
-        if (!isAuthenticated) return;
-        bookmark(article.slug);
-    };
-
     return (
-        <div className="min-h-screen bg-background">
+        <main className="min-h-screen bg-[#fbfaf8] text-neutral-900">
+            <article>
+                <header className="mx-auto max-w-5xl px-6 pb-10 pt-12 sm:pt-16">
+                    <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-500 transition hover:text-[#35145f]">
+                        <ArrowLeft className="h-4 w-4" /> Back to stories
+                    </Link>
 
-            {/* ── HERO / COVER ──────────────────────────────────────────── */}
-            <div className="relative w-full h-[55vh] min-h-[420px] overflow-hidden bg-neutral-950">
-                {article.cover_image ? (
-                    <Image
-                        src={article.cover_image}
-                        alt={article.cover_image_alt || article.title}
-                        fill
-                        priority
-                        sizes="100vw"
-                        className="object-cover opacity-50"
-                    />
-                ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-neutral-900 to-neutral-950" />
+                    <div className="mt-10 max-w-4xl">
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500">
+                            {article.category && <span className="font-bold uppercase tracking-[0.14em] text-[#5d2d84]">{article.category.name}</span>}
+                            {article.published_at && <><span aria-hidden="true">/</span><span>{formatDate(article.published_at)}</span></>}
+                            <span aria-hidden="true">/</span>
+                            <span>{article.reading_time_minutes} min read</span>
+                        </div>
+                        <h1 className="mt-5 text-balance font-display text-4xl font-extrabold leading-[1.08] tracking-[-0.04em] sm:text-5xl lg:text-6xl">{article.title}</h1>
+                        {article.excerpt && <p className="mt-6 max-w-3xl text-xl leading-8 text-neutral-600">{article.excerpt}</p>}
+                    </div>
+
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-5 border-t border-neutral-200 pt-6">
+                        {article.author ? (
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10">
+                                    <AvatarImage src={getAvatarUrl(article.author.avatar) ?? undefined} />
+                                    <AvatarFallback className="bg-[#eee7f3] text-xs font-bold text-[#35145f]">{getInitials(article.author.full_name)}</AvatarFallback>
+                                </Avatar>
+                                <div><p className="text-sm font-bold">{article.author.full_name}</p><p className="text-xs text-neutral-500">HOVUCA</p></div>
+                            </div>
+                        ) : <span />}
+                        <div className="flex items-center gap-4 text-sm text-neutral-500">
+                            <span className="flex items-center gap-1.5"><Eye className="h-4 w-4" />{article.view_count.toLocaleString()}</span>
+                            <span className="flex items-center gap-1.5"><MessageSquare className="h-4 w-4" />{article.comment_count}</span>
+                            <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{article.reading_time_minutes}m</span>
+                        </div>
+                    </div>
+                </header>
+
+                {article.cover_image && (
+                    <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                        <div className="relative aspect-[16/8] overflow-hidden rounded-xl bg-neutral-200">
+                            <Image src={article.cover_image} alt={article.cover_image_alt || article.title} fill priority sizes="(max-width: 1200px) 100vw, 1152px" className="object-cover" />
+                        </div>
+                    </div>
                 )}
 
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.5)_100%)]" />
+                <div className="mx-auto max-w-3xl px-6 pb-20 pt-12 sm:pt-16">
+                    <ArticleBody content={article.body} />
 
-                <motion.div
-                    className="absolute top-6 left-6 z-10"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4 }}
-                >
-                    <Link href="/blog">
-                        <Button variant="ghost" size="sm" className="gap-2 text-white/70 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/10">
-                            <ArrowLeft className="h-3.5 w-3.5" />
-                            Back to Blog
-                        </Button>
-                    </Link>
-                </motion.div>
-
-                <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 w-full max-w-4xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-                    >
-                        <div className="mb-4 flex flex-wrap items-center gap-2">
-                            {article.category && (
-                                <span
-                                    className="rounded-full px-3 py-1 text-xs font-semibold text-white"
-                                    style={{ backgroundColor: article.category.color }}
-                                >
-                                    {article.category.name}
-                                </span>
-                            )}
-                            {article.tags?.map((tag) => (
-                                <span key={tag.id} className="rounded-full border border-white/20 px-2.5 py-0.5 text-[11px] text-white/60">
-                                    #{tag.name}
-                                </span>
-                            ))}
-                            {article.is_featured && (
-                                <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
-                                    Featured
-                                </span>
-                            )}
-                        </div>
-                        <h1 className="font-display text-3xl md:text-5xl font-light text-white leading-tight tracking-tight">
-                            {article.title}
-                        </h1>
-                    </motion.div>
-                </div>
-            </div>
-
-            {/* ── CONTENT ───────────────────────────────────────────────── */}
-            <div className="mx-auto max-w-4xl px-6 py-12">
-
-                {/* Author + meta */}
-                <div className="mb-10 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                    {article.author && (
-                        <div className="flex items-center gap-2.5">
-                            <Avatar className="h-9 w-9 ring-2 ring-border">
-                                <AvatarImage src={getAvatarUrl(article.author.avatar) ?? undefined} />
-                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                                    {getInitials(article.author.full_name)}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-medium text-foreground leading-none">{article.author.full_name}</p>
-                                {article.published_at && (
-                                    <p className="mt-0.5 text-xs">{formatDate(article.published_at)}</p>
-                                )}
-                            </div>
+                    {article.tags?.length > 0 && (
+                        <div className="mt-12 flex flex-wrap gap-2 border-t border-neutral-200 pt-7">
+                            {article.tags.map((tag) => <span key={tag.id} className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-neutral-600">#{tag.name}</span>)}
                         </div>
                     )}
-                    <div className="flex items-center gap-4 ml-auto flex-wrap">
-                        <span className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5" />
-                            {article.reading_time_minutes} min read
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <Eye className="h-3.5 w-3.5" />
-                            {article.view_count.toLocaleString()} views
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <MessageSquare className="h-3.5 w-3.5" />
-                            {article.comment_count} comments
-                        </span>
-                    </div>
-                </div>
 
-                {article.excerpt && (
-                    <motion.p
-                        className="mt-8 text-xl text-muted-foreground font-light leading-relaxed border-l-2 border-primary/40 pl-5"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.6 }}
-                    >
-                        {article.excerpt}
-                    </motion.p>
-                )}
-
-                <motion.div
-                    className="mt-10 mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
-                >
-                    <ArticleBody content={article.body} />
-                </motion.div>
-
-                {/* ── ACTIONS BAR ───────────────────────────────────────── */}
-                <div className="flex items-center justify-between flex-wrap gap-3 rounded-2xl border border-border bg-muted/30 px-6 py-4 mb-16">
-                    <div className="flex items-center gap-3">
-                        <Button
-                            variant={liked ? "default" : "outline"}
-                            size="sm"
-                            onClick={handleLike}
-                            className="gap-2 rounded-full"
-                            disabled={!isAuthenticated}
-                        >
-                            <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-                            {likeCount} {likeCount === 1 ? "Like" : "Likes"}
-                        </Button>
-                        <Button
-                            variant={bookmarked ? "default" : "outline"}
-                            size="sm"
-                            onClick={handleBookmark}
-                            className="gap-2 rounded-full"
-                            disabled={!isAuthenticated}
-                        >
-                            {bookmarked
-                                ? <BookmarkCheck className="h-4 w-4" />
-                                : <Bookmark className="h-4 w-4" />
-                            }
-                            {bookmarked ? "Saved" : "Save"}
-                        </Button>
-                    </div>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="gap-2 text-muted-foreground"
-                        onClick={() => navigator.share?.({ title: article.title, url: window.location.href })}
-                    >
-                        <Share2 className="h-4 w-4" />
-                        Share
-                    </Button>
-                </div>
-
-                {/* ── COMMENTS ──────────────────────────────────────────── */}
-                <section className="pb-24">
-                    <h2 className="mb-8 font-display text-2xl font-light text-foreground flex items-center gap-2 tracking-tight">
-                        <MessageSquare className="h-5 w-5 text-primary" />
-                        {article.comment_count} Comments
-                    </h2>
-
-                    {isAuthenticated ? (
-                        <motion.div
-                            className="mb-10 rounded-2xl border border-border bg-card p-5 space-y-3"
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
-                        >
-                            <p className="text-sm font-medium text-foreground">Leave a comment</p>
-                            <Textarea
-                                placeholder="Share your thoughts…"
-                                value={commentBody}
-                                onChange={(e) => setCommentBody(e.target.value)}
-                                rows={3}
-                                className="resize-none bg-background"
-                            />
-                            <div className="flex justify-end">
-                                <Button
-                                    onClick={handleComment}
-                                    disabled={commenting || !commentBody.trim()}
-                                    size="sm"
-                                    className="rounded-full px-6"
-                                >
-                                    {commenting ? "Posting…" : "Post comment"}
-                                </Button>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <div className="mb-10 rounded-2xl border border-dashed border-border p-6 text-center">
-                            <p className="text-sm text-muted-foreground mb-3 font-light">
-                                Sign in to join the conversation
-                            </p>
-                            <Button size="sm" asChild className="rounded-full px-6">
-                                <Link href="/login">Sign in</Link>
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-4">
+                        <div className="flex gap-2">
+                            <Button variant={liked ? "default" : "outline"} size="sm" onClick={() => isAuthenticated && like(article.slug)} disabled={!isAuthenticated} className={liked ? "bg-[#35145f] hover:bg-[#4d2477]" : ""}>
+                                <Heart className={`mr-2 h-4 w-4 ${liked ? "fill-current" : ""}`} />{likeCount}
+                            </Button>
+                            <Button variant={bookmarked ? "default" : "outline"} size="sm" onClick={() => isAuthenticated && bookmark(article.slug)} disabled={!isAuthenticated} className={bookmarked ? "bg-[#35145f] hover:bg-[#4d2477]" : ""}>
+                                {bookmarked ? <BookmarkCheck className="mr-2 h-4 w-4" /> : <Bookmark className="mr-2 h-4 w-4" />}{bookmarked ? "Saved" : "Save"}
                             </Button>
                         </div>
-                    )}
-
-                    <div className="space-y-4">
-                        {comments.length === 0 ? (
-                            <p className="text-center text-sm text-muted-foreground font-light py-8">
-                                No comments yet. Be the first to share your thoughts.
-                            </p>
-                        ) : (
-                            comments.map((comment, index) => (
-                                <motion.div
-                                    key={comment.id}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.05, duration: 0.4 }}
-                                    viewport={{ once: true }}
-                                    className="flex gap-4 rounded-2xl border border-border bg-card p-5"
-                                >
-                                    <Avatar className="h-9 w-9 shrink-0 ring-2 ring-border">
-                                        <AvatarImage src={getAvatarUrl(comment.author?.avatar ?? null) ?? undefined} />
-                                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                                            {comment.author ? getInitials(comment.author.full_name) : "?"}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="mb-2 flex items-center gap-2 flex-wrap">
-                                            <span className="text-sm font-semibold text-foreground">
-                                                {comment.author?.full_name ?? "Anonymous"}
-                                            </span>
-                                            <span className="text-xs text-muted-foreground">
-                                                {timeAgo(comment.created_at)}
-                                            </span>
-                                            {comment.is_pinned && (
-                                                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                                                    Pinned
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-sm text-foreground/80 leading-relaxed font-light">
-                                            {comment.body}
-                                        </p>
-                                    </div>
-                                </motion.div>
-                            ))
-                        )}
+                        <Button variant="ghost" size="sm" onClick={() => navigator.share?.({ title: article.title, url: window.location.href })}><Share2 className="mr-2 h-4 w-4" />Share</Button>
                     </div>
-                </section>
-            </div>
-        </div>
+
+                    <section className="mt-16 border-t border-neutral-200 pt-12">
+                        <h2 className="font-display text-3xl font-extrabold tracking-tight">Conversation</h2>
+                        <p className="mt-2 text-sm text-neutral-500">{article.comment_count} {article.comment_count === 1 ? "comment" : "comments"}</p>
+
+                        {isAuthenticated ? (
+                            <div className="mt-8 rounded-xl border border-neutral-200 bg-white p-5">
+                                <Textarea placeholder="Share your thoughts" value={commentBody} onChange={(event) => setCommentBody(event.target.value)} rows={4} className="resize-none border-neutral-200 bg-[#fbfaf8]" />
+                                <div className="mt-3 flex justify-end"><Button onClick={submitComment} disabled={commenting || !commentBody.trim()} className="bg-[#35145f] hover:bg-[#4d2477]">{commenting ? "Posting..." : "Post comment"}</Button></div>
+                            </div>
+                        ) : (
+                            <div className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 text-center text-sm text-neutral-600">Want to join the conversation? <Link href="/login" className="font-bold text-[#5d2d84] hover:underline">Sign in</Link></div>
+                        )}
+
+                        <div className="mt-8 space-y-4">
+                            {comments.length === 0 ? <p className="py-6 text-sm text-neutral-500">No comments yet.</p> : comments.map((comment) => (
+                                <div key={comment.id} className="flex gap-4 rounded-xl border border-neutral-200 bg-white p-5">
+                                    <Avatar className="h-9 w-9 shrink-0">
+                                        <AvatarImage src={getAvatarUrl(comment.author?.avatar ?? null) ?? undefined} />
+                                        <AvatarFallback className="bg-[#eee7f3] text-xs font-bold text-[#35145f]">{comment.author ? getInitials(comment.author.full_name) : "?"}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-bold">{comment.author?.full_name ?? "Anonymous"}</span><span className="text-xs text-neutral-500">{timeAgo(comment.created_at)}</span>{comment.is_pinned && <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-semibold">Pinned</span>}</div>
+                                        <p className="mt-2 text-sm leading-7 text-neutral-700">{comment.body}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            </article>
+        </main>
     );
 }

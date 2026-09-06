@@ -56,6 +56,7 @@ export const keys = {
     categories: ["categories"] as const,
     tags: ["tags"] as const,
     comments: (id: string) => ["comments", id] as const,
+    resources: ["resources"] as const,
     programs: (f?: object) => ["programs", f] as const,
     program: (id: string) => ["program", id] as const,
     programProjects: (id: string) => ["program-projects", id] as const,
@@ -180,6 +181,14 @@ export function useResetPassword() {
 }
 // ─── Blog ─────────────────────────────────────────────────────────────────────
 
+export function useResources() {
+    return useQuery({
+        queryKey: keys.resources,
+        queryFn: blogService.getResources,
+        staleTime: 1000 * 60 * 30,
+    });
+}
+
 export function useArticles(filters?: Parameters<typeof blogService.getArticles>[0]) {
     return useQuery({
         queryKey: keys.articles(filters),
@@ -229,6 +238,44 @@ export function useTags() {
         queryKey: keys.tags,
         queryFn: blogService.getTags,
         staleTime: 1000 * 60 * 30,
+    });
+}
+
+export function useCreateTag() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (name: string) => blogService.createTag(name),
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: keys.tags });
+        },
+    });
+}
+
+export function useCreateArticle() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: blogService.createArticle,
+        onSuccess: () => {
+            void qc.invalidateQueries({ queryKey: ["admin-articles"] });
+            void qc.invalidateQueries({ queryKey: ["articles"] });
+            toast.success("Article created.");
+        },
+        onError: () => toast.error("Failed to create article."),
+    });
+}
+
+export function useUpdateArticle(slug: string) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (payload: Parameters<typeof blogService.updateArticle>[1]) =>
+            blogService.updateArticle(slug, payload),
+        onSuccess: (updated) => {
+            qc.setQueryData(keys.article(slug), updated);
+            void qc.invalidateQueries({ queryKey: ["admin-articles"] });
+            void qc.invalidateQueries({ queryKey: ["articles"] });
+            toast.success("Article saved.");
+        },
+        onError: () => toast.error("Failed to save article."),
     });
 }
 

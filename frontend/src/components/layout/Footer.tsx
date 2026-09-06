@@ -7,6 +7,7 @@ const links = {
         { label: "Programs", href: "/programs" },
         { label: "Courses", href: "/courses" },
         { label: "Blog", href: "/blog" },
+        { label: "Documents", href: "/documents" },
         { label: "Donate", href: "/donate" },
     ],
     Organization: [

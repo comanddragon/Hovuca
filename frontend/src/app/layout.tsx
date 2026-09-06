@@ -4,19 +4,17 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Toaster } from "sonner";
 import {NotificationProvider} from "@/components/shared/NotificationProvider";
-import {Poppins, Fraunces} from 'next/font/google'
+import {DM_Sans, Manrope} from "next/font/google";
 
-const poppins = Poppins({
+const dmSans = DM_Sans({
     subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700", "800", "900"],
-    variable: "--font-poppins",
+    variable: "--font-dm-sans",
     display: "swap",
 });
 
-const fraunces = Fraunces({
+const manrope = Manrope({
     subsets: ["latin"],
-    style: ["normal", "italic"],
-    variable: "--font-fraunces",
+    variable: "--font-manrope",
     display: "swap",
 });
 
@@ -30,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${poppins.variable} ${fraunces.variable}`}>
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${dmSans.variable} ${manrope.variable}`}>
         <body>
         <Providers>
             <NotificationProvider />

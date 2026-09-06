@@ -2,7 +2,15 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 
-from .models import Article, Category, Tag, Comment, Like, Bookmark
+from .models import Article, Category, Tag, Comment, Like, Bookmark, Resource
+
+
+@admin.register(Resource)
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ["title", "category", "published_at", "is_active"]
+    list_filter = ["category", "is_active"]
+    search_fields = ["title", "description"]
+    prepopulated_fields = {"slug": ("title",)}
 
 
 @admin.register(Category)

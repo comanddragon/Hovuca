@@ -200,6 +200,17 @@ export interface Comment {
     created_at: string;
 }
 
+export interface Resource {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    category: string;
+    file_url: string;
+    published_at: string | null;
+    created_at: string;
+}
+
 // ─── Donations ────────────────────────────────────────────────────────────────
 
 export type CampaignStatus = "active" | "closed" | "draft";

@@ -311,6 +311,13 @@ SUPABASE_STORAGE_SECRET = config(
     default="",
 )
 
+NEON_STORAGE_ENDPOINT = config("NEON_STORAGE_ENDPOINT", default="")
+NEON_STORAGE_PUBLIC_URL = config("NEON_STORAGE_PUBLIC_URL", default="")
+NEON_STORAGE_BUCKET = config("NEON_STORAGE_BUCKET", default="")
+NEON_STORAGE_REGION = config("NEON_STORAGE_REGION", default="auto")
+NEON_STORAGE_KEY_ID = config("NEON_STORAGE_KEY_ID", default="")
+NEON_STORAGE_SECRET = config("NEON_STORAGE_SECRET", default="")
+
 
 RESEND_API_KEY = config("RESEND_API_KEY", default="")
 RESEND_FROM = config("RESEND_FROM", default="")

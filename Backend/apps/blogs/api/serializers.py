@@ -1,7 +1,26 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark
+from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, Resource
+
+
+class ResourceSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Resource
+        fields = [
+            "id", "title", "slug", "description", "category",
+            "file_url", "published_at", "created_at",
+        ]
+        read_only_fields = fields
+
+    def get_file_url(self, obj):
+        if not obj.file:
+            return None
+        url = obj.file.url
+        request = self.context.get("request")
+        return request.build_absolute_uri(url) if request and url.startswith("/") else url
 
 
 # ---------------------------------------------------------------------------

@@ -5,7 +5,7 @@ celery -A config beat -l info --scheduler django_celery_beat.schedulers:Database
 celery -A config purge
 
 
-When you're done working in files, send them as output in the chat
+When you're done working in files, send them as output in the chat, zip them in their respective directories
 
 ## Universal CLAUDE rules
 - Read existing files before writing. Don't re-read unless changed.
@@ -14,7 +14,7 @@ When you're done working in files, send them as output in the chat
 - No sycophantic openers or closing fluff.
 - No emojis or em "—" dashes.
 - Do not guess APIs, versions, flags, commit SHAs, or package names. Verify by reading code or docs before asserting.
-- Ask clarifying questions befre giving detailed answers.
+- Ask clarifying questions before giving detailed answers.
 ### Coding Profile
 Best for: dev projects, code review, debugging, refactoring
 Extends: Universal CLAUDE rules

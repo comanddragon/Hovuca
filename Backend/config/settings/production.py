@@ -76,47 +76,48 @@ CSRF_TRUSTED_ORIGINS = config(
 )
 
 
-if not SUPABASE_PROJECT_REF:
-    raise RuntimeError(
-        "SUPABASE_PROJECT_REF must be configured."
+NEON_STORAGE_CONFIGURED = all((
+    NEON_STORAGE_ENDPOINT,
+    NEON_STORAGE_PUBLIC_URL,
+    NEON_STORAGE_BUCKET,
+    NEON_STORAGE_KEY_ID,
+    NEON_STORAGE_SECRET,
+))
+
+if NEON_STORAGE_CONFIGURED:
+    MEDIA_STORAGE_ENDPOINT = NEON_STORAGE_ENDPOINT
+    MEDIA_STORAGE_PUBLIC_URL = NEON_STORAGE_PUBLIC_URL
+    MEDIA_STORAGE_BUCKET = NEON_STORAGE_BUCKET
+    MEDIA_STORAGE_REGION = NEON_STORAGE_REGION
+    MEDIA_STORAGE_KEY_ID = NEON_STORAGE_KEY_ID
+    MEDIA_STORAGE_SECRET = NEON_STORAGE_SECRET
+else:
+    if not all((SUPABASE_PROJECT_REF, SUPABASE_STORAGE_KEY_ID, SUPABASE_STORAGE_SECRET)):
+        raise RuntimeError("Neon or Supabase object storage must be configured.")
+    MEDIA_STORAGE_ENDPOINT = (
+        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
     )
-
-if not SUPABASE_STORAGE_KEY_ID:
-    raise RuntimeError(
-        "SUPABASE_STORAGE_KEY_ID must be configured."
+    MEDIA_STORAGE_PUBLIC_URL = (
+        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/"
+        f"{SUPABASE_STORAGE_BUCKET}"
     )
+    MEDIA_STORAGE_BUCKET = SUPABASE_STORAGE_BUCKET
+    MEDIA_STORAGE_REGION = SUPABASE_STORAGE_REGION
+    MEDIA_STORAGE_KEY_ID = SUPABASE_STORAGE_KEY_ID
+    MEDIA_STORAGE_SECRET = SUPABASE_STORAGE_SECRET
 
-if not SUPABASE_STORAGE_SECRET:
-    raise RuntimeError(
-        "SUPABASE_STORAGE_SECRET must be configured."
-    )
-
-
-SUPABASE_S3_ENDPOINT = (
-    f"https://{SUPABASE_PROJECT_REF}.supabase.co"
-    "/storage/v1/s3"
-)
-
-SUPABASE_PUBLIC_ENDPOINT = (
-    f"https://{SUPABASE_PROJECT_REF}.supabase.co"
-    "/storage/v1/object/public"
-)
-
-MEDIA_URL = (
-    f"{SUPABASE_PUBLIC_ENDPOINT}/"
-    f"{SUPABASE_STORAGE_BUCKET}/media/"
-)
+MEDIA_URL = f"{MEDIA_STORAGE_PUBLIC_URL.rstrip('/')}/media/"
 
 
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {
-            "access_key": SUPABASE_STORAGE_KEY_ID,
-            "secret_key": SUPABASE_STORAGE_SECRET,
-            "bucket_name": SUPABASE_STORAGE_BUCKET,
-            "region_name": SUPABASE_STORAGE_REGION,
-            "endpoint_url": SUPABASE_S3_ENDPOINT,
+            "access_key": MEDIA_STORAGE_KEY_ID,
+            "secret_key": MEDIA_STORAGE_SECRET,
+            "bucket_name": MEDIA_STORAGE_BUCKET,
+            "region_name": MEDIA_STORAGE_REGION,
+            "endpoint_url": MEDIA_STORAGE_ENDPOINT,
             "location": "media",
             "file_overwrite": False,
             "default_acl": None,

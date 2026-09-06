@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from apps.core.pagination import StandardPagination
 from apps.core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
 
-from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark
+from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, Resource
 from .serializers import (
     ArticleListSerializer,
     ArticleDetailSerializer,
@@ -24,10 +24,21 @@ from .serializers import (
     CommentSerializer,
     CommentWriteSerializer,
     ToggleResponseSerializer,
+    ResourceSerializer,
 )
 
 MAX_INLINE_IMAGE_BYTES = 5 * 1024 * 1024  # 5MB
 ALLOWED_INLINE_IMAGE_FORMATS = {"JPEG": "jpg", "PNG": "png", "GIF": "gif", "WEBP": "webp"}
+
+
+class ResourceViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public list and detail endpoints for downloadable resources."""
+
+    queryset = Resource.objects.filter(is_active=True).order_by("-published_at", "title")
+    serializer_class = ResourceSerializer
+    permission_classes = [AllowAny]
+    lookup_field = "slug"
+    pagination_class = None
 
 
 # ---------------------------------------------------------------------------
