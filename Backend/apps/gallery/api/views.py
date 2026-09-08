@@ -1,11 +1,11 @@
 from django.db.models import F
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.gallery.models import GalleryAlbum, GalleryImage
 from .serializers import (

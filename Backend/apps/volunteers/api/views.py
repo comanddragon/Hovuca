@@ -1,10 +1,10 @@
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
 
 from apps.volunteers.models import VolunteerProfile, VolunteerTask
 from .serializers import (

@@ -1,12 +1,12 @@
 from django.db import transaction
 from django.utils import timezone
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.quiz import Quiz, Question, Choice, QuizAttempt, QuizAnswer
 from apps.elearning.models.enrollment import Enrollment
@@ -16,7 +16,6 @@ from apps.elearning.serializers.quiz import (
     QuizPublicSerializer,
     QuizWriteSerializer,
     QuestionSerializer,
-    ChoiceSerializer,
     QuizSubmitSerializer,
     QuizAttemptListSerializer,
     QuizAttemptDetailSerializer,

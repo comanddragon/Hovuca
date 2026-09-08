@@ -1,10 +1,10 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdminOrReadOnly, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsStaffOrAdmin
 
 from apps.programs.models import Program, Project
 from .serializers import (
@@ -37,7 +37,7 @@ class ProgramViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return [IsStaffOrAdmin()]
         if self.action == "destroy":
-            from apps.core.permissions import IsAdmin
+            from core.permissions import IsAdmin
 
             return [IsAdmin()]
         return [AllowAny()]
@@ -92,7 +92,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if self.action in ("create", "update", "partial_update"):
             return [IsStaffOrAdmin()]
         if self.action == "destroy":
-            from apps.core.permissions import IsAdmin
+            from core.permissions import IsAdmin
             return [IsAdmin()]
         return [AllowAny()]
 

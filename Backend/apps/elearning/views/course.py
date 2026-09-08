@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.course import Subject, Course
 from apps.elearning.serializers.course import (

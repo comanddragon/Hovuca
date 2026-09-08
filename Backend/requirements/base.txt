@@ -1,7 +1,10 @@
 # Core
 django
 djangorestframework
-
+# Admin
+django-unfold
+whitenoise
+resend
 # Auth
 djangorestframework-simplejwt
 

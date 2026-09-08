@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from apps.core.models import BaseModel
+from core.models import BaseModel
 
 
 class DonorOrganization(BaseModel):

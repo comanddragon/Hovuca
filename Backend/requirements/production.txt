@@ -9,9 +9,6 @@ django-redis
 uvicorn[standard]
 # Monitoring & logging
 sentry-sdk[django]
-whitenoise
-python-json-logger
-resend
 gevent
 # Security
 django-axes        # brute-force login protection

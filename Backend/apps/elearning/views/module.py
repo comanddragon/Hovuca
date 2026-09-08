@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.module import Module
 from apps.elearning.serializers.module import (

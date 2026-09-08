@@ -1,264 +1,92 @@
-import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from urllib.parse import parse_qsl, urlparse
+
 
 from .base import *  # noqa: F401, F403
 
 DEBUG = False
 
-ALLOWED_HOSTS = config(
-    "DJANGO_ALLOWED_HOSTS",
-    default="",
-    cast=Csv(),
-)
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS")
 
+# ---------------------------------------------------------------------------
+# Database — Postgres with connection pooling
+# ---------------------------------------------------------------------------
+DATABASE_URL = config("NEON_DB_URL")
 
-DATABASE_URL = (
-    config("DATABASE_URL", default="")
-    or config("NEON_DB_URL", default="")
-    or config("SUPABASE_DB_URL", default="")
-)
-
-if not DATABASE_URL:
-    raise RuntimeError(
-        "Production database URL is not configured."
-    )
-
+tmp_postgres = urlparse(config["DATABASE_URL"])
 
 DATABASES = {
-    "default": dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,
-    ),
-}
-
-DATABASES["default"]["OPTIONS"] = {
-    **DATABASES["default"].get("OPTIONS", {}),
-    "connect_timeout": 10,
-    "sslmode": "require",
-    "options": "-c statement_timeout=30000",
-}
-
-
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = (
-    "HTTP_X_FORWARDED_PROTO",
-    "https",
-)
-
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
-
-X_FRAME_OPTIONS = "DENY"
-
-
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
-
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = "Lax"
-
-
-CSRF_TRUSTED_ORIGINS = config(
-    "CSRF_TRUSTED_ORIGINS",
-    default="",
-    cast=Csv(),
-)
-
-
-NEON_STORAGE_CONFIGURED = all((
-    NEON_STORAGE_ENDPOINT,
-    NEON_STORAGE_PUBLIC_URL,
-    NEON_STORAGE_BUCKET,
-    NEON_STORAGE_KEY_ID,
-    NEON_STORAGE_SECRET,
-))
-
-if NEON_STORAGE_CONFIGURED:
-    MEDIA_STORAGE_ENDPOINT = NEON_STORAGE_ENDPOINT
-    MEDIA_STORAGE_PUBLIC_URL = NEON_STORAGE_PUBLIC_URL
-    MEDIA_STORAGE_BUCKET = NEON_STORAGE_BUCKET
-    MEDIA_STORAGE_REGION = NEON_STORAGE_REGION
-    MEDIA_STORAGE_KEY_ID = NEON_STORAGE_KEY_ID
-    MEDIA_STORAGE_SECRET = NEON_STORAGE_SECRET
-else:
-    if not all((SUPABASE_PROJECT_REF, SUPABASE_STORAGE_KEY_ID, SUPABASE_STORAGE_SECRET)):
-        raise RuntimeError("Neon or Supabase object storage must be configured.")
-    MEDIA_STORAGE_ENDPOINT = (
-        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
-    )
-    MEDIA_STORAGE_PUBLIC_URL = (
-        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/"
-        f"{SUPABASE_STORAGE_BUCKET}"
-    )
-    MEDIA_STORAGE_BUCKET = SUPABASE_STORAGE_BUCKET
-    MEDIA_STORAGE_REGION = SUPABASE_STORAGE_REGION
-    MEDIA_STORAGE_KEY_ID = SUPABASE_STORAGE_KEY_ID
-    MEDIA_STORAGE_SECRET = SUPABASE_STORAGE_SECRET
-
-MEDIA_URL = f"{MEDIA_STORAGE_PUBLIC_URL.rstrip('/')}/media/"
-
-
-STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "ENGINE":   "django.db.backends.postgresql",
+        "NAME":     tmp_postgres.path.lstrip("/"),
+        "USER":     tmp_postgres.username,
+        "PASSWORD": tmp_postgres.password,
+        "HOST":     tmp_postgres.hostname,
+        "PORT":     tmp_postgres.port or 5432,
+        "CONN_MAX_AGE": 60,
+        "DISABLE_SERVER_SIDE_CURSORS": True,
         "OPTIONS": {
-            "access_key": MEDIA_STORAGE_KEY_ID,
-            "secret_key": MEDIA_STORAGE_SECRET,
-            "bucket_name": MEDIA_STORAGE_BUCKET,
-            "region_name": MEDIA_STORAGE_REGION,
-            "endpoint_url": MEDIA_STORAGE_ENDPOINT,
-            "location": "media",
-            "file_overwrite": False,
-            "default_acl": None,
-            "querystring_auth": False,
-            "use_ssl": True,
-            "verify": True,
-            "object_parameters": {
-                "CacheControl": "max-age=86400",
-            },
+            "connect_timeout": 10,
+            "isolation_level": 2,  # psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED
+            **dict(parse_qsl(tmp_postgres.query)),
         },
-    },
+    }
+}
+
+# ---------------------------------------------------------------------------
+# Security hardening
+# ---------------------------------------------------------------------------
+def _env_bool(name, default):
+    return config.get(name, str(default)).lower() in ("true", "1", "yes")
+
+SECURE_SSL_REDIRECT            = _env_bool("SECURE_SSL_REDIRECT", True)
+SECURE_HSTS_SECONDS            = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD            = True
+SESSION_COOKIE_SECURE          = _env_bool("SESSION_COOKIE_SECURE", True)
+CSRF_COOKIE_SECURE             = _env_bool("CSRF_COOKIE_SECURE", True)
+SECURE_BROWSER_XSS_FILTER      = True
+SECURE_CONTENT_TYPE_NOSNIFF    = True
+X_FRAME_OPTIONS                = "DENY"
+
+# ---------------------------------------------------------------------------
+# CORS
+# ---------------------------------------------------------------------------
+CORS_ALLOWED_ORIGINS = config["CORS_ALLOWED_ORIGINS"].split(",")
+CORS_ALLOW_CREDENTIALS = True
+
+# ---------------------------------------------------------------------------
+# Static files — WhiteNoise serves them efficiently
+# ---------------------------------------------------------------------------
+STORAGES = {
     "staticfiles": {
-        "BACKEND": (
-            "whitenoise.storage.CompressedManifestStaticFilesStorage"
-        ),
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
-}
-
-
-CACHES = {
+    # Media files — S3
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
-        "KEY_PREFIX": "hovuca",
-        "TIMEOUT": 300,
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
 }
 
-
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
-
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [REDIS_URL],
-        },
-    },
-}
+AWS_ACCESS_KEY_ID     = config["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = config["AWS_SECRET_ACCESS_KEY"]
+AWS_STORAGE_BUCKET_NAME = config["AWS_STORAGE_BUCKET_NAME"]
+AWS_S3_REGION = config.get("AWS_S3_REGION", "us-east-1")
+AWS_S3_CUSTOM_DOMAIN  = config.get("AWS_CLOUDFRONT_DOMAIN", "")
+AWS_DEFAULT_ACL       = "private"
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH  = False
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
-EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-
-DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL",
-    default=RESEND_FROM,
+# ---------------------------------------------------------------------------
+# Sentry — error tracking
+# ---------------------------------------------------------------------------
+sentry_sdk.init(
+    dsn=config["SENTRY_DSN"],
+    integrations=[DjangoIntegration(),CeleryIntegration(),RedisIntegration()],
+    traces_sample_rate=0.2,
+    send_default_pii=False,
 )
-
-
-REST_FRAMEWORK = {
-    **REST_FRAMEWORK,
-    "DEFAULT_THROTTLE_RATES": {
-        "anon": config(
-            "THROTTLE_ANON",
-            default="60/hour",
-        ),
-        "user": config(
-            "THROTTLE_USER",
-            default="500/hour",
-        ),
-        "login": config(
-            "THROTTLE_LOGIN",
-            default="10/minute",
-        ),
-    },
-}
-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": (
-                "%(asctime)s "
-                "%(levelname)s "
-                "%(name)s "
-                "%(message)s"
-            ),
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "json",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "WARNING",
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "WARNING",
-            "propagate": False,
-        },
-        "django.security": {
-            "handlers": ["console"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "apps": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "celery": {
-            "handlers": ["console"],
-            "level": "WARNING",
-            "propagate": False,
-        },
-    },
-}
-
-
-SENTRY_DSN = config("SENTRY_DSN", default="")
-
-if SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[
-            DjangoIntegration(transaction_style="url"),
-            CeleryIntegration(),
-            RedisIntegration(),
-        ],
-        traces_sample_rate=config(
-            "SENTRY_TRACES_SAMPLE_RATE",
-            default=0.1,
-            cast=float,
-        ),
-        send_default_pii=False,
-        environment="production",
-        release=config("APP_VERSION", default="1.0.0"),
-    )

@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.chapter import Chapter
 from apps.elearning.models.enrollment import Enrollment, ChapterProgress
@@ -15,7 +15,6 @@ from apps.elearning.serializers.chapter import (
 )
 from apps.elearning.serializers.enrollment import (
     ChapterProgressSerializer,
-    MarkChapterCompleteSerializer,
 )
 
 

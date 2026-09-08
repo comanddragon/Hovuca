@@ -7,8 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.accounts.models import User
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin
 from .serializers import (
     ChangePasswordSerializer,
     CustomTokenObtainPairSerializer,

@@ -11,8 +11,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
 
 from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, Resource
 from .serializers import (
@@ -23,7 +23,6 @@ from .serializers import (
     TagSerializer,
     CommentSerializer,
     CommentWriteSerializer,
-    ToggleResponseSerializer,
     ResourceSerializer,
 )
 

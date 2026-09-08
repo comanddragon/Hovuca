@@ -4,10 +4,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
+from core.pagination import StandardPagination
 
 from apps.notifications.models import Notification
-from .serializers import NotificationSerializer, NotificationMarkReadSerializer
+from .serializers import NotificationSerializer
+
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     """

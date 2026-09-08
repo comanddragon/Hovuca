@@ -70,17 +70,3 @@ SIMPLE_JWT = {
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": True,
-    "handlers": {
-        "null": {
-            "class": "logging.NullHandler",
-        },
-    },
-    "root": {
-        "handlers": ["null"],
-    },
-}

@@ -1,12 +1,12 @@
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsStaffOrAdmin
+from core.pagination import StandardPagination
+from core.permissions import IsAdmin, IsStaffOrAdmin
 
-from apps.donors.models import DonorOrganization, DonorContact, Grant, DonorEngagement
+from apps.donors.models import DonorContact, Grant, DonorEngagement
 from apps.donors import services
 
 from .serializers import (

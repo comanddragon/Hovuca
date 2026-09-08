@@ -2,7 +2,7 @@ import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
 from django.utils.text import slugify
-from apps.core.models import BaseModel
+from core.models import BaseModel
 
 ARTICLE_BODY_ALLOWED_TAGS = [
     "p", "br", "hr",

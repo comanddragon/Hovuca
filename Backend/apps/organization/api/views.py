@@ -1,10 +1,10 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.core.pagination import StandardPagination
-from apps.core.permissions import IsAdmin, IsAdminOrReadOnly
+from core.pagination import StandardPagination
+from core.permissions import IsAdminOrReadOnly
 
 from apps.organization.models import Organization, Branch, Department
 from .serializers import (
