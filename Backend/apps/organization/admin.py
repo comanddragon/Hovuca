@@ -1,17 +1,18 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Organization, Branch, Department
+from .models import Branch, Department, Organization
 
 
-class BranchInline(admin.TabularInline):
+class BranchInline(TabularInline):
     model = Branch
     fields = ["name", "slug", "location", "manager", "is_active"]
     extra = 0
     show_change_link = True
 
 
-class DepartmentInline(admin.TabularInline):
+class DepartmentInline(TabularInline):
     model = Department
     fields = ["name", "description", "head"]
     extra = 0
@@ -19,7 +20,7 @@ class DepartmentInline(admin.TabularInline):
 
 
 @admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
+class OrganizationAdmin(ModelAdmin):
     list_display = [
         "name",
         "slug",
@@ -74,7 +75,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 @admin.register(Branch)
-class BranchAdmin(admin.ModelAdmin):
+class BranchAdmin(ModelAdmin):
     list_display = [
         "name",
         "organization",
@@ -122,7 +123,7 @@ class BranchAdmin(admin.ModelAdmin):
 
 
 @admin.register(Department)
-class DepartmentAdmin(admin.ModelAdmin):
+class DepartmentAdmin(ModelAdmin):
     list_display = ["name", "branch", "head", "volunteer_count", "created_at"]
     list_filter = ["branch__organization", "branch"]
     search_fields = ["name", "branch__name", "head__email"]

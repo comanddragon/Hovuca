@@ -1,18 +1,16 @@
 from django.contrib import admin
+from django.db.models import Count, Q
 from django.utils.html import format_html
-from django.db.models import Sum, Count, Q
-from django.urls import reverse
-from django.utils.safestring import mark_safe
+from unfold.admin import ModelAdmin, TabularInline
 
-from apps.donors.models import DonorOrganization, DonorContact, Grant, DonorEngagement
-
+from apps.donors.models import DonorContact, DonorEngagement, DonorOrganization, Grant
 
 # ---------------------------------------------------------------------------
 # Inlines
 # ---------------------------------------------------------------------------
 
 
-class DonorContactInline(admin.TabularInline):
+class DonorContactInline(TabularInline):
     model = DonorContact
     extra = 0
     fields = ("first_name", "last_name", "role", "email", "phone", "is_primary")
@@ -23,7 +21,7 @@ class DonorContactInline(admin.TabularInline):
         return super().get_queryset(request).filter(deleted_at__isnull=True)
 
 
-class GrantInline(admin.TabularInline):
+class GrantInline(TabularInline):
     model = Grant
     extra = 0
     fields = (
@@ -37,7 +35,7 @@ class GrantInline(admin.TabularInline):
         return super().get_queryset(request).filter(deleted_at__isnull=True)
 
 
-class DonorEngagementInline(admin.TabularInline):
+class DonorEngagementInline(TabularInline):
     model = DonorEngagement
     extra = 0
     fields = ("type", "date", "contact", "logged_by", "summary", "next_action_date")
@@ -54,7 +52,7 @@ class DonorEngagementInline(admin.TabularInline):
 
 
 @admin.register(DonorOrganization)
-class DonorOrganizationAdmin(admin.ModelAdmin):
+class DonorOrganizationAdmin(ModelAdmin):
     list_display = (
         "logo_thumbnail", "name", "abbreviation", "type", "tier_badge",
         "status", "country", "total_funded", "currency",
@@ -165,7 +163,7 @@ class DonorOrganizationAdmin(admin.ModelAdmin):
 
 
 @admin.register(DonorContact)
-class DonorContactAdmin(admin.ModelAdmin):
+class DonorContactAdmin(ModelAdmin):
     list_display = (
         "full_name_display", "organization", "role",
         "email", "phone", "is_primary",
@@ -207,7 +205,7 @@ class DonorContactAdmin(admin.ModelAdmin):
 
 
 @admin.register(Grant)
-class GrantAdmin(admin.ModelAdmin):
+class GrantAdmin(ModelAdmin):
     list_display = (
         "title", "reference_code", "donor_organization",
         "funding_type", "amount", "currency", "status_badge",
@@ -309,7 +307,7 @@ class GrantAdmin(admin.ModelAdmin):
 
 
 @admin.register(DonorEngagement)
-class DonorEngagementAdmin(admin.ModelAdmin):
+class DonorEngagementAdmin(ModelAdmin):
     list_display = (
         "organization", "type", "date", "contact",
         "logged_by", "next_action_date", "grant",

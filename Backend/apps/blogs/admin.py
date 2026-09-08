@@ -1,12 +1,13 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from django.utils import timezone
+from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Article, Category, Tag, Comment, Like, Bookmark, Resource
+from .models import Article, Bookmark, Category, Comment, Like, Resource, Tag
 
 
 @admin.register(Resource)
-class ResourceAdmin(admin.ModelAdmin):
+class ResourceAdmin(ModelAdmin):
     list_display = ["title", "category", "published_at", "is_active"]
     list_filter = ["category", "is_active"]
     search_fields = ["title", "description"]
@@ -14,7 +15,7 @@ class ResourceAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     list_display = [
         "name",
         "slug",
@@ -44,7 +45,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(ModelAdmin):
     list_display = ["name", "slug", "article_count"]
     search_fields = ["name"]
     prepopulated_fields = {"slug": ("name",)}
@@ -55,7 +56,7 @@ class TagAdmin(admin.ModelAdmin):
     article_count.short_description = "Articles"
 
 
-class CommentInline(admin.TabularInline):
+class CommentInline(TabularInline):
     model = Comment
     fk_name = "article"
     fields = ["author", "body", "is_approved", "is_pinned", "created_at"]
@@ -66,7 +67,7 @@ class CommentInline(admin.TabularInline):
 
 
 @admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(ModelAdmin):
     list_display = [
         "title",
         "author",
@@ -205,7 +206,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(ModelAdmin):
     list_display = [
         "short_body",
         "author",
@@ -234,14 +235,14 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Like)
-class LikeAdmin(admin.ModelAdmin):
+class LikeAdmin(ModelAdmin):
     list_display = ["user", "article", "created_at"]
     search_fields = ["user__email", "article__title"]
     readonly_fields = ["created_at"]
 
 
 @admin.register(Bookmark)
-class BookmarkAdmin(admin.ModelAdmin):
+class BookmarkAdmin(ModelAdmin):
     list_display = ["user", "article", "created_at"]
     search_fields = ["user__email", "article__title"]
     readonly_fields = ["created_at"]

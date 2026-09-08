@@ -1,12 +1,13 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from django.utils import timezone
+from django.utils.html import format_html
+from unfold.admin import ModelAdmin
 
 from .models import Notification
 
 
 @admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
+class NotificationAdmin(ModelAdmin):
     list_display = [
         "title",
         "recipient",

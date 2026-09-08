@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
 from apps.events.models import Event, EventCategory, EventImage, EventRegistration
-
 
 # ---------------------------------------------------------------------------
 # EventCategory
@@ -10,7 +10,7 @@ from apps.events.models import Event, EventCategory, EventImage, EventRegistrati
 
 
 @admin.register(EventCategory)
-class EventCategoryAdmin(admin.ModelAdmin):
+class EventCategoryAdmin(ModelAdmin):
     list_display = ("name", "slug", "color_badge", "is_active")
     list_filter = ("is_active",)
     search_fields = ("name", "slug")
@@ -31,14 +31,14 @@ class EventCategoryAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
-class EventImageInline(admin.TabularInline):
+class EventImageInline(TabularInline):
     model = EventImage
     extra = 1
     fields = ("image", "alt_text", "order")
     ordering = ("order",)
 
 
-class EventRegistrationInline(admin.TabularInline):
+class EventRegistrationInline(TabularInline):
     model = EventRegistration
     extra = 0
     fields = ("user", "status", "checked_in_at", "notes")
@@ -55,7 +55,7 @@ class EventRegistrationInline(admin.TabularInline):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ModelAdmin):
     list_display = (
         "title", "category", "event_type", "status",
         "start_date", "end_date", "is_featured", "attendee_count", "view_count",
@@ -125,7 +125,7 @@ class EventAdmin(admin.ModelAdmin):
 
 
 @admin.register(EventImage)
-class EventImageAdmin(admin.ModelAdmin):
+class EventImageAdmin(ModelAdmin):
     list_display = ("event", "order", "alt_text")
     list_filter = ("event",)
     search_fields = ("event__title", "alt_text")
@@ -138,7 +138,7 @@ class EventImageAdmin(admin.ModelAdmin):
 
 
 @admin.register(EventRegistration)
-class EventRegistrationAdmin(admin.ModelAdmin):
+class EventRegistrationAdmin(ModelAdmin):
     list_display = ("user", "event", "status", "checked_in_at", "created_at")
     list_filter = ("status", "event")
     search_fields = ("user__email", "user__first_name", "user__last_name", "event__title")

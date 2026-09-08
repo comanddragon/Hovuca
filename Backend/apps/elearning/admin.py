@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin, StackedInline, TabularInline
 
-from apps.elearning.models.course import Subject, Course
-from apps.elearning.models.module import Module
 from apps.elearning.models.chapter import Chapter
-from apps.elearning.models.quiz import Quiz, Question, Choice, QuizAttempt, QuizAnswer
-from apps.elearning.models.enrollment import Enrollment, ChapterProgress
-
+from apps.elearning.models.course import Course, Subject
+from apps.elearning.models.enrollment import ChapterProgress, Enrollment
+from apps.elearning.models.module import Module
+from apps.elearning.models.quiz import Choice, Question, Quiz, QuizAttempt
 
 # ---------------------------------------------------------------------------
 # Subject
@@ -14,7 +14,7 @@ from apps.elearning.models.enrollment import Enrollment, ChapterProgress
 
 
 @admin.register(Subject)
-class SubjectAdmin(admin.ModelAdmin):
+class SubjectAdmin(ModelAdmin):
     list_display = ["name", "slug", "icon", "course_count", "is_active"]
     list_filter = ["is_active"]
     search_fields = ["name", "slug"]
@@ -32,7 +32,7 @@ class SubjectAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
-class ChapterInline(admin.TabularInline):
+class ChapterInline(TabularInline):
     model = Chapter
     fields = ["order", "title", "content_type", "duration_minutes", "is_preview"]
     extra = 0
@@ -45,7 +45,7 @@ class ChapterInline(admin.TabularInline):
 # ---------------------------------------------------------------------------
 
 
-class ModuleInline(admin.TabularInline):
+class ModuleInline(TabularInline):
     model = Module
     fields = ["order", "title", "description"]
     extra = 0
@@ -59,7 +59,7 @@ class ModuleInline(admin.TabularInline):
 
 
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(ModelAdmin):
     list_display = [
         "title",
         "subject",
@@ -155,7 +155,7 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Module)
-class ModuleAdmin(admin.ModelAdmin):
+class ModuleAdmin(ModelAdmin):
     list_display = ["title", "course", "order", "chapter_count", "has_quiz"]
     list_filter = ["course__subject", "course"]
     search_fields = ["title", "course__title"]
@@ -184,7 +184,7 @@ class ModuleAdmin(admin.ModelAdmin):
 
 
 @admin.register(Chapter)
-class ChapterAdmin(admin.ModelAdmin):
+class ChapterAdmin(ModelAdmin):
     list_display = [
         "title",
         "module",
@@ -252,14 +252,14 @@ class ChapterAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(TabularInline):
     model = Choice
     fields = ["text", "is_correct"]
     extra = 2
     min_num = 2
 
 
-class QuestionInline(admin.StackedInline):
+class QuestionInline(StackedInline):
     model = Question
     fields = ["order", "text", "question_type", "marks", "explanation"]
     extra = 0
@@ -268,7 +268,7 @@ class QuestionInline(admin.StackedInline):
 
 
 @admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
+class QuizAdmin(ModelAdmin):
     list_display = [
         "title",
         "linked_to",
@@ -328,7 +328,7 @@ class QuizAdmin(admin.ModelAdmin):
 
 
 @admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
+class QuestionAdmin(ModelAdmin):
     list_display = ["short_text", "quiz", "question_type", "order", "marks"]
     list_filter = ["question_type", "quiz__course", "quiz__module"]
     search_fields = ["text", "quiz__title"]
@@ -346,7 +346,7 @@ class QuestionAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
-class ChapterProgressInline(admin.TabularInline):
+class ChapterProgressInline(TabularInline):
     model = ChapterProgress
     fields = ["chapter", "completed_at"]
     readonly_fields = ["chapter", "completed_at"]
@@ -355,7 +355,7 @@ class ChapterProgressInline(admin.TabularInline):
 
 
 @admin.register(Enrollment)
-class EnrollmentAdmin(admin.ModelAdmin):
+class EnrollmentAdmin(ModelAdmin):
     list_display = [
         "user",
         "course",
@@ -431,7 +431,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(QuizAttempt)
-class QuizAttemptAdmin(admin.ModelAdmin):
+class QuizAttemptAdmin(ModelAdmin):
     list_display = [
         "user",
         "quiz",

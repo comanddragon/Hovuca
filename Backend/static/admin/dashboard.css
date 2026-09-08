@@ -1,6 +1,101 @@
 /* Keep the data-heavy desktop admin close to the compact Unfold reference.
    Root sizing scales rem-based Unfold layout without distorting the page. */
 html { font-size: 14px; }
+
+.admin-app-toggle-wrap {
+    background: var(--color-base-50);
+    padding: 10px 12px 6px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.dark .admin-app-toggle-wrap {
+    background: var(--color-base-900);
+}
+
+.admin-app-toggle {
+    align-items: center;
+    background: white;
+    border: 1px solid var(--color-base-300);
+    border-radius: var(--border-radius, 6px);
+    color: var(--color-font-default-light);
+    cursor: pointer;
+    display: flex;
+    font-size: 12px;
+    font-weight: 600;
+    gap: 7px;
+    justify-content: center;
+    min-height: 34px;
+    padding: 6px 10px;
+    transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+    width: 100%;
+}
+
+.admin-app-toggle:hover,
+.admin-app-toggle:focus-visible {
+    border-color: var(--color-primary-600);
+    color: var(--color-primary-600);
+}
+
+.admin-app-toggle:focus-visible {
+    outline: 2px solid var(--color-primary-600);
+    outline-offset: 1px;
+}
+
+.admin-app-toggle .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.dark .admin-app-toggle {
+    background: var(--color-base-900);
+    border-color: var(--color-base-600);
+    color: var(--color-font-default-dark);
+}
+
+.dark .admin-app-toggle:hover,
+.dark .admin-app-toggle:focus-visible {
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-500);
+}
+
+/* Unfold's default base-200 borders are intentionally subtle. Use a stronger
+   edge on data-entry controls so every clickable field is easy to locate. */
+#content-main input:not([type="button"]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"]):not([type="reset"]):not([type="submit"]),
+#content-main select,
+#content-main textarea,
+#content-main .select2-container .select2-selection {
+    border-color: var(--color-base-300) !important;
+    border-style: solid !important;
+    border-width: 1px !important;
+}
+
+#content-main input:not([type="button"]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"]):not([type="reset"]):not([type="submit"]):focus,
+#content-main select:focus,
+#content-main textarea:focus,
+#content-main .select2-container--focus .select2-selection,
+#content-main .select2-container--open .select2-selection {
+    border-color: var(--color-primary-600) !important;
+    box-shadow: 0 0 0 1px var(--color-primary-600) !important;
+    outline: none !important;
+}
+
+.dark #content-main input:not([type="button"]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"]):not([type="reset"]):not([type="submit"]),
+.dark #content-main select,
+.dark #content-main textarea,
+.dark #content-main .select2-container .select2-selection {
+    border-color: var(--color-base-600) !important;
+}
+
+.dark #content-main input:not([type="button"]):not([type="checkbox"]):not([type="hidden"]):not([type="radio"]):not([type="reset"]):not([type="submit"]):focus,
+.dark #content-main select:focus,
+.dark #content-main textarea:focus,
+.dark #content-main .select2-container--focus .select2-selection,
+.dark #content-main .select2-container--open .select2-selection {
+    border-color: var(--color-primary-500) !important;
+    box-shadow: 0 0 0 1px var(--color-primary-500) !important;
+}
+
 .admin-thumbnail { align-items: center; background: var(--color-base-100); border-radius: 8px; display: inline-flex; height: 48px; justify-content: center; overflow: hidden; vertical-align: middle; width: 48px; }
 .dark .admin-thumbnail { background: var(--color-base-800); }
 .admin-thumbnail img { display: block; height: 100%; object-fit: cover; width: 100%; }

@@ -1,15 +1,14 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
 from apps.gallery.models import GalleryAlbum, GalleryImage
-
 
 # ---------------------------------------------------------------------------
 # Inline
 # ---------------------------------------------------------------------------
 
 
-class GalleryImageInline(admin.TabularInline):
+class GalleryImageInline(TabularInline):
     model = GalleryImage
     extra = 1
     fields = ("image", "title", "alt_text", "order", "is_featured", "media_type")
@@ -23,7 +22,7 @@ class GalleryImageInline(admin.TabularInline):
 
 
 @admin.register(GalleryAlbum)
-class GalleryAlbumAdmin(admin.ModelAdmin):
+class GalleryAlbumAdmin(ModelAdmin):
     list_display = (
         "title", "is_published", "is_featured", "taken_at",
         "image_count", "event", "program", "created_by",
@@ -82,7 +81,7 @@ class GalleryAlbumAdmin(admin.ModelAdmin):
 
 
 @admin.register(GalleryImage)
-class GalleryImageAdmin(admin.ModelAdmin):
+class GalleryImageAdmin(ModelAdmin):
     list_display = (
         "title_or_id", "album", "media_type", "order",
         "is_featured", "view_count", "uploaded_by",

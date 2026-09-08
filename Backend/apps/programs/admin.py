@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
 from .models import Program, Project
 
 
-class ProjectInline(admin.TabularInline):
+class ProjectInline(TabularInline):
     model = Project
     fields = ["title", "slug", "excerpt", "lead", "status", "budget", "start_date", "end_date"]
     extra = 0
@@ -12,7 +13,7 @@ class ProjectInline(admin.TabularInline):
 
 
 @admin.register(Program)
-class ProgramAdmin(admin.ModelAdmin):
+class ProgramAdmin(ModelAdmin):
     list_display = [
         "title",
         "organization",
@@ -100,7 +101,7 @@ class ProgramAdmin(admin.ModelAdmin):
 
 
 @admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(ModelAdmin):
     list_display = [
         "title",
         "program",

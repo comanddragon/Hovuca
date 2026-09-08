@@ -1,12 +1,12 @@
 from django.contrib import admin
-from django.db.models import Sum, Count
-from django.utils.html import format_html
 from django.utils import timezone
+from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
-from .models import DonationCampaign, Donation
+from .models import Donation, DonationCampaign
 
 
-class DonationInline(admin.TabularInline):
+class DonationInline(TabularInline):
     model = Donation
     fields = [
         "donor",
@@ -32,7 +32,7 @@ class DonationInline(admin.TabularInline):
 
 
 @admin.register(DonationCampaign)
-class DonationCampaignAdmin(admin.ModelAdmin):
+class DonationCampaignAdmin(ModelAdmin):
     list_display = [
         "title",
         "program",
@@ -138,7 +138,7 @@ class DonationCampaignAdmin(admin.ModelAdmin):
 
 
 @admin.register(Donation)
-class DonationAdmin(admin.ModelAdmin):
+class DonationAdmin(ModelAdmin):
     list_display = [
         "donor_display",
         "campaign",

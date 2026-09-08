@@ -1,8 +1,8 @@
 from datetime import timedelta
 from pathlib import Path
+
 from decouple import config
 from django.templatetags.static import static
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from kombu import Queue
 
@@ -165,8 +165,22 @@ UNFOLD = {
     "SITE_TITLE": _("HOVUCA Admin"),
     "SITE_HEADER": _("HOVUCA"),
     "SITE_SUBHEADER": _("Site operations"),
+    "SITE_ICON": lambda request: static("admin/favicon.ico"),
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "any",
+            "type": "image/x-icon",
+            "href": lambda request: static("admin/favicon.ico"),
+        },
+    ],
     "DASHBOARD_CALLBACK": "core.admin_dashboard.dashboard_callback",
     "STYLES": [lambda request: static("admin/dashboard.css")],
+    "SCRIPTS": [lambda request: static("admin/navigation.js")],
+    "SIDEBAR": {
+        "show_search": True,
+        "navigation": "core.admin_navigation.sidebar_navigation",
+    },
 }
 
 # ---------------------------------------------------------------------------

@@ -1,10 +1,11 @@
+import uuid
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
 from django.db import models
-import uuid
 
 
 class UserManager(BaseUserManager):
@@ -77,3 +78,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
+
+    @property
+    def avatar_url(self):
+        """Return the storage-backed avatar URL expected by Django Unfold."""
+        if not self.avatar:
+            return ""
+
+        try:
+            return self.avatar.url
+        except ValueError:
+            return ""

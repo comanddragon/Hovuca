@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin, TabularInline
 
 from .models import VolunteerProfile, VolunteerTask
 
 
-class VolunteerTaskInline(admin.TabularInline):
+class VolunteerTaskInline(TabularInline):
     model = VolunteerTask
     fields = ["title", "project", "status", "due_date", "hours_logged"]
     extra = 0
@@ -12,7 +13,7 @@ class VolunteerTaskInline(admin.TabularInline):
 
 
 @admin.register(VolunteerProfile)
-class VolunteerProfileAdmin(admin.ModelAdmin):
+class VolunteerProfileAdmin(ModelAdmin):
     list_display = [
         "user",
         "department",
@@ -92,7 +93,7 @@ class VolunteerProfileAdmin(admin.ModelAdmin):
 
 
 @admin.register(VolunteerTask)
-class VolunteerTaskAdmin(admin.ModelAdmin):
+class VolunteerTaskAdmin(ModelAdmin):
     list_display = [
         "title",
         "volunteer",
