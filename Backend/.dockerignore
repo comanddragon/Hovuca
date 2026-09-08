@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+*.pyc
+__pycache__
+.venv
+media/
+.test_media/
+staticfiles/
+.idea
