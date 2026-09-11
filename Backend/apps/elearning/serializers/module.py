@@ -15,6 +15,8 @@ class ModuleListSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "order",
+            "age_min",
+            "age_max",
             "chapter_count",
             "has_quiz",
             "created_at",
@@ -30,6 +32,7 @@ class ModuleListSerializer(serializers.ModelSerializer):
 
 class ModuleDetailSerializer(serializers.ModelSerializer):
     chapters = serializers.SerializerMethodField()
+    chapter_count = serializers.SerializerMethodField()
     has_quiz = serializers.SerializerMethodField()
 
     class Meta:
@@ -40,6 +43,9 @@ class ModuleDetailSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "order",
+            "age_min",
+            "age_max",
+            "chapter_count",
             "chapters",
             "has_quiz",
             "created_at",
@@ -53,6 +59,9 @@ class ModuleDetailSerializer(serializers.ModelSerializer):
         return ChapterListSerializer(
             obj.chapters.all(), many=True, context=self.context
         ).data
+
+    def get_chapter_count(self, obj):
+        return obj.chapters.count()
 
     def get_has_quiz(self, obj):
         return hasattr(obj, "quiz") and obj.quiz is not None

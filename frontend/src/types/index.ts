@@ -269,7 +269,8 @@ export interface Subject {
     slug: string;
     description: string;
     icon: string;
-    color: string;
+    is_active: boolean;
+    course_count: number;
 }
 
 export interface Course {
@@ -280,11 +281,12 @@ export interface Course {
     slug: string;
     description: string;
     thumbnail: string | null;
-    level: CourseLevel;
+    difficulty: CourseLevel;
     is_published: boolean;
     is_free: boolean;
-    duration_hours: number;
+    estimated_hours: number;
     enrollment_count: number;
+    modules?: Module[];
     created_at: string;
 }
 
@@ -294,6 +296,10 @@ export interface Module {
     title: string;
     description: string;
     order: number;
+    age_min: number;
+    age_max: number | null;
+    chapter_count: number;
+    has_quiz: boolean;
     chapters?: Chapter[];
 }
 
@@ -304,9 +310,10 @@ export interface Chapter {
     content_type: ContentType;
     order: number;
     duration_minutes: number;
-    is_free_preview: boolean;
-    video_url?: string;
-    body?: string;
+    is_preview: boolean;
+    content_url?: string;
+    content_body?: string;
+    content_file?: string | null;
 }
 
 export interface Enrollment {

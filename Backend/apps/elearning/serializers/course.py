@@ -48,6 +48,7 @@ class CourseListSerializer(serializers.ModelSerializer):
             "instructor",
             "title",
             "slug",
+            "description",
             "thumbnail",
             "difficulty",
             "estimated_hours",
@@ -99,9 +100,9 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "enrollment_count", "created_at", "updated_at"]
 
     def get_modules(self, obj):
-        from apps.elearning.serializers.module import ModuleListSerializer
+        from apps.elearning.serializers.module import ModuleDetailSerializer
 
-        return ModuleListSerializer(
+        return ModuleDetailSerializer(
             obj.modules.all(), many=True, context=self.context
         ).data
 

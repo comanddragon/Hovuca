@@ -76,12 +76,12 @@ export const coursesService = {
     },
 
     getCourseModules: async (courseId: string): Promise<Module[]> => {
-        const { data } = await api.get(`/courses/${courseId}/modules/`);
-        return data;
+        const { data } = await api.get<PaginatedResponse<Module>>(`/modules/?course=${courseId}&page_size=100`);
+        return data.results;
     },
 
-    enroll: async (courseId: string): Promise<Enrollment> => {
-        const { data } = await api.post(`/courses/${courseId}/enroll/`);
+    enroll: async (courseSlug: string): Promise<Enrollment> => {
+        const { data } = await api.post(`/courses/${courseSlug}/enroll/`);
         return data;
     },
 
@@ -164,4 +164,3 @@ export * from "./blog.service";
 export * from "./events.service";
 export * from "./gallery.service";
 export * from "./donors.service";
-

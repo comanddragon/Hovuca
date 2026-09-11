@@ -459,7 +459,7 @@ export function useEnrollments() {
 export function useEnroll() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: (courseId: string) => coursesService.enroll(courseId),
+        mutationFn: (courseSlug: string) => coursesService.enroll(courseSlug),
         onSuccess: () => {
             void qc.invalidateQueries({ queryKey: keys.enrollments });
             toast.success("Enrolled successfully! Start learning.");
