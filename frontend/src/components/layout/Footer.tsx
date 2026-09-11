@@ -25,7 +25,7 @@ const links = {
 export function Footer() {
     return (
         <>
-            <div className="w-full overflow-hidden leading-none -mt-28 md:-mt-36 relative z-10">
+            <div className="relative z-10 w-full overflow-hidden leading-none">
                 <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-28 md:h-36 block">
                     <path
                         d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1350,20 1440,40 L1440,80 L0,80 Z"

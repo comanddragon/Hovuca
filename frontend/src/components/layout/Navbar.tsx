@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import { useLogout } from "@/hooks";
@@ -142,8 +142,121 @@ export function Navbar() {
     const { mutate: logout } = useLogout();
     const unreadCount = useNotificationStore((s) => s.unreadCount);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     // ✅ track by label, not href — fixes the "all empty-href dropdowns open together" bug
     const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+
+    useEffect(() => {
+        const updateNavbar = () => setScrolled(window.scrollY > 96);
+        updateNavbar();
+        window.addEventListener("scroll", updateNavbar, { passive: true });
+        return () => window.removeEventListener("scroll", updateNavbar);
+    }, []);
+
+    if (pathname) {
+        const isHome = pathname === "/";
+        const homeLinks = [
+            { href: "/about", label: "About" },
+            { href: "/programs", label: "What we do" },
+            { href: "/projects", label: "Our impact" },
+            { href: "/blog", label: "Field stories" },
+            { href: "/documents", label: "Publications" },
+            { href: "/contact", label: "Get involved" },
+        ];
+        const visibleLinks = scrolled ? homeLinks.slice(0, 3) : homeLinks;
+
+        return (
+            <>
+            <header
+                className={cn(
+                    "z-50 text-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
+                    scrolled
+                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] border border-white/25 bg-[#183b35]/78 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl xl:w-[880px]"
+                        : isHome
+                            ? "absolute inset-x-0 top-0 bg-[linear-gradient(to_bottom,rgba(54,62,64,0.68)_0%,rgba(28,38,37,0.25)_58%,rgba(10,25,22,0)_100%)] pb-6"
+                            : "relative inset-x-0 top-0 bg-[#183b35]"
+                )}
+            >
+                <nav className={cn("relative mx-auto flex w-full items-center transition-[height,padding] duration-500", scrolled ? "h-14 px-4" : "h-[72px] px-[clamp(1.5rem,3.8vw,3.75rem)]")} aria-label="Primary navigation">
+                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)]", !scrolled && "gap-6 lg:w-[24.5%] lg:min-w-[360px]")}>
+                        <span className={cn("font-extrabold leading-none tracking-[-0.035em] transition-[font-size] duration-500", scrolled ? "text-xl" : "text-[clamp(1.65rem,2.6vw,2.7rem)]")}>HOVUCA</span>
+                        {!scrolled && <span className="h-12 w-px bg-[#f2c14e]" aria-hidden="true" />}
+                    </Link>
+                    {!scrolled && (
+                        <span className="pointer-events-none absolute left-[calc(16.6%+11px)] top-4 hidden h-[47px] w-[11.5%] min-w-[172px] text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)] lg:block">
+                            Hope for<br />vulnerable communities<br />in Cameroon
+                        </span>
+                    )}
+
+                    <div className={cn("ml-auto hidden items-center xl:flex", scrolled ? "gap-5" : "gap-[clamp(1.1rem,2vw,2.2rem)]")}>
+                        {visibleLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={cn("text-[13px] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.62)] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]", pathname.startsWith(link.href) && "text-[#f2c14e]")}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                        <Link
+                            href="/contact"
+                            className={cn("inline-flex items-center bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934] focus-visible:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-[46px] px-8")}
+                        >
+                            Partner with us
+                        </Link>
+                        {!scrolled && (
+                            <Link
+                                href="/blog"
+                                aria-label="Search HOVUCA stories"
+                                className="group/search mr-[22px] inline-flex h-7 w-[21px] items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]"
+                            >
+                                <span className="relative block h-6 w-6" aria-hidden="true">
+                                    <span className="absolute left-px top-px h-[17px] w-[17px] rounded-full border-[2px] border-current" />
+                                    <span className="absolute left-[15px] top-[16px] h-[2px] w-[7px] origin-left rotate-45 rounded-full bg-current" />
+                                </span>
+                            </Link>
+                        )}
+                    </div>
+
+                    <button
+                        type="button"
+                        aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+                        aria-expanded={mobileOpen}
+                        onClick={() => setMobileOpen((open) => !open)}
+                        className="ml-auto inline-flex h-11 w-11 items-center justify-center border border-white/50 bg-[#183b35]/45 text-white backdrop-blur-sm xl:hidden"
+                    >
+                        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                    </button>
+                </nav>
+
+                {mobileOpen && (
+                    <div className="mx-4 border-t border-white/20 bg-[#183b35] px-5 py-5 shadow-[0_18px_40px_rgba(0,0,0,0.28)] sm:mx-6 xl:hidden">
+                        <div className="grid gap-1">
+                            {homeLinks.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="border-b border-white/12 px-2 py-3 text-sm font-semibold text-white last:border-b-0 hover:text-[#f2c14e]"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                            <Link
+                                href="/contact"
+                                onClick={() => setMobileOpen(false)}
+                                className="mt-4 bg-[#d85c43] px-5 py-3.5 text-center text-sm font-semibold text-white"
+                            >
+                                Partner with us
+                            </Link>
+                        </div>
+                    </div>
+                )}
+            </header>
+            {!isHome && <div className="h-[72px]" aria-hidden="true" />}
+            </>
+        );
+    }
 
     return (
         <header className="sticky top-0 z-50 border-b border-[#35145f]/10 bg-[#fffaf3]/95 backdrop-blur-xl">
