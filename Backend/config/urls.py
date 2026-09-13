@@ -12,14 +12,14 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
-def home(request):
+def health(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
     return JsonResponse({"message": "API is live"})
 urlpatterns = [
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("admin/", admin.site.urls),
-    path("", home),
+    path("/health", health),
     path('api/health/', lambda request: JsonResponse({'status': 'ok'})),
     path("api/v1/", include("api.v1.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
