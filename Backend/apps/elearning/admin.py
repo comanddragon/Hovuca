@@ -17,6 +17,13 @@ class ChapterAdminForm(forms.ModelForm):
         fields = "__all__"
         widgets = {"content_body": CKEditor5Widget(config_name="hovuca")}
 
+
+class CourseAdminForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = "__all__"
+        widgets = {"description": CKEditor5Widget(config_name="hovuca")}
+
 # ---------------------------------------------------------------------------
 # Subject
 # ---------------------------------------------------------------------------
@@ -69,6 +76,7 @@ class ModuleInline(TabularInline):
 
 @admin.register(Course)
 class CourseAdmin(ModelAdmin):
+    form = CourseAdminForm
     list_display = [
         "title",
         "subject",
