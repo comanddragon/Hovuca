@@ -50,7 +50,7 @@ const fallbackStories = [
         slug: "learning-together",
         title: "Learning together, building opportunity",
         excerpt: "How practical learning creates room for confidence, connection and possibility.",
-        cover_image: "/assets/plates/hero-photo.png",
+        cover_image: "/blogs/2.jpg",
         cover_image_alt: "HOVUCA participants learning together",
         category: { name: "From the field" },
     },

@@ -107,7 +107,12 @@ AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH  = False
 AWS_S3_ADDRESSING_STYLE = "path"
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+# Uploaded media names are UUID-based (see core.utils.files), so a URL never
+# changes its contents. Let browsers and Cloudflare's media.hovuca.org CDN keep
+# those immutable objects for a year instead of revalidating them every day.
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "public, max-age=31536000, immutable",
+}
 
 # A single Gunicorn process does not need external cache/channel infrastructure.
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}

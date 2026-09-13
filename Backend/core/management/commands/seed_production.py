@@ -10,6 +10,7 @@ SEED_COMMANDS = (
     "seed_archived_blogs",
     "seed_archived_resources",
     "seed_archived_donors",
+    "seed_cse_course"
 )
 
 

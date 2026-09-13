@@ -19,7 +19,9 @@ if (process.env.NEXT_PUBLIC_MEDIA_URL) {
 const nextConfig: NextConfig = {
     images: {
         remotePatterns,
-        minimumCacheTTL: 60,
+        // The source media URLs are UUID-versioned. Keep optimized variants at
+        // Cloudflare's edge for a day while Next.js still controls invalidation.
+        minimumCacheTTL: 86_400,
         dangerouslyAllowSVG: false,
         dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
     },
