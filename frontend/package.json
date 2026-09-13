@@ -1,5 +1,5 @@
 {
-  "name": "nextjs",
+  "name": "hovuca",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "cf:build": "opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "opennextjs-cloudflare build && wrangler dev --config wrangler.json",
+    "deploy": "opennextjs-cloudflare build && wrangler deploy --config wrangler.json"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^11.2.0",
