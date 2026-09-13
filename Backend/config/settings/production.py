@@ -18,7 +18,15 @@ configured_hosts = [
 render_hostname = config("RENDER_EXTERNAL_HOSTNAME", default="").strip()
 ALLOWED_HOSTS = list(
     dict.fromkeys(
-        [*configured_hosts, "localhost", "127.0.0.1", render_hostname]
+        [
+            *configured_hosts,
+            ".hovuca.org",
+            ".onrender.com",
+            "localhost",
+            "127.0.0.1",
+            "0.0.0.0",
+            render_hostname,
+        ]
     )
 )
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
