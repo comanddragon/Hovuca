@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Toaster } from "sonner";
 import {NotificationProvider} from "@/components/shared/NotificationProvider";
-import {DM_Sans, Manrope} from "next/font/google";
+import {Baskervville_SC, DM_Sans, Judson, Manrope} from "next/font/google";
 
 const dmSans = DM_Sans({
     subsets: ["latin"],
@@ -18,6 +18,20 @@ const manrope = Manrope({
     display: "swap",
 });
 
+const judson = Judson({
+    subsets: ["latin"],
+    weight: ["400", "700"],
+    variable: "--font-judson",
+    display: "swap",
+});
+
+const baskervville = Baskervville_SC({
+    subsets: ["latin"],
+    weight: ["400", "700"],
+    variable: "--font-baskervville",
+    display: "swap",
+});
+
 export const metadata: Metadata = {
     icons: {
         icon: "./favicon.ico",
@@ -28,7 +42,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${dmSans.variable} ${manrope.variable}`}>
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${dmSans.variable} ${manrope.variable} ${judson.variable} ${baskervville.variable}`}>
         <body>
         <Providers>
             <NotificationProvider />

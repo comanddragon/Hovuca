@@ -93,6 +93,7 @@ export default function HomePage() {
                         alt="Young people taking part in a community-led discussion in Cameroon"
                         fill
                         priority
+                        loading="eager"
                         unoptimized
                         sizes="100vw"
                         className="object-cover object-[54%_center] lg:object-center"

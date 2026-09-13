@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, ExternalLink, FileText, Search } from "lucide-react";
+import { Download, ExternalLink, Search } from "lucide-react";
 
 import { PageLoader } from "@/components/shared";
 import { useResources } from "@/hooks";
+import { DocumentPreview } from "@/components/documents/DocumentPreview";
 
 export default function DocumentsPage() {
     const { data: documents = [], isLoading, isError } = useResources();
@@ -45,8 +46,8 @@ export default function DocumentsPage() {
                         <p className="mb-6 text-sm text-neutral-500">{filtered.length} {filtered.length === 1 ? "document" : "documents"}</p>
                         <div className="divide-y divide-neutral-200 border-y border-neutral-200">
                             {filtered.map((document) => (
-                                <article key={document.id} className="grid gap-5 py-7 md:grid-cols-[56px_1fr_auto] md:items-center">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eee7f3] text-[#35145f]"><FileText className="h-6 w-6" aria-hidden="true" /></div>
+                                <article key={document.id} className="grid gap-5 py-7 sm:grid-cols-[9rem_1fr] md:grid-cols-[9rem_1fr_auto] md:items-center">
+                                    <DocumentPreview url={document.file_url} title={document.title} />
                                     <div>
                                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#5d2d84]">{document.category}</p>
                                         <h2 className="mt-2 font-display text-xl font-extrabold leading-snug sm:text-2xl">{document.title}</h2>

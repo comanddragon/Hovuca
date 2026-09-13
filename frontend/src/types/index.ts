@@ -161,11 +161,19 @@ export interface Tag {
     slug: string;
 }
 
+export interface ArticleTopic {
+    id: string;
+    name: string;
+    slug: string;
+    parent: string | null;
+}
+
 export interface Article {
     id: string;
     author: UserPublic | null;
     category: Category | null;
     tags: Tag[];
+    topics: ArticleTopic[];
     title: string;
     slug: string;
     excerpt: string;

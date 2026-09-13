@@ -2,7 +2,7 @@ import api from "@/lib/api";
 import {
     Program, Project, PaginatedResponse,
     DonationCampaign, Donation, DonationPayload,
-    Course, Module, Enrollment, Quiz, QuizAttempt,
+    Course, Module, Chapter, Enrollment, Quiz, QuizAttempt,
     VolunteerProfile, VolunteerTask,
     Notification,
 } from "@/types";
@@ -72,6 +72,11 @@ export const coursesService = {
 
     getCourse: async (slug: string): Promise<Course> => {
         const { data } = await api.get(`/courses/${slug}/`);
+        return data;
+    },
+
+    getChapter: async (chapterId: string): Promise<Chapter> => {
+        const { data } = await api.get(`/chapters/${chapterId}/`);
         return data;
     },
 

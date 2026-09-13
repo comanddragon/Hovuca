@@ -56,6 +56,13 @@ function buildArticleBody(data: Partial<ArticleWritePayload>): FormData | Record
 const multipart = { "Content-Type": "multipart/form-data" };
 
 export const blogService = {
+    uploadInlineImage: async (file: File): Promise<string> => {
+        const body = new FormData();
+        body.append("file", file);
+        const { data } = await api.post<{ url: string }>("/articles/upload_image/", body, { headers: multipart });
+        return data.url;
+    },
+
     getResources: async (): Promise<Resource[]> => {
         const { data } = await api.get("/resources/");
         return data.results ?? data;

@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 const contactMethods = [
     { icon: Mail, label: "Email", value: "contact@hovuca.org", href: "mailto:contact@hovuca.org" },
     { icon: Phone, label: "Phone", value: "+237 696 230 391", href: "tel:+237696230391" },
-    { icon: MapPin, label: "Head office", value: "Tam Tam, Yaoundé, Cameroon", href: "https://maps.google.com/?q=Tam+Tam+Yaounde+Cameroon" },
-    { icon: Clock, label: "Office hours", value: "Monday to Friday, 8am to 5pm", href: "#map" },
+    { icon: MapPin, label: "Head office", value: "Grande Chefferie Simbock, Yaoundé, Cameroon", href: "" },
+    { icon: Clock, label: "Office hours", value: "Monday to Friday, 9am to 5pm", href: "#map" },
 ];
 
 const reasons = [

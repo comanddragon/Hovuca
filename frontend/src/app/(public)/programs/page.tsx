@@ -33,6 +33,7 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
                             src={program.banner}
                             alt={program.title}
                             fill
+                            loading={index === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 640px) 100vw, 320px"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />

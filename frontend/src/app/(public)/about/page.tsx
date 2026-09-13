@@ -123,6 +123,7 @@ export default function AboutPage() {
                         alt="Hero background"
                         fill
                         priority
+                        loading="eager"
                         sizes="100vw"
                         className="object-cover"
                     />

@@ -439,6 +439,14 @@ export function useCourse(slug: string) {
     });
 }
 
+export function useChapter(chapterId: string | null) {
+    return useQuery({
+        queryKey: ["chapter", chapterId],
+        queryFn: () => coursesService.getChapter(chapterId!),
+        enabled: !!chapterId,
+    });
+}
+
 export function useCourseModules(courseId: string) {
     return useQuery({
         queryKey: keys.courseModules(courseId),

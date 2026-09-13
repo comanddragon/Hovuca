@@ -1,9 +1,19 @@
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
+from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
+from django import forms
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from .models import Article, Bookmark, Category, Comment, Like, Resource, Tag
+
+
+class ArticleAdminForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = "__all__"
+        widgets = {"body": CKEditor5Widget(config_name="hovuca")}
 
 
 @admin.register(Resource)
@@ -68,6 +78,7 @@ class CommentInline(TabularInline):
 
 @admin.register(Article)
 class ArticleAdmin(ModelAdmin):
+    form = ArticleAdminForm
     list_display = [
         "title",
         "author",
@@ -79,7 +90,9 @@ class ArticleAdmin(ModelAdmin):
         "reading_time_minutes",
         "published_at",
         "created_at",
+        "edit_link",
     ]
+    list_display_links = ["title"]
     list_filter = ["status", "is_featured", "category", "created_at", "published_at"]
     search_fields = ["title", "slug", "excerpt", "body", "author__email"]
     prepopulated_fields = {"slug": ("title",)}
@@ -155,6 +168,11 @@ class ArticleAdmin(ModelAdmin):
         "feature_articles",
         "unfeature_articles",
     ]
+
+    @admin.display(description="Edit")
+    def edit_link(self, obj):
+        url = reverse("admin:blogs_article_change", args=[obj.pk])
+        return format_html('<a class="button" href="{}">Edit article</a>', url)
 
     def status_badge(self, obj):
         colors = {

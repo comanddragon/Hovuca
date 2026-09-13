@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCategories, useTags, useCreateTag, useCreateArticle, useUpdateArticle } from "@/hooks";
 import type { Article, ArticleStatus } from "@/types";
@@ -171,11 +172,10 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
 
                     <div className="space-y-1.5">
                         <Label>Body</Label>
-                        <Textarea
-                            placeholder="Write the article…"
-                            rows={16}
-                            {...register("body")}
-                            className="font-mono text-sm"
+                        <RichTextEditor
+                            value={watch("body")}
+                            onChange={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
+                            error={errors.body?.message}
                         />
                         {errors.body && <p className="text-xs text-destructive">{errors.body.message}</p>}
                     </div>

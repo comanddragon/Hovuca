@@ -64,6 +64,7 @@ function EventCard({ event, index }: { event: EventList; index: number }) {
                             src={event.cover_image}
                             alt={event.cover_image_alt || event.title}
                             fill
+                            loading={index === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />

@@ -3,6 +3,7 @@ django
 djangorestframework
 # Admin
 django-unfold
+django-ckeditor-5
 whitenoise
 resend
 # Auth
@@ -45,6 +46,7 @@ python-decouple
 
 # Utilities
 django-extensions
+lxml
 
 dotenv
 twisted[tls,http2]

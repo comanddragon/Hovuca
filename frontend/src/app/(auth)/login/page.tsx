@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import Logo from "@/components/layout/Logo";
+import { authPath, getBrowserReturnPath } from "@/lib/auth-return";
 
 const schema = z.object({
   email: z.email("Enter a valid email"),
@@ -31,7 +32,7 @@ export default function LoginPage() {
 
   const onSubmit = (data: FormData) => {
     login(data, {
-      onSuccess: () => router.push("/dashboard"),
+      onSuccess: () => router.replace(getBrowserReturnPath()),
     });
   };
 
@@ -102,7 +103,14 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-purple-200/70">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-medium text-purple-300 hover:text-purple-200 transition-colors">
+            <Link
+              href="/register"
+              onClick={(event) => {
+                event.preventDefault();
+                router.push(authPath("/register", getBrowserReturnPath()));
+              }}
+              className="font-medium text-purple-300 hover:text-purple-200 transition-colors"
+            >
               Create one
             </Link>
           </p>

@@ -105,6 +105,7 @@ function Lightbox({
                             sizes="85vw"
                             className="object-contain"
                             priority
+                            loading="eager"
                         />
                     </div>
                 </motion.div>
@@ -205,6 +206,7 @@ export default function GalleryAlbumPage() {
                         alt={album.title}
                         fill
                         priority
+                        loading="eager"
                         sizes="100vw"
                         className="object-cover opacity-45"
                     />

@@ -1,7 +1,15 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, Resource
+from apps.blogs.models import Article, Category, Tag, Comment, Resource
+from apps.programs.models import Topic
+
+
+class ArticleTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ["id", "name", "slug", "parent"]
+        read_only_fields = fields
 
 
 class ResourceSerializer(serializers.ModelSerializer):
@@ -166,6 +174,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
     author = UserPublicSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
+    topics = ArticleTopicSerializer(many=True, read_only=True)
     like_count = serializers.ReadOnlyField()
     comment_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
@@ -183,6 +192,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
             "author",
             "category",
             "tags",
+            "topics",
             "status",
             "is_featured",
             "published_at",
@@ -218,6 +228,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
     author = UserPublicSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
+    topics = ArticleTopicSerializer(many=True, read_only=True)
     like_count = serializers.ReadOnlyField()
     comment_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
@@ -237,6 +248,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "author",
             "category",
             "tags",
+            "topics",
             "program",
             "status",
             "is_featured",

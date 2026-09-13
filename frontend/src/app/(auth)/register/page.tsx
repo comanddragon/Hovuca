@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Logo from "@/components/layout/Logo";
+import { authPath, getBrowserReturnPath } from "@/lib/auth-return";
 
 const schema = z.object({
     first_name: z.string().min(1, "Required"),
@@ -45,7 +46,7 @@ export default function RegisterPage() {
 
   const onSubmit = (data: FormData) => {
     register(data, {
-      onSuccess: () => router.push("/dashboard"),
+      onSuccess: () => router.replace(getBrowserReturnPath()),
     });
   };
 
@@ -165,7 +166,14 @@ export default function RegisterPage() {
 
           <p className="mt-6 text-center text-sm text-purple-200/70">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-purple-300 hover:text-purple-200 transition-colors">
+            <Link
+              href="/login"
+              onClick={(event) => {
+                event.preventDefault();
+                router.push(authPath("/login", getBrowserReturnPath()));
+              }}
+              className="font-medium text-purple-300 hover:text-purple-200 transition-colors"
+            >
               Sign in
             </Link>
           </p>

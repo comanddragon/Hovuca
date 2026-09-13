@@ -34,6 +34,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                             src={project.cover_image}
                             alt={project.title}
                             fill
+                            loading={index === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 640px) 100vw, 320px"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />

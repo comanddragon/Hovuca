@@ -14,13 +14,28 @@ import { PageLoader } from "@/components/shared";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { authPath } from "@/lib/auth-return";
+
+function resolveArticleMedia(content: string) {
+    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL?.replace(/\/$/, "");
+    const resolved = mediaBase
+        ? content.replace(
+            /\b(src|href)=(['"])\/media\//gi,
+            (_match, attribute: string, quote: string) => `${attribute}=${quote}${mediaBase}/media/`,
+        )
+        : content;
+
+    // Archived WordPress articles often wrapped images in links to the original
+    // attachment. Published inline images should display as content, not links.
+    return resolved.replace(/<a\b[^>]*>\s*(<img\b[^>]*>)\s*<\/a>/gi, "$1");
+}
 
 function ArticleBody({ content }: { content: string }) {
     const isHtml = /<\s*[a-z][\s\S]*?>/i.test(content.trim());
-    const proseClass = "prose prose-neutral max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-3xl prose-p:text-[1.0625rem] prose-p:leading-8 prose-p:text-neutral-700 prose-a:text-[#5d2d84] prose-a:font-semibold prose-blockquote:border-l-[#5d2d84] prose-blockquote:text-neutral-600 prose-img:rounded-xl";
+    const proseClass = "rich-content prose prose-neutral max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-3xl prose-p:text-[1.0625rem] prose-p:leading-8 prose-p:text-neutral-700 prose-a:text-[#5d2d84] prose-a:font-semibold prose-blockquote:border-l-[#5d2d84] prose-blockquote:text-neutral-600 prose-img:rounded-xl";
 
     if (isHtml) {
-        return <div className={proseClass} dangerouslySetInnerHTML={{ __html: content }} />;
+        return <div className={proseClass} dangerouslySetInnerHTML={{ __html: resolveArticleMedia(content) }} />;
     }
 
     return (
@@ -109,7 +124,7 @@ export default function ArticlePage() {
                 {article.cover_image && (
                     <div className="mx-auto max-w-6xl px-4 sm:px-6">
                         <div className="relative aspect-[16/8] overflow-hidden rounded-xl bg-neutral-200">
-                            <Image src={article.cover_image} alt={article.cover_image_alt || article.title} fill priority sizes="(max-width: 1200px) 100vw, 1152px" className="object-cover" />
+                            <Image src={article.cover_image} alt={article.cover_image_alt || article.title} fill priority loading="eager" sizes="(max-width: 1200px) 100vw, 1152px" className="object-cover" />
                         </div>
                     </div>
                 )}
@@ -145,7 +160,7 @@ export default function ArticlePage() {
                                 <div className="mt-3 flex justify-end"><Button onClick={submitComment} disabled={commenting || !commentBody.trim()} className="bg-[#35145f] hover:bg-[#4d2477]">{commenting ? "Posting..." : "Post comment"}</Button></div>
                             </div>
                         ) : (
-                            <div className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 text-center text-sm text-neutral-600">Want to join the conversation? <Link href="/login" className="font-bold text-[#5d2d84] hover:underline">Sign in</Link></div>
+                            <div className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 text-center text-sm text-neutral-600">Want to join the conversation? <Link href={authPath("/login", `/blog/${slug}`)} className="font-bold text-[#5d2d84] hover:underline">Sign in</Link></div>
                         )}
 
                         <div className="mt-8 space-y-4">

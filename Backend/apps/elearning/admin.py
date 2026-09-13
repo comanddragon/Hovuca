@@ -1,12 +1,21 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, StackedInline, TabularInline
+from django import forms
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from apps.elearning.models.chapter import Chapter
 from apps.elearning.models.course import Course, Subject
 from apps.elearning.models.enrollment import ChapterProgress, Enrollment
 from apps.elearning.models.module import Module
 from apps.elearning.models.quiz import Choice, Question, Quiz, QuizAttempt
+
+
+class ChapterAdminForm(forms.ModelForm):
+    class Meta:
+        model = Chapter
+        fields = "__all__"
+        widgets = {"content_body": CKEditor5Widget(config_name="hovuca")}
 
 # ---------------------------------------------------------------------------
 # Subject
@@ -185,6 +194,7 @@ class ModuleAdmin(ModelAdmin):
 
 @admin.register(Chapter)
 class ChapterAdmin(ModelAdmin):
+    form = ChapterAdminForm
     list_display = [
         "title",
         "module",

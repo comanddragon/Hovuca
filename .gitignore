@@ -14,7 +14,7 @@ node_modules/
 .next/
 frontend/.env
 frontend/.files/*
-frontend/public/
+frontend/public/donors/
 *.zip
 .idea/
 .vscode/
@@ -22,3 +22,5 @@ frontend/public/
 /Documents/
 /hovuca.org/
 /Backend/.test_media/
+/Backend/.env.production
+

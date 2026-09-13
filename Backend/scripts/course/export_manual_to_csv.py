@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import docx
+from docx.oxml.ns import qn
 
 
 # ---------------------------------------------------------------------------
@@ -24,9 +25,15 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SOURCE_FILE = SOURCE_DIR / "CSE Manual.docx"
 OUTPUT_FILE = OUTPUT_DIR / "cse_manual.csv"
+IMAGES_DIR = OUTPUT_DIR / "images"
+
+# Welcome message, peer education overview, "what is CSE" intro - not part of
+# any module, folded into course_description instead.
+FRONT_MATTER_RANGE = (25, 82)
 
 SUBJECT = {"name": "Comprehensive Sexuality Education (CSE)", "slug": "cse"}
 COURSE = {
+    "import_key": "hovuca-cse-manual-v1",
     "title": "Comprehensive Sexuality Education Training",
     "slug": "cse-training",
     "description": (
@@ -109,9 +116,24 @@ def table_to_html(table):
     return "\n".join(rows)
 
 
-def paragraphs_to_html(paragraphs):
+def extract_paragraph_images(paragraph, doc, images_dir, base_name, counter):
+    tags = []
+    for blip in paragraph._p.findall(".//" + qn("a:blip")):
+        r_id = blip.get(qn("r:embed"))
+        if not r_id:
+            continue
+        image_part = doc.part.related_parts[r_id]
+        counter[0] += 1
+        filename = f"{base_name}_{counter[0]}.{image_part.partname.ext}"
+        (images_dir / filename).write_bytes(image_part.blob)
+        tags.append(f'<img src="images/{filename}">')
+    return tags
+
+
+def paragraphs_to_html(paragraphs, doc, images_dir, base_name):
     html_parts = []
     list_buffer = []
+    counter = [0]
 
     def flush_list():
         if list_buffer:
@@ -120,23 +142,26 @@ def paragraphs_to_html(paragraphs):
 
     for p in paragraphs:
         text = p.text.strip()
-        if not text:
+        img_tags = extract_paragraph_images(p, doc, images_dir, base_name, counter)
+        if not text and not img_tags:
             continue
         if p.style.name == "List Paragraph":
             list_buffer.append(runs_to_html(p))
+            html_parts.extend(img_tags)
             continue
         flush_list()
         if p.style.name in ("Heading 2", "Heading 3"):
             html_parts.append(f"<h4>{html.escape(text)}</h4>")
-        else:
+        elif text:
             html_parts.append(f"<p>{runs_to_html(p)}</p>")
+        html_parts.extend(img_tags)
     flush_list()
     return "\n".join(html_parts)
 
 
-def build_chapter_body(doc, para_range, table_indices):
+def build_chapter_body(doc, para_range, table_indices, images_dir, base_name):
     start, end = para_range
-    body = paragraphs_to_html(doc.paragraphs[start:end + 1])
+    body = paragraphs_to_html(doc.paragraphs[start:end + 1], doc, images_dir, base_name)
     for idx in table_indices:
         body += "\n" + table_to_html(doc.tables[idx])
     return body
@@ -149,17 +174,22 @@ def estimate_minutes(body_html):
 
 def main(docx_path, csv_path):
     doc = docx.Document(docx_path)
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+
+    description = COURSE["description"]
 
     rows = []
     for module_title, module_order, age_min, age_max, module_desc, chapters in MODULES:
         for chapter_title, chapter_order, para_range, table_indices in chapters:
-            body = build_chapter_body(doc, para_range, table_indices)
+            base_name = f"m{module_order}c{chapter_order}"
+            body = build_chapter_body(doc, para_range, table_indices, IMAGES_DIR, base_name)
             rows.append({
                 "subject_name": SUBJECT["name"],
                 "subject_slug": SUBJECT["slug"],
                 "course_title": COURSE["title"],
                 "course_slug": COURSE["slug"],
-                "course_description": COURSE["description"],
+                "course_import_key": COURSE["import_key"],
+                "description": description,
                 "course_difficulty": COURSE["difficulty"],
                 "module_title": module_title,
                 "module_order": module_order,

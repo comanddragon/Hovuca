@@ -30,6 +30,14 @@ class Course(BaseModel):
     subject = models.ForeignKey(
         Subject, on_delete=models.CASCADE, related_name="courses"
     )
+    import_key = models.CharField(
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True,
+        editable=False,
+        help_text="Stable identity used by repeatable content imports.",
+    )
     instructor = models.ForeignKey(
         "accounts.User",
         null=True,

@@ -2,7 +2,17 @@ from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Program, Project
+from .models import Program, Project, Topic
+
+
+@admin.register(Topic)
+class TopicAdmin(ModelAdmin):
+    list_display = ["name", "parent", "order", "is_active", "updated_at"]
+    list_filter = ["is_active", "parent"]
+    search_fields = ["name", "slug", "description"]
+    prepopulated_fields = {"slug": ("name",)}
+    autocomplete_fields = ["parent"]
+    readonly_fields = ["id", "created_at", "updated_at"]
 
 
 class ProjectInline(TabularInline):

@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePagination } from "@/hooks/usePagination";
 import { formatDate } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth.store";
 import { ArticleStatus } from "@/types";
 import { Search, Newspaper, Plus, Pencil, Eye } from "lucide-react";
 
@@ -18,7 +17,6 @@ const STATUSES: ArticleStatus[] = ["draft", "review", "published", "archived"];
 const PAGE_SIZE = 20;
 
 export default function AdminBlogPage() {
-    const { user } = useAuthStore();
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [category, setCategory] = useState("");
@@ -98,8 +96,8 @@ export default function AdminBlogPage() {
                     description="Try adjusting your search or filters."
                 />
             ) : (
-                <div className="overflow-hidden rounded-xl border border-border bg-card">
-                    <table className="w-full text-sm">
+                <div className="overflow-x-auto rounded-xl border border-border bg-card">
+                    <table className="w-full min-w-[46rem] text-sm">
                         <thead>
                             <tr className="border-b border-border bg-muted/40 text-left text-xs text-muted-foreground">
                                 <th className="px-4 py-3 font-medium">Title</th>
@@ -111,14 +109,13 @@ export default function AdminBlogPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                            {articles.map((a) => {
-                                const canEdit = user?.role === "admin" || a.author?.id === user?.id;
-                                return (
+                            {articles.map((a) => (
                                     <tr key={a.id} className="hover:bg-muted/20 transition-colors">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
+                                                <Link href={`/admin/blog/${a.slug}/edit`} aria-label={`Edit ${a.title}`} className="shrink-0">
                                                 {a.cover_image ? (
-                                                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
+                                                    <span className="relative block h-10 w-10 overflow-hidden rounded-md bg-muted">
                                                         <Image
                                                             src={a.cover_image}
                                                             alt={a.cover_image_alt || a.title}
@@ -126,14 +123,17 @@ export default function AdminBlogPage() {
                                                             sizes="40px"
                                                             className="object-cover"
                                                         />
-                                                    </div>
+                                                    </span>
                                                 ) : (
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                                                    <span className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
                                                         <Newspaper className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
+                                                    </span>
                                                 )}
+                                                </Link>
                                                 <div className="min-w-0">
-                                                    <p className="truncate font-medium text-foreground">{a.title}</p>
+                                                    <Link href={`/admin/blog/${a.slug}/edit`} className="block truncate font-medium text-foreground hover:text-primary hover:underline">
+                                                        {a.title}
+                                                    </Link>
                                                     <p className="truncate text-xs text-muted-foreground">{a.excerpt}</p>
                                                 </div>
                                             </div>
@@ -159,19 +159,16 @@ export default function AdminBlogPage() {
                                                         </Link>
                                                     </Button>
                                                 )}
-                                                {canEdit && (
-                                                    <Button size="sm" variant="outline" asChild>
-                                                        <Link href={`/admin/blog/${a.slug}/edit`}>
-                                                            <Pencil className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline ml-1.5">Edit</span>
-                                                        </Link>
-                                                    </Button>
-                                                )}
+                                                <Button size="sm" asChild>
+                                                    <Link href={`/admin/blog/${a.slug}/edit`} aria-label={`Edit ${a.title}`}>
+                                                        <Pencil className="h-3.5 w-3.5" />
+                                                        <span>Edit article</span>
+                                                    </Link>
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>
-                                );
-                            })}
+                            ))}
                         </tbody>
                     </table>
 

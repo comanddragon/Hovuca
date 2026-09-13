@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useNotificationStore } from "@/store";
 import Logo from "@/components/layout/Logo";
+import { authPath } from "@/lib/auth-return";
 
 type NavChild = { href: string; label: string };
 type NavLink = {
@@ -47,13 +48,12 @@ const navLinks: NavLink[] = [
         href: "/projects",
         label: "Projects",
     },
-    { href: "/programs", label: "Programs" },
+    { href: "/courses", label: "Courses" },
     {
         href: "", label: "Resources",
         children: [
             { href: "/blog", label: "Stories & news" },
             { href: "/documents", label: "Documents" },
-            { href: "/courses", label: "Courses" },
             { href: "/gallery", label: "Gallery" },
 
         ],
@@ -157,10 +157,10 @@ export function Navbar() {
         const isHome = pathname === "/";
         const homeLinks = [
             { href: "/about", label: "About" },
-            { href: "/programs", label: "What we do" },
             { href: "/projects", label: "Our impact" },
             { href: "/blog", label: "Field stories" },
             { href: "/documents", label: "Publications" },
+            { href: "/courses", label: "Courses" },
             { href: "/contact", label: "Get involved" },
         ];
         const visibleLinks = scrolled ? homeLinks.slice(0, 3) : homeLinks;
@@ -184,7 +184,7 @@ export function Navbar() {
                     </Link>
                     {!scrolled && (
                         <span className="pointer-events-none absolute left-[calc(16.6%+11px)] top-4 hidden h-[47px] w-[11.5%] min-w-[172px] text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)] lg:block">
-                            Hope for<br />vulnerable communities<br />in Cameroon
+                            Hope for<br />Vulnerable Children<br />Association
                         </span>
                     )}
 
@@ -253,7 +253,7 @@ export function Navbar() {
                     </div>
                 )}
             </header>
-            {!isHome && <div className="h-[72px]" aria-hidden="true" />}
+            {!isHome && scrolled && <div className="h-[72px]" aria-hidden="true" />}
             </>
         );
     }
@@ -332,7 +332,7 @@ export function Navbar() {
                                         Logout
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href="/login"><LogIn className="mr-2 h-4 w-4" />Switch Accounts</Link>
+                                        <Link href={authPath("/login", pathname)}><LogIn className="mr-2 h-4 w-4" />Switch Accounts</Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -340,10 +340,10 @@ export function Navbar() {
                     ) : (
                         <div className="hidden items-center gap-2 xl:flex">
                             <Button variant="ghost" size="sm" asChild>
-                                <Link href="/login">Sign in</Link>
+                                <Link href={authPath("/login", pathname)}>Sign in</Link>
                             </Button>
                             <Button size="sm" asChild>
-                                <Link href="/register">Get started</Link>
+                                <Link href={authPath("/register", pathname)}>Get started</Link>
                             </Button>
                         </div>
                     )}
@@ -436,10 +436,10 @@ export function Navbar() {
                         {!isAuthenticated && (
                             <div className="mt-2 flex gap-2">
                                 <Button variant="outline" size="sm" className="flex-1" asChild>
-                                    <Link href="/login">Sign in</Link>
+                                    <Link href={authPath("/login", pathname)}>Sign in</Link>
                                 </Button>
                                 <Button size="sm" className="flex-1" asChild>
-                                    <Link href="/register">Get started</Link>
+                                    <Link href={authPath("/register", pathname)}>Get started</Link>
                                 </Button>
                             </div>
                         )}

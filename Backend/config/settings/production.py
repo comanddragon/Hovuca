@@ -1,4 +1,5 @@
 import sentry_sdk
+from decouple import config
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
@@ -9,14 +10,20 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = False
 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in config(
+        "DJANGO_ALLOWED_HOSTS", default=config("ALLOWED_HOSTS", default="")
+    ).split(",")
+    if host.strip()
+]
 
 # ---------------------------------------------------------------------------
 # Database — Postgres with connection pooling
 # ---------------------------------------------------------------------------
 DATABASE_URL = config("NEON_DB_URL")
 
-tmp_postgres = urlparse(config["DATABASE_URL"])
+tmp_postgres = urlparse(DATABASE_URL)
 
 DATABASES = {
     "default": {
@@ -40,7 +47,7 @@ DATABASES = {
 # Security hardening
 # ---------------------------------------------------------------------------
 def _env_bool(name, default):
-    return config.get(name, str(default)).lower() in ("true", "1", "yes")
+    return config(name, default=str(default)).lower() in ("true", "1", "yes")
 
 SECURE_SSL_REDIRECT            = _env_bool("SECURE_SSL_REDIRECT", True)
 SECURE_HSTS_SECONDS            = 31536000
@@ -55,7 +62,11 @@ X_FRAME_OPTIONS                = "DENY"
 # ---------------------------------------------------------------------------
 # CORS
 # ---------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = config["CORS_ALLOWED_ORIGINS"].split(",")
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in config("CORS_ALLOWED_ORIGINS", default="").split(",")
+    if origin.strip()
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ---------------------------------------------------------------------------
@@ -71,11 +82,28 @@ STORAGES = {
     },
 }
 
-AWS_ACCESS_KEY_ID     = config["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = config["AWS_SECRET_ACCESS_KEY"]
-AWS_STORAGE_BUCKET_NAME = config["AWS_STORAGE_BUCKET_NAME"]
-AWS_S3_REGION = config.get("AWS_S3_REGION", "us-east-1")
-AWS_S3_CUSTOM_DOMAIN  = config.get("AWS_CLOUDFRONT_DOMAIN", "")
+AWS_ACCESS_KEY_ID = config(
+    "AWS_ACCESS_KEY_ID", default=config("SUPABASE_STORAGE_KEY_ID", default="")
+)
+AWS_SECRET_ACCESS_KEY = config(
+    "AWS_SECRET_ACCESS_KEY", default=config("SUPABASE_STORAGE_SECRET", default="")
+)
+AWS_STORAGE_BUCKET_NAME = config(
+    "AWS_STORAGE_BUCKET_NAME", default=config("SUPABASE_STORAGE_BUCKET", default="")
+)
+AWS_S3_REGION = config(
+    "AWS_S3_REGION", default=config("SUPABASE_STORAGE_REGION", default="us-east-1")
+)
+AWS_S3_CUSTOM_DOMAIN = config("AWS_CLOUDFRONT_DOMAIN", default="")
+SUPABASE_PROJECT_REF = config("SUPABASE_PROJECT_REF", default="")
+AWS_S3_ENDPOINT_URL = config(
+    "AWS_S3_ENDPOINT_URL",
+    default=(
+        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
+        if SUPABASE_PROJECT_REF
+        else None
+    ),
+)
 AWS_DEFAULT_ACL       = "private"
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH  = False
@@ -85,7 +113,7 @@ AWS_QUERYSTRING_AUTH  = False
 # Sentry — error tracking
 # ---------------------------------------------------------------------------
 sentry_sdk.init(
-    dsn=config["SENTRY_DSN"],
+    dsn=config("SENTRY_DSN", default=""),
     integrations=[DjangoIntegration(),CeleryIntegration(),RedisIntegration()],
     traces_sample_rate=0.2,
     send_default_pii=False,

@@ -2,6 +2,27 @@ from django.db import models
 from core.models import BaseModel
 
 
+class Topic(BaseModel):
+    """A public issue area addressed by HOVUCA, optionally nested under another topic."""
+
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, max_length=280)
+    description = models.TextField(blank=True)
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="children"
+    )
+    source_url = models.CharField(max_length=500, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "topics"
+        ordering = ["order", "name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Program(BaseModel):
     """A high-level NGO initiative (e.g. Digital Literacy, Health Outreach)."""
 

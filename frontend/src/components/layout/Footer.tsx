@@ -24,16 +24,7 @@ const links = {
 
 export function Footer() {
     return (
-        <>
-            <div className="relative z-10 w-full overflow-hidden leading-none">
-                <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-28 md:h-36 block">
-                    <path
-                        d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1350,20 1440,40 L1440,80 L0,80 Z"
-                        className="fill-muted"
-                    />
-                </svg>
-            </div>
-            <footer className="border-t-0 border-border bg-muted">
+            <footer className="border-t border-border bg-muted">
                 <div className="mx-auto max-w-7xl px-4 pb-12 pt-4 sm:px-6">
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {/* Brand */}
@@ -93,6 +84,5 @@ export function Footer() {
                     </div>
                 </div>
             </footer>
-        </>
     );
 }

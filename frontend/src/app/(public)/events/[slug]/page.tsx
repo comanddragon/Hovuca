@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/store/auth.store";
 import type { EventDetail } from "@/types";
+import { authPath } from "@/lib/auth-return";
 
 /* ─── Hero Slideshow ──────────────────────────────────────────── */
 
@@ -72,6 +73,7 @@ function HeroSlideshow({ slides }: { slides: { src: string; alt: string }[] }) {
                         alt={slides[current].alt}
                         fill
                         priority={current === 0}
+                        loading={current === 0 ? "eager" : "lazy"}
                         sizes="100vw"
                         className="object-cover opacity-60"
                     />
@@ -184,7 +186,7 @@ function RegistrationStatus({ event }: { event: EventDetail }) {
         return (
             <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">Sign in to register for this event.</p>
-                <Link href="/login">
+                <Link href={authPath("/login", `/events/${event.slug}`)}>
                     <Button className="w-full" size="lg">Sign in to register</Button>
                 </Link>
             </div>

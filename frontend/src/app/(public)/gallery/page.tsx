@@ -9,7 +9,7 @@ import Link from "next/link";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import {
     Images, Search, Calendar, X, ChevronLeft,
-    ChevronRight, Eye, ImageIcon, Star
+    ChevronRight, ImageIcon, Star
 } from "lucide-react";
 import { format } from "date-fns";
 import type { GalleryAlbumList, GalleryImage } from "@/types";
@@ -130,6 +130,7 @@ function AlbumCard({ album, index }: { album: GalleryAlbumList; index: number })
                             src={cover}
                             alt={album.title}
                             fill
+                            loading={index === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />

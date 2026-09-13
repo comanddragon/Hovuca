@@ -180,6 +180,84 @@
     margin: 0.25rem 0.75rem 0 0;
     color: var(--primary);
 }
+
+/* CKEditor authoring surface and published rich-content layout. */
+.rich-content::after {
+    display: table;
+    clear: both;
+    content: "";
+}
+
+.hovuca-ckeditor .ck-editor__editable_inline {
+    min-height: 24rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.hovuca-ckeditor .ck-toolbar__items {
+    flex-wrap: wrap !important;
+}
+
+.hovuca-ckeditor--error .ck-editor__editable_inline,
+.hovuca-ckeditor--error .ck-toolbar {
+    border-color: var(--destructive) !important;
+}
+
+.rich-content figure.image {
+    display: table;
+    clear: both;
+    max-width: 100%;
+    height: auto;
+    margin: 1.25rem auto;
+}
+
+.rich-content figure.image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.rich-content figure.image figcaption {
+    display: table-caption;
+    caption-side: bottom;
+    padding: 0.6rem;
+    color: #525252;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.rich-content .image-style-align-left,
+.rich-content .image-style-side {
+    float: left;
+    margin: 0.4rem 1.5rem 1rem 0;
+}
+
+.rich-content .image-style-align-right {
+    float: right;
+    margin: 0.4rem 0 1rem 1.5rem;
+}
+
+.rich-content table {
+    width: 100%;
+    margin-block: 1.5rem;
+    border-collapse: collapse;
+}
+
+.rich-content th,
+.rich-content td {
+    border: 1px solid #d4d4d4;
+    padding: 0.65rem 0.8rem;
+    text-align: left;
+}
+
+@media (max-width: 640px) {
+    .rich-content .image-style-align-left,
+    .rich-content .image-style-align-right,
+    .rich-content .image-style-side {
+        float: none;
+        width: 100% !important;
+        margin-inline: 0;
+    }
+}
 /* ── Smooth scrolling ─────────────────────────────────────────── */
 html {
     scroll-behavior: smooth;

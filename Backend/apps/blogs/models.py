@@ -7,19 +7,27 @@ from core.models import BaseModel
 ARTICLE_BODY_ALLOWED_TAGS = [
     "p", "br", "hr",
     "h1", "h2", "h3", "h4",
-    "strong", "em", "u", "s",
+    "strong", "em", "u", "s", "sub", "sup", "span",
     "ul", "ol", "li",
     "blockquote", "a", "img",
     "code", "pre",
+    "figure", "figcaption", "oembed", "table", "thead", "tbody", "tfoot", "tr", "th", "td",
 ]
 
 ARTICLE_BODY_ALLOWED_ATTRS = {
     "a": ["href", "title", "target", "rel"],
     "img": ["src", "alt", "style", "width", "height"],
-    "*": ["class"],
+    "oembed": ["url"],
+    "td": ["colspan", "rowspan", "style"],
+    "th": ["colspan", "rowspan", "style"],
+    "*": ["class", "data-indent", "style"],
 }
 
-ARTICLE_BODY_ALLOWED_STYLES = ["width", "height"]
+ARTICLE_BODY_ALLOWED_STYLES = [
+    "width", "height", "margin-left", "margin-right", "float",
+    "background-color", "border-color", "text-align", "color", "font-family",
+    "font-size",
+]
 
 
 class Category(BaseModel):
@@ -92,6 +100,9 @@ class Article(BaseModel):
         related_name="articles",
     )
     tags = models.ManyToManyField(Tag, blank=True, related_name="articles")
+    topics = models.ManyToManyField(
+        "programs.Topic", blank=True, related_name="articles"
+    )
 
     # Content
     title = models.CharField(max_length=255)

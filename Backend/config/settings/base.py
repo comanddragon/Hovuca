@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_ckeditor_5",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -155,6 +156,54 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+CKEDITOR_5_MAX_FILE_SIZE = 5
+CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "webp"]
+CKEDITOR_5_CONFIGS = {
+    "hovuca": {
+        "toolbar": {
+            "items": [
+                "undo", "redo", "findAndReplace", "|", "heading", "fontFamily",
+                "fontSize", "|", "bold", "italic", "underline", "strikethrough",
+                "code", "subscript", "superscript", "removeFormat", "|",
+                "fontColor", "fontBackgroundColor", "highlight", "|", "alignment",
+                "bulletedList", "numberedList", "outdent", "indent", "|", "link",
+                "blockQuote", "codeBlock", "insertImage", "mediaEmbed", "insertTable",
+                "horizontalLine", "pageBreak", "specialCharacters", "|",
+                "sourceEditing",
+            ],
+            "shouldNotGroupWhenFull": True,
+        },
+        "fontFamily": {"supportAllValues": True},
+        "fontSize": {
+            "options": [9, 11, 13, "default", 17, 20, 24, 30, 36],
+            "supportAllValues": True,
+        },
+        "image": {
+            "toolbar": [
+                "imageTextAlternative", "toggleImageCaption", "|",
+                "imageStyle:alignLeft", "imageStyle:alignCenter", "imageStyle:alignRight",
+                "|", "imageStyle:inline", "imageStyle:wrapText", "imageStyle:breakText",
+                "|", "resizeImage",
+            ],
+            "resizeOptions": [
+                {"name": "resizeImage:original", "value": None, "label": "Original"},
+                {"name": "resizeImage:25", "value": "25", "label": "25%"},
+                {"name": "resizeImage:50", "value": "50", "label": "50%"},
+                {"name": "resizeImage:75", "value": "75", "label": "75%"},
+            ],
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn", "tableRow", "mergeTableCells", "tableProperties",
+                "tableCellProperties",
+            ],
+        },
+        "height": "400px",
+        "width": "100%",
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -137,7 +137,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
         if self.action in ("publish", "archive"):
             return [IsStaffOrAdmin()]
-        if self.action in ("update", "partial_update", "destroy"):
+        if self.action in ("update", "partial_update"):
+            return [(IsStaffOrAdmin | IsOwnerOrAdmin)()]
+        if self.action == "destroy":
             return [IsOwnerOrAdmin()]
         return [IsAuthenticated()]
 

@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Newspaper, FolderKanban, Tag } from "lucide-react";
+import {
+    BarChart3,
+    FolderKanban,
+    LayoutDashboard,
+    Newspaper,
+    Users,
+} from "lucide-react";
 
 interface AdminNavItem {
     href: string;
@@ -20,11 +26,23 @@ interface AdminNavSection {
 // itself doesn't need to change shape to support them.
 const sections: AdminNavSection[] = [
     {
-        title: "Blog",
+        title: "Workspace",
+        items: [
+            { href: "/admin", label: "Overview", icon: LayoutDashboard },
+        ],
+    },
+    {
+        title: "Content",
         items: [
             { href: "/admin/blog", label: "Articles", icon: Newspaper },
-            { href: "/admin/blog/categories", label: "Categories", icon: FolderKanban },
-            { href: "/admin/blog/tags", label: "Tags", icon: Tag },
+            { href: "/admin/programs", label: "Programs", icon: FolderKanban },
+        ],
+    },
+    {
+        title: "Operations",
+        items: [
+            { href: "/admin/users", label: "Users", icon: Users },
+            { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
         ],
     },
 ];
@@ -44,7 +62,7 @@ export function AdminSidebar() {
                             {section.title}
                         </p>
                         {section.items.map(({ href, label, icon: Icon }) => {
-                            const active = pathname === href || pathname.startsWith(`${href}/`);
+                            const active = pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
                             return (
                                 <Link
                                     key={href}

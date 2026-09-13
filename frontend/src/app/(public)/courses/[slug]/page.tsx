@@ -1,242 +1,294 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-import { useCourse, useCourseModules, useEnrollments, useEnroll, useMarkChapterComplete } from "@/hooks/index";
-import { PageLoader, StatusBadge, ProgressBar, AvatarStack } from "@/components/shared/index";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { getAvatarUrl, getInitials } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth.store";
-import {
-  BookOpen, CheckCircle2, ChevronDown, ChevronRight,
-  Clock, FileText, Lock, Play, Users, Video,
-} from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
 
-const contentIcon = {
-  video: Play,
-  text: FileText,
-  pdf: FileText,
-};
+import { useChapter, useCourse, useEnroll, useEnrollments, useMarkChapterComplete } from "@/hooks";
+import { useAuthStore } from "@/store/auth.store";
+import type { Module } from "@/types";
+import styles from "../course-handbook.module.css";
+
+function ageBand(module: Module) {
+  return module.age_max ? `${module.age_min}–${module.age_max}` : `${module.age_min}+`;
+}
+
+function displayModuleTitle(title: string) {
+  return title.replace(/^Module\s+\d+:\s*/i, "");
+}
+
+function courseAudience(modules: Module[]) {
+  const labels = Array.from(new Set(modules.map(ageBand)));
+  return labels.length ? labels.join(" · ") : "All ages";
+}
+
+function formatMinutes(minutes: number) {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
+}
+
+function HandbookLoader() {
+  return (
+    <div className={`${styles.page} ${styles.loadingPage}`} aria-label="Loading course handbook">
+      <div className={styles.loadingKicker} />
+      <div className={styles.loadingTitle} />
+      <div className={styles.loadingRule} />
+      <div className={styles.loadingPanel} />
+    </div>
+  );
+}
 
 export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
   const { isAuthenticated } = useAuthStore();
-
-  const { data: course, isLoading: courseLoading } = useCourse(slug);
-  const { data: modules = [], isLoading: modulesLoading } = useCourseModules(course?.id ?? "");
+  const { data: course, isLoading, isError } = useCourse(slug);
   const { data: enrollments } = useEnrollments();
   const { mutate: enroll, isPending: enrolling } = useEnroll();
-  const { mutate: markComplete } = useMarkChapterComplete();
+  const { mutate: markChapterComplete, isPending: markingChapter } = useMarkChapterComplete();
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [completedChapterId, setCompletedChapterId] = useState<string | null>(null);
+  const { data: selectedChapter, isLoading: chapterLoading, isError: chapterError } = useChapter(selectedChapterId);
 
-  const [openModules, setOpenModules] = useState<Set<string>>(new Set());
+  if (isLoading) return <HandbookLoader />;
 
-  if (courseLoading || modulesLoading) return <PageLoader />;
-  if (!course) return <div className="p-8 text-center text-muted-foreground">Course not found.</div>;
+  if (isError || !course) {
+    return (
+      <div className={`${styles.page} ${styles.notFound}`}>
+        <div>
+          <p className={styles.eyebrow}>Field handbook</p>
+          <h1>Course not found</h1>
+          <p>This handbook may have moved or is not yet published.</p>
+          <Link href="/courses">Return to all courses</Link>
+        </div>
+      </div>
+    );
+  }
 
-  const enrollment = enrollments?.results?.find((e) => e.course.id === course.id);
-  const isEnrolled = !!enrollment;
+  const modules = [...(course.modules ?? [])].sort((a, b) => a.order - b.order);
+  const activeModule = modules.find((module) => module.id === activeModuleId) ?? modules[0];
+  const activeIndex = Math.max(0, modules.findIndex((module) => module.id === activeModule?.id));
+  const chapters = [...(activeModule?.chapters ?? [])].sort((a, b) => a.order - b.order);
+  const leadChapter = chapters[0];
+  const enrollment = enrollments?.results?.find((item) => item.course.id === course.id);
+  const isEnrolled = Boolean(enrollment);
+  const chapterCount = modules.reduce((total, module) => total + (module.chapter_count || module.chapters?.length || 0), 0);
+  const selectedMinutes = chapters.reduce((total, chapter) => total + chapter.duration_minutes, 0);
+  const selectedChapterSummary = chapters.find((chapter) => chapter.id === selectedChapterId);
+  const canReadSelectedChapter = isEnrolled || Boolean(isAuthenticated && selectedChapterSummary?.is_preview);
 
-  const toggleModule = (id: string) =>
-    setOpenModules((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-
-  const levelColor: Record<string, string> = {
-    beginner: "text-green-600 bg-green-50 dark:bg-green-900/20",
-    intermediate: "text-blue-600 bg-blue-50 dark:bg-blue-900/20",
-    advanced: "text-purple-600 bg-purple-50 dark:bg-purple-900/20",
+  const goToHandbook = () => {
+    document.getElementById("session-map")?.scrollIntoView({ behavior: shouldReduceMotion ? "auto" : "smooth" });
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Left — course info */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Header */}
-          <div>
-            <div className="mb-3 flex flex-wrap gap-2">
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${levelColor[course.level] ?? ""}`}>
-                {course.level}
-              </span>
-              {course.is_free && (
-                <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-white">Free</span>
-              )}
-              {course.subject && (
-                <span className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
-                  {course.subject.name}
-                </span>
-              )}
-            </div>
-            <h1 className="font-display text-3xl font-bold text-foreground sm:text-4xl">{course.title}</h1>
-            <p className="mt-3 text-muted-foreground leading-relaxed">{course.description}</p>
-          </div>
+    <div className={styles.page}>
+      <section className={styles.courseHero} aria-labelledby="course-title">
+        <Image
+          src="/assets/plates/course-hero-photo.png"
+          alt="Young people taking part in a HOVUCA learning session"
+          fill
+          priority
+          loading="eager"
+          unoptimized
+          sizes="100vw"
+          className={styles.heroPhoto}
+        />
+        <div className={styles.heroInner}>
+          <p className={styles.eyebrow}>Field handbook · {course.subject?.name ?? "Community learning"}</p>
+          <h1 id="course-title" className={styles.heroTitle}>{course.title}</h1>
+          <p className={styles.heroSummary}>{course.description}</p>
+        </div>
+      </section>
 
-          {/* Instructor + meta */}
-          <div className="flex flex-wrap items-center gap-6 rounded-xl border border-border bg-card p-4">
-            {course.instructor && (
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={getAvatarUrl(course.instructor.avatar) ?? undefined} />
-                  <AvatarFallback>{getInitials(course.instructor.full_name)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{course.instructor.full_name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{course.instructor.role}</p>
+      <div className={styles.handbookGrid}>
+        <aside className={styles.contents} aria-label="Handbook contents">
+          <h2 className={styles.railTitle}>Contents</h2>
+          {modules.length ? (
+            <nav className={styles.moduleNav}>
+              {modules.map((module, index) => {
+                const isActive = module.id === activeModule?.id;
+                return (
+                  <button
+                    key={module.id}
+                    type="button"
+                    className={`${styles.moduleButton} ${isActive ? styles.moduleButtonActive : ""}`}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setActiveModuleId(module.id)}
+                  >
+                    <span className={styles.moduleNumber}>{String(index + 1).padStart(2, "0")}</span>
+                    <span className={styles.moduleName}>{displayModuleTitle(module.title)}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          ) : (
+            <p className={styles.railNote}>The first modules are being prepared.</p>
+          )}
+          <p className={styles.railNote}>Choose a module to update the active folio. Your place stays visible as you move through the handbook.</p>
+        </aside>
+
+        <main id="handbook-content" className={styles.chapterStage}>
+          {activeModule ? (
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.article
+                key={activeModule.id}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.22 }}
+              >
+                <div className={styles.stageTopline}>
+                  <p className={styles.eyebrow}>Module {activeIndex + 1} · Ages {ageBand(activeModule)}</p>
+                  <span className={styles.folio}>{String(activeIndex + 1).padStart(2, "0")} / {String(modules.length).padStart(2, "0")}</span>
                 </div>
-              </div>
-            )}
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />{course.duration_hours}h total
-            </div>
-            <AvatarStack count={course.enrollment_count} label="enrolled" />
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <BookOpen className="h-4 w-4" />{modules.length} modules
-            </div>
-          </div>
+                <h2 className={styles.moduleTitle}>{displayModuleTitle(activeModule.title)}</h2>
+                <h3 className={styles.chapterTitle}>{leadChapter?.title ?? "Module overview"}</h3>
 
-          {/* Progress (if enrolled) */}
-          {isEnrolled && enrollment && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-sm font-semibold text-primary">Your Progress</p>
-                <p className="text-sm font-bold text-primary">{enrollment.progress_percentage}%</p>
-              </div>
-              <ProgressBar value={enrollment.progress_percentage} />
-              {enrollment.status === "completed" && (
-                <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-green-600">
-                  <CheckCircle2 className="h-4 w-4" /> Course completed!
+                <div className={styles.lessonPhotoWrap}>
+                  <Image
+                    src="/assets/plates/lesson-photo.png"
+                    alt="Young people in a facilitated outdoor learning discussion"
+                    fill
+                    priority
+                    loading="eager"
+                    unoptimized
+                    sizes="(max-width: 760px) 100vw, 60vw"
+                    className={styles.lessonPhoto}
+                  />
+                </div>
+
+                <p className={styles.moduleDescription}>
+                  {activeModule.description || `Work through ${displayModuleTitle(activeModule.title).toLowerCase()} with practical, age-appropriate guidance designed for reflection and discussion.`}
                 </p>
-              )}
+
+                <p id="session-map" className={styles.sessionLabel}>Sessions in this module</p>
+                {chapters.length ? (
+                  <ol className={styles.chapterList}>
+                    {chapters.map((chapter, index) => {
+                      const canOpen = isEnrolled || Boolean(isAuthenticated && chapter.is_preview);
+                      return (
+                        <li key={chapter.id}>
+                          <button
+                            type="button"
+                            className={`${styles.chapterRow} ${selectedChapterId === chapter.id ? styles.chapterRowActive : ""}`}
+                            disabled={!canOpen}
+                            onClick={() => setSelectedChapterId(chapter.id)}
+                          >
+                            <span className={styles.chapterIndex}>{index + 1}</span>
+                            <span>
+                              <span className={styles.chapterName}>{chapter.title}</span>
+                              <span className={styles.chapterMeta}>{chapter.content_type} · {formatMinutes(chapter.duration_minutes)}{chapter.is_preview ? " · Preview" : ""}</span>
+                            </span>
+                            {canOpen
+                              ? <ArrowRight className={styles.chapterOpenIcon} size={16} aria-hidden="true" />
+                              : <LockKeyhole className={styles.lock} size={15} aria-label="Enroll to access" />}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                ) : (
+                  <p className={styles.smallPrint}>Session details will appear here when this module is published.</p>
+                )}
+
+                {selectedChapterId && selectedChapterSummary && canReadSelectedChapter && (
+                  <section className={styles.chapterReader} aria-live="polite">
+                    {chapterLoading ? (
+                      <p>Opening session…</p>
+                    ) : chapterError || !selectedChapter ? (
+                      <p>This session could not be opened. Please try again.</p>
+                    ) : (
+                      <>
+                        <p className={styles.eyebrow}>Open session</p>
+                        <h4>{selectedChapter.title}</h4>
+                        {selectedChapter.content_type === "text" && selectedChapter.content_body && (
+                          <div className={`${styles.readerText} rich-content`} dangerouslySetInnerHTML={{ __html: selectedChapter.content_body }} />
+                        )}
+                        {selectedChapter.content_type === "video" && selectedChapter.content_url && (
+                          <a href={selectedChapter.content_url} target="_blank" rel="noreferrer">Watch the session video <ArrowRight size={16} /></a>
+                        )}
+                        {selectedChapter.content_type === "pdf" && selectedChapter.content_file && (
+                          <a href={selectedChapter.content_file} target="_blank" rel="noreferrer">Open the session document <ArrowRight size={16} /></a>
+                        )}
+                        {isEnrolled && (
+                          <button
+                            type="button"
+                            className={styles.completeAction}
+                            disabled={markingChapter || completedChapterId === selectedChapter.id}
+                            onClick={() => markChapterComplete(selectedChapter.id, { onSuccess: () => setCompletedChapterId(selectedChapter.id) })}
+                          >
+                            <CheckCircle2 size={17} />
+                            {completedChapterId === selectedChapter.id ? "Session complete" : markingChapter ? "Saving progress…" : "Mark session complete"}
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </section>
+                )}
+              </motion.article>
+            </AnimatePresence>
+          ) : (
+            <div>
+              <p className={styles.eyebrow}>Handbook introduction</p>
+              <h2 className={styles.moduleTitle}>Modules coming soon</h2>
+              <p className={styles.moduleDescription}>{course.description}</p>
+            </div>
+          )}
+        </main>
+
+        <aside className={styles.facts} aria-label="Course details">
+          <h2 className={styles.railTitle}>Course details</h2>
+          <dl className={styles.factList}>
+            <div className={styles.fact}><dt>Level</dt><dd>{course.difficulty}</dd></div>
+            <div className={styles.fact}><dt>Cost</dt><dd>{course.is_free ? "Free" : "Paid"}</dd></div>
+            <div className={styles.fact}><dt>Modules</dt><dd>{modules.length}</dd></div>
+            <div className={styles.fact}><dt>Sessions</dt><dd>{chapterCount}</dd></div>
+            <div className={styles.fact}><dt>Time</dt><dd>{course.estimated_hours} hours</dd></div>
+            <div className={styles.fact}><dt>Ages</dt><dd>{courseAudience(modules)}</dd></div>
+            {course.instructor && <div className={styles.fact}><dt>Instructor</dt><dd>{course.instructor.full_name}</dd></div>}
+          </dl>
+
+          {enrollment && (
+            <div className={styles.progress}>
+              <div className={styles.progressTop}>
+                <span>Your progress</span>
+                <span>{Math.round(enrollment.progress_percentage)}%</span>
+              </div>
+              <div className={styles.progressTrack} aria-label={`${enrollment.progress_percentage}% complete`}>
+                <div className={styles.progressValue} style={{ width: `${enrollment.progress_percentage}%` }} />
+              </div>
             </div>
           )}
 
-          {/* Curriculum */}
-          <div>
-            <h2 className="mb-4 font-display text-xl font-bold text-foreground">Curriculum</h2>
-            <div className="space-y-2">
-              {modules.map((mod, idx) => {
-                const isOpen = openModules.has(mod.id);
-                return (
-                  <div key={mod.id} className="rounded-xl border border-border overflow-hidden">
-                    <button
-                      onClick={() => toggleModule(mod.id)}
-                      className="flex w-full items-center justify-between bg-muted/40 px-4 py-3 text-left hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                          {idx + 1}
-                        </span>
-                        <div>
-                          <p className="font-semibold text-foreground text-sm">{mod.title}</p>
-                          {mod.description && (
-                            <p className="text-xs text-muted-foreground">{mod.description}</p>
-                          )}
-                        </div>
-                      </div>
-                      {isOpen ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                      )}
-                    </button>
-
-                    {isOpen && mod.chapters && (
-                      <div className="divide-y divide-border">
-                        {mod.chapters.map((chapter) => {
-                          const Icon = contentIcon[chapter.content_type] ?? FileText;
-                          const locked = !isEnrolled && !chapter.is_free_preview;
-                          return (
-                            <div
-                              key={chapter.id}
-                              className={`flex items-center gap-3 px-4 py-3 ${locked ? "opacity-50" : "hover:bg-muted/30 cursor-pointer"}`}
-                              onClick={() => {
-                                if (!locked) markComplete(chapter.id);
-                              }}
-                            >
-                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-card border border-border">
-                                {locked ? (
-                                  <Lock className="h-3.5 w-3.5 text-muted-foreground" />
-                                ) : (
-                                  <Icon className="h-3.5 w-3.5 text-primary" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-foreground truncate">{chapter.title}</p>
-                                <p className="text-xs text-muted-foreground capitalize">
-                                  {chapter.content_type} · {chapter.duration_minutes}min
-                                </p>
-                              </div>
-                              {chapter.is_free_preview && (
-                                <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold text-accent">
-                                  Preview
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Right — sticky enroll card */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24 rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
-            {/* Thumbnail */}
-            {course.thumbnail && (
-              <div className="overflow-hidden rounded-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={course.thumbnail} alt={course.title} className="w-full object-cover h-40" />
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <p className="font-display text-2xl font-bold text-foreground">
-                {course.is_free ? "Free" : "Paid"}
-              </p>
-              <p className="text-sm text-muted-foreground">Full lifetime access</p>
-            </div>
-
-            {isEnrolled ? (
-              <div className="space-y-2">
-                <Button className="w-full" variant="outline" disabled>
-                  <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-                  Enrolled
-                </Button>
-                <Button className="w-full" asChild>
-                  <Link href={`/courses/${slug}/learn`}>Continue learning →</Link>
-                </Button>
-              </div>
-            ) : isAuthenticated ? (
-              <Button
-                className="w-full"
-                onClick={() => enroll(course.id)}
-                disabled={enrolling}
-              >
-                {enrolling ? "Enrolling…" : "Enroll now — it's free"}
-              </Button>
-            ) : (
-              <Button className="w-full" asChild>
-                <Link href="/src/app/login">Sign in to enroll</Link>
-              </Button>
-            )}
-
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><Clock className="h-4 w-4" />{course.duration_hours} hours of content</li>
-              <li className="flex items-center gap-2"><BookOpen className="h-4 w-4" />{modules.length} modules</li>
-              <li className="flex items-center gap-2"><Users className="h-4 w-4" />{course.enrollment_count} students enrolled</li>
-            </ul>
-          </div>
-        </div>
+          {isEnrolled ? (
+            <button type="button" className={styles.primaryAction} onClick={goToHandbook}>
+              <span>{enrollment?.status === "completed" ? "Review sessions" : "Open sessions"}</span>
+              {enrollment?.status === "completed" ? <CheckCircle2 size={18} /> : <ArrowRight size={18} />}
+            </button>
+          ) : isAuthenticated ? (
+            <button type="button" className={styles.primaryAction} disabled={enrolling} onClick={() => enroll(course.slug)}>
+              <span>{enrolling ? "Enrolling…" : course.is_free ? "Start learning" : "Request access"}</span>
+              <ArrowRight size={18} />
+            </button>
+          ) : (
+            <Link href={`/login?next=/courses/${course.slug}`} className={styles.primaryAction}>
+              <span>Sign in to enroll</span>
+              <ArrowRight size={18} />
+            </Link>
+          )}
+          <p className={styles.smallPrint}>
+            {isEnrolled
+              ? `${selectedMinutes ? formatMinutes(selectedMinutes) : "Self-paced"} in the selected module.`
+              : "Create a free account to save progress and access every session."}
+          </p>
+        </aside>
       </div>
     </div>
   );
