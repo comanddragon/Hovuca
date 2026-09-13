@@ -3,6 +3,7 @@ from django.db import connection
 from django.http import JsonResponse
 from django.urls import path, include, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.generic import RedirectView
 from django.views.static import serve as serve_media
 from django.conf import settings
 from django.conf.urls.static import static
@@ -17,9 +18,10 @@ def health(request):
         cursor.execute("SELECT 1")
     return JsonResponse({"message": "API is live"})
 urlpatterns = [
+    path("", RedirectView.as_view(pattern_name="admin:index", permanent=False)),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("admin/", admin.site.urls),
-    path("/health", health),
+    path("health/", health),
     path('api/health/', lambda request: JsonResponse({'status': 'ok'})),
     path("api/v1/", include("api.v1.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
