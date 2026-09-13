@@ -16,7 +16,7 @@ from drf_spectacular.views import (
 def health(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
-    return JsonResponse({"message": "API is live"})
+    return JsonResponse({"status": "ok"})
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="admin:index", permanent=False)),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
