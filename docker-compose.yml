@@ -32,26 +32,6 @@ services:
       REDIS_HOST: redis
       REDIS_URL: redis://redis:6379/0
 
-  celery-worker:
-    build:
-      context: ./Backend
-      dockerfile: dev.Dockerfile
-    command: celery -A config worker -l info
-    volumes:
-      - ./Backend:/app
-    depends_on:
-      - db
-      - redis
-    environment:
-      DJANGO_SECRET_KEY: dev-secret-key-change-me
-      DB_NAME: hovuca
-      DB_USER: silkkeith
-      DB_PASSWORD: "85213"
-      DB_HOST: db
-      DB_PORT: "5432"
-      REDIS_HOST: redis
-      REDIS_URL: redis://redis:6379/0
-      
   frontend:
     build: ./frontend
     volumes:

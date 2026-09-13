@@ -1,15 +1,15 @@
 """
-Celery tasks for the accounts app.
+Django tasks for the accounts app.
 Queue: accounts
 
 Email delivery via Resend (HTTP API — fast, no SMTP).
-Non-email tasks (IP logging etc.) remain on Celery.
+Non-email tasks (IP logging etc.) use the configured Django task backend.
 """
 
 import logging
 
 import resend
-from celery import shared_task
+from core.tasking import shared_task
 from django.conf import settings
 from django.template.loader import render_to_string
 
@@ -154,7 +154,7 @@ def send_password_changed_email(self, email: str, frontend_url: str = ""):
 
 
 # ---------------------------------------------------------------------------
-# Update last login IP (non-email — stays on Celery as before)
+# Update last login IP (non-email — stays on the task backend)
 # ---------------------------------------------------------------------------
 
 @shared_task(queue="accounts", name="accounts.update_last_login_ip")

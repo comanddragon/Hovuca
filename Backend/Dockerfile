@@ -17,15 +17,15 @@ ENV DJANGO_SETTINGS_MODULE=config.settings.production
 RUN DJANGO_SECRET_KEY=collectstatic-only-not-a-runtime-secret-0000000000000000 \
     ALLOWED_HOSTS=localhost \
     NEON_DB_URL=postgresql://build:build@localhost:5432/build \
-    REDIS_HOST=localhost \
-    REDIS_URL=redis://localhost:6379/0 \
     CORS_ALLOWED_ORIGINS=http://localhost:3000 \
-    AWS_ACCESS_KEY_ID=collectstatic \
-    AWS_SECRET_ACCESS_KEY=collectstatic \
-    AWS_STORAGE_BUCKET_NAME=collectstatic \
+    R2_ACCOUNT_ID=collectstatic \
+    R2_ACCESS_KEY_ID=collectstatic \
+    R2_SECRET_ACCESS_KEY=collectstatic \
+    R2_BUCKET_NAME=collectstatic \
+    R2_PUBLIC_URL=https://example.invalid \
     SENTRY_DSN= \
     python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "celery -A config worker -l info & python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-1} --threads 2 --timeout 120 --access-logfile - --error-logfile -"]

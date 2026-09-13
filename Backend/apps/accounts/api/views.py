@@ -48,7 +48,7 @@ class LoginView(TokenObtainPairView):
             user_id = user["id"] if user else None
             if user_id:
                 from apps.accounts.tasks import update_last_login_ip
-                update_last_login_ip.delay(str(user_id), self._get_client_ip(request))
+                update_last_login_ip.enqueue(str(user_id), self._get_client_ip(request))
         return response
 
     def _get_client_ip(self, request):
@@ -107,7 +107,7 @@ class RegisterView(generics.CreateAPIView):
         # Fire-and-forget — does not block the response
         try:
             from apps.accounts.tasks import send_welcome_email
-            send_welcome_email.delay(str(user.id), get_frontend_url(request))
+            send_welcome_email.enqueue(str(user.id), get_frontend_url(request))
         except Exception:
             pass
 

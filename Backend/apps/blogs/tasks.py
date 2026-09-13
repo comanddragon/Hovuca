@@ -1,11 +1,11 @@
 """
-Celery tasks for the blog app.
+Django tasks for the blog app.
 Queue: accounts, default
 """
 
 import logging
 
-from celery import shared_task
+from core.tasking import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -39,7 +39,7 @@ def notify_author_on_comment(comment_id: str):
     try:
         from apps.notifications.tasks import send_notification
 
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(article.author.id),
             notification_type="system",
             title="💬 New comment on your article",
@@ -81,7 +81,7 @@ def notify_commenter_on_reply(reply_id: str):
     try:
         from apps.notifications.tasks import send_notification
 
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(reply.parent.author.id),
             notification_type="system",
             title="↩️ Someone replied to your comment",

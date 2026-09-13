@@ -5,7 +5,7 @@ WebSocket endpoint: /ws/quiz/<quiz_id>/
 
 Powers two real-time features:
   1. Live leaderboard — pushed to all connected participants whenever
-     a new attempt is completed (triggered by Celery / quiz submit view).
+     a new attempt is completed (triggered by Django tasks / quiz submit view).
   2. Quiz session timer — server-authoritative countdown broadcast to
      all participants in the same quiz room.
 
@@ -142,7 +142,7 @@ class QuizConsumer(AsyncWebsocketConsumer):
 
     async def timer_tick(self, event):
         """
-        Triggered by a Celery beat task for timed quizzes.
+        Triggered by a a scheduler task for timed quizzes.
         Broadcasts seconds remaining to all participants.
         """
         await self.send_json(
@@ -248,7 +248,7 @@ class QuizConsumer(AsyncWebsocketConsumer):
         return entries
 
     # ------------------------------------------------------------------
-    # Class-level broadcast helpers (call from Celery / views)
+    # Class-level broadcast helpers (call from Django tasks / views)
     # ------------------------------------------------------------------
 
     @classmethod

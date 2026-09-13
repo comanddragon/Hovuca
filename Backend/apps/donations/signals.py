@@ -26,7 +26,7 @@ def on_donation_status_changed(sender, instance, created, **kwargs):
         try:
             from apps.notifications.tasks import send_notification
 
-            send_notification.delay(
+            send_notification.enqueue(
                 user_id=str(instance.donor.id),
                 notification_type="donation",
                 title="Donation Confirmed ❤️",
@@ -51,7 +51,7 @@ def on_donation_status_changed(sender, instance, created, **kwargs):
             ):
                 from .tasks import notify_campaign_goal_reached
 
-                notify_campaign_goal_reached.delay(str(campaign.id))
+                notify_campaign_goal_reached.enqueue(str(campaign.id))
         except Exception as exc:
             logger.error(
                 "on_donation_status_changed campaign goal check failed: %s", exc
@@ -69,7 +69,7 @@ def on_campaign_created(sender, instance, created, **kwargs):
     try:
         from apps.notifications.tasks import notify_staff
 
-        notify_staff.delay(
+        notify_staff.enqueue(
             notification_type="donation",
             title=f"New Campaign: '{instance.title}'",
             body="A new donation campaign has been created and needs review.",

@@ -1,12 +1,12 @@
 """
-Celery tasks for the notifications app.
+Django tasks for the notifications app.
 These are the shared helpers all other apps call to dispatch notifications.
 Queue: default
 """
 
 import logging
 
-from celery import shared_task
+from core.tasking import shared_task
 from asgiref.sync import async_to_sync
 
 logger = logging.getLogger(__name__)
@@ -99,7 +99,7 @@ def notify_staff(
     )
 
     for user_id in staff_ids:
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(user_id),
             notification_type=notification_type,
             title=title,
@@ -125,7 +125,7 @@ def send_bulk_notification(
     Send the same notification to a list of users (e.g. all course enrollees).
     """
     for user_id in user_ids:
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(user_id),
             notification_type=notification_type,
             title=title,

@@ -25,7 +25,7 @@ def on_user_created(sender, instance, created, **kwargs):
         from apps.notifications.tasks import send_notification
         from apps.accounts.tasks import send_email_verification
 
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(instance.id),
             notification_type="system",
             title="Welcome to HOVUCA! 🎉",
@@ -35,7 +35,7 @@ def on_user_created(sender, instance, created, **kwargs):
             ),
             action_url="/dashboard/",
         )
-        send_email_verification.delay()
+        send_email_verification.enqueue()
     except Exception as exc:
         logger.error("on_user_created notification failed for %s: %s", instance.id, exc)
 
@@ -47,6 +47,6 @@ def notify_password_changed(sender, instance, update_fields, **kwargs):
             from apps.accounts.tasks import send_password_changed_email
             # No request context in signals — frontend_url left empty,
             # template footer links fall back to "#"
-            send_password_changed_email.delay(instance.email)
+            send_password_changed_email.enqueue(instance.email)
         except Exception as exc:
             logger.error("notify_password_changed failed for %s: %s", instance.id, exc)

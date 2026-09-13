@@ -2,7 +2,7 @@
 WSGI config for ngo_platform.
 
 Used for traditional synchronous HTTP serving (e.g. Gunicorn).
-For WebSocket / real-time support use asgi.py with Daphne instead.
+For WebSocket / real-time support use asgi.py with an ASGI server instead.
 """
 
 import os

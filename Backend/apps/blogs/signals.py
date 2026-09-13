@@ -26,7 +26,7 @@ def on_article_saved(sender, instance, created, **kwargs):
             # Use a flag on the instance to avoid double-firing within the same save cycle
             if not getattr(instance, "_newsletter_sent", False):
                 instance._newsletter_sent = True
-                send_article_published_newsletter.delay(str(instance.id))
+                send_article_published_newsletter.enqueue(str(instance.id))
         except Exception as exc:
             logger.error("on_article_saved newsletter dispatch failed: %s", exc)
 
@@ -35,7 +35,7 @@ def on_article_saved(sender, instance, created, **kwargs):
         try:
             from apps.notifications.tasks import notify_staff
 
-            notify_staff.delay(
+            notify_staff.enqueue(
                 notification_type="system",
                 title="📝 Article Pending Review",
                 body=f"'{instance.title}' has been submitted for review.",
@@ -58,7 +58,7 @@ def on_comment_saved(sender, instance, created, **kwargs):
     try:
         from .tasks import notify_author_on_comment
 
-        notify_author_on_comment.delay(str(instance.id))
+        notify_author_on_comment.enqueue(str(instance.id))
     except Exception as exc:
         logger.error("on_comment_saved author notification failed: %s", exc)
 
@@ -66,6 +66,6 @@ def on_comment_saved(sender, instance, created, **kwargs):
         try:
             from .tasks import notify_commenter_on_reply
 
-            notify_commenter_on_reply.delay(str(instance.id))
+            notify_commenter_on_reply.enqueue(str(instance.id))
         except Exception as exc:
             logger.error("on_comment_saved reply notification failed: %s", exc)

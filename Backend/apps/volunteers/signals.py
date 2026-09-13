@@ -22,7 +22,7 @@ def on_volunteer_task_saved(sender, instance, created, **kwargs):
         try:
             from .tasks import send_task_assignment_email
 
-            send_task_assignment_email.delay(str(instance.id))
+            send_task_assignment_email.enqueue(str(instance.id))
         except Exception as exc:
             logger.error("on_volunteer_task_saved task email dispatch failed: %s", exc)
 
@@ -30,7 +30,7 @@ def on_volunteer_task_saved(sender, instance, created, **kwargs):
         try:
             from apps.notifications.tasks import send_notification
 
-            send_notification.delay(
+            send_notification.enqueue(
                 user_id=str(instance.volunteer.user.id),
                 notification_type="volunteer",
                 title="📋 New Task Assigned",
@@ -47,7 +47,7 @@ def on_volunteer_task_saved(sender, instance, created, **kwargs):
         try:
             from .tasks import update_hours_contributed
 
-            update_hours_contributed.delay(str(instance.volunteer.id))
+            update_hours_contributed.enqueue(str(instance.volunteer.id))
         except Exception as exc:
             logger.error(
                 "on_volunteer_task_saved hours update dispatch failed: %s", exc

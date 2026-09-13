@@ -10,20 +10,13 @@ resend
 djangorestframework-simplejwt
 
 # Real-time
-channels[daphne]
+channels
 dj_database_url
 channels-redis
 
 # WSGI / ASGI servers
 gunicorn
-daphne
 argon2-cffi
-
-# Task queue
-celery[redis]
-celery-types
-django-celery-beat
-django-celery-results
 
 # API
 django-cors-headers

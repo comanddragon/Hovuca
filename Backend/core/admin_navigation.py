@@ -44,13 +44,6 @@ MODEL_ICONS = {
     "programs.project": "work",
     "volunteers.volunteerprofile": "group",
     "volunteers.volunteertask": "task_alt",
-    "django_celery_beat.clockedschedule": "schedule",
-    "django_celery_beat.crontabschedule": "calendar_month",
-    "django_celery_beat.intervalschedule": "timer",
-    "django_celery_beat.periodictask": "sync",
-    "django_celery_beat.solarschedule": "sunny",
-    "django_celery_results.groupresult": "format_list_bulleted",
-    "django_celery_results.taskresult": "data_check",
     "token_blacklist.blacklistedtoken": "block",
     "token_blacklist.outstandingtoken": "key",
 }

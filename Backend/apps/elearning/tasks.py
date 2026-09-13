@@ -1,16 +1,15 @@
 """
-Celery tasks for the elearning app.
+Django tasks for the elearning app.
 Queues: certificates, accounts
 """
 
 import logging
 
-from celery import shared_task
+from core.tasking import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +69,7 @@ def generate_certificate(self, enrollment_id: str):
         # Notify the student
         from apps.notifications.tasks import send_notification
 
-        send_notification.delay(
+        send_notification.enqueue(
             user_id=str(enrollment.user.id),
             notification_type="course",
             title="🎓 Certificate Ready!",
@@ -79,7 +78,7 @@ def generate_certificate(self, enrollment_id: str):
         )
 
         # Email the certificate
-        send_certificate_email.delay(enrollment_id)
+        send_certificate_email.enqueue(enrollment_id)
 
     except Exception as exc:
         logger.error(

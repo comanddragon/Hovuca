@@ -1,12 +1,6 @@
 -r base.txt
 
-# Caching
-django-redis
-uvicorn[standard]
 # Monitoring & logging
 sentry-sdk[django]
-sentry-sdk[celery]
-sentry-sdk[redis]
-gevent
 # Security
 django-axes        # brute-force login protection

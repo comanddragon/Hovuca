@@ -210,7 +210,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
         reset_url = f"{frontend_url}/reset-password/{uid}/{token}"
 
         from apps.accounts.tasks import send_password_reset_email
-        send_password_reset_email.delay(str(user.id), reset_url)
+        send_password_reset_email.enqueue(str(user.id), reset_url)
 
 
 # ---------------------------------------------------------------------------

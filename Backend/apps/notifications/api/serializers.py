@@ -30,7 +30,7 @@ class NotificationMarkReadSerializer(serializers.Serializer):
 
 
 class NotificationCreateSerializer(serializers.ModelSerializer):
-    """Internal serializer — used by Celery tasks / system events, not exposed to end users."""
+    """Internal serializer — used by Django tasks / system events, not exposed to end users."""
 
     class Meta:
         model = Notification

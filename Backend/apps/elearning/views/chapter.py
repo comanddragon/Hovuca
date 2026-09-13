@@ -129,7 +129,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
             try:
                 from apps.elearning.tasks import generate_certificate
 
-                generate_certificate.delay(str(enrollment.id))
+                generate_certificate.enqueue(str(enrollment.id))
             except Exception:
                 pass
 

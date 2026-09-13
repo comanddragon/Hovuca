@@ -1,11 +1,11 @@
 """
-Celery tasks for the donations app.
+Django tasks for the donations app.
 Queues: payments, accounts
 """
 
 import logging
 
-from celery import shared_task
+from core.tasking import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -65,7 +65,7 @@ def process_donation_payment(self, donation_id: str):
         )
 
         # Fire receipt task
-        send_donation_receipt.delay(donation_id)
+        send_donation_receipt.enqueue(donation_id)
 
     except Exception as exc:
         logger.error("process_donation_payment failed for %s: %s", donation_id, exc)

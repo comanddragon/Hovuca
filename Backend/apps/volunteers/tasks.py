@@ -1,11 +1,11 @@
 """
-Celery tasks for the volunteers app.
+Django tasks for the volunteers app.
 Queue: accounts, default
 """
 
 import logging
 
-from celery import shared_task
+from core.tasking import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -68,7 +68,7 @@ def remind_pending_tasks():
     """
     Periodic task: remind volunteers of tasks that are past their due date
     and still pending or in-progress.
-    Schedule in Celery Beat (e.g. daily at 08:00).
+    Schedule in a scheduler (e.g. daily at 08:00).
     """
     from django.utils import timezone
     from .models import VolunteerTask
@@ -84,7 +84,7 @@ def remind_pending_tasks():
         try:
             from apps.notifications.tasks import send_notification
 
-            send_notification.delay(
+            send_notification.enqueue(
                 user_id=str(user.id),
                 notification_type="volunteer",
                 title="⏰ Overdue Task",

@@ -155,7 +155,7 @@ class DonationViewSet(viewsets.ModelViewSet):
         try:
             from apps.donations.tasks import process_donation_payment
 
-            process_donation_payment.delay(str(donation.id))
+            process_donation_payment.enqueue(str(donation.id))
         except Exception:
             pass
 

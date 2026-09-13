@@ -6,7 +6,7 @@ WebSocket endpoint: /ws/notifications/
 Each authenticated user joins their own private channel group:
     notification_<user_id>
 
-Celery tasks (or any Django code) can push notifications to a user
+Django tasks (or any Django code) can push notifications to a user
 by calling the class-method `NotificationConsumer.push()` or by
 publishing directly to the channel layer group:
 
@@ -173,7 +173,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         ).update(is_read=True, read_at=timezone.now())
 
     # ------------------------------------------------------------------
-    # Class-level push helper (call from Celery tasks / views)
+    # Class-level push helper (call from Django tasks / views)
     # ------------------------------------------------------------------
 
     @classmethod
@@ -181,7 +181,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         """
         Push a notification to a connected user from anywhere in the codebase.
 
-        Usage (sync context, e.g. in a Celery task):
+        Usage (sync context, e.g. in a Django task):
             from asgiref.sync import async_to_sync
             async_to_sync(NotificationConsumer.push)(str(user.id), {"title": "Hello"})
         """

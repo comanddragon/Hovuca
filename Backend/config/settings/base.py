@@ -4,7 +4,6 @@ from pathlib import Path
 from decouple import config
 from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
-from kombu import Queue
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -21,7 +20,6 @@ INSTALLED_APPS = [
     "unfold.contrib.location_field",  # optional, if django-location-field package is used
     "unfold.contrib.constance",  # optional, if django-constance package is used
     "unfold.contrib.hijack",  # optional, if django-hijack package is used
-    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,8 +35,6 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "storages",
     "channels",
-    "django_celery_beat",
-    "django_celery_results",
     "core",
     "apps.accounts",
     "apps.blogs",
@@ -258,41 +254,12 @@ SPECTACULAR_SETTINGS = {
 RESEND_API_KEY = config("RESEND_API_KEY", default="")
 RESEND_FROM = config("RESEND_FROM", default="")
 
-CELERY_BROKER_URL = config("REDIS_URL")
-CELERY_RESULT_BACKEND = config( "CELERY_RESULT_BACKEND", default="django-db" )
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_ALWAYS_EAGER = False
-CELERY_TASK_EAGER_PROPAGATES = False
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BROKER_TRANSPORT_OPTIONS = { "visibility_timeout": 3600 }
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60
-
-CELERY_TASK_QUEUES = (Queue("celery"), Queue("accounts"))
-
-CELERY_TASK_ROUTES = {
-    "accounts.*": {"queue": "accounts"},
-    "notifications.*": {"queue": "celery"},
+TASKS = {
+    "default": {
+        "BACKEND": "django.tasks.backends.immediate.ImmediateBackend",
+        "QUEUES": ["default", "accounts", "payments", "certificates"],
+    },
 }
-
-
-SUPABASE_PROJECT_REF = config("SUPABASE_PROJECT_REF", default="")
-SUPABASE_STORAGE_BUCKET = config("SUPABASE_STORAGE_BUCKET", default="hovuca-media",)
-SUPABASE_STORAGE_REGION = config("SUPABASE_STORAGE_REGION", default="ap-southeast-1",)
-SUPABASE_STORAGE_KEY_ID = config("SUPABASE_STORAGE_KEY_ID", default="",)
-SUPABASE_STORAGE_SECRET = config("SUPABASE_STORAGE_SECRET", default="",)
-
-NEON_STORAGE_ENDPOINT = config("NEON_STORAGE_ENDPOINT", default="")
-NEON_STORAGE_PUBLIC_URL = config("NEON_STORAGE_PUBLIC_URL", default="")
-NEON_STORAGE_BUCKET = config("NEON_STORAGE_BUCKET", default="")
-NEON_STORAGE_REGION = config("NEON_STORAGE_REGION", default="auto")
-NEON_STORAGE_KEY_ID = config("NEON_STORAGE_KEY_ID", default="")
-NEON_STORAGE_SECRET = config("NEON_STORAGE_SECRET", default="")
 
 
 

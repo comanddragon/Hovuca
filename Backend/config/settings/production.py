@@ -1,8 +1,6 @@
 import sentry_sdk
 from decouple import config
-from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
 from urllib.parse import parse_qsl, urlparse
 
 
@@ -76,37 +74,29 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
-    # Media files — S3
+# Media files — Cloudflare R2 (S3-compatible)
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
 }
 
-AWS_ACCESS_KEY_ID = config(
-    "AWS_ACCESS_KEY_ID", default=config("SUPABASE_STORAGE_KEY_ID", default="")
-)
-AWS_SECRET_ACCESS_KEY = config(
-    "AWS_SECRET_ACCESS_KEY", default=config("SUPABASE_STORAGE_SECRET", default="")
-)
-AWS_STORAGE_BUCKET_NAME = config(
-    "AWS_STORAGE_BUCKET_NAME", default=config("SUPABASE_STORAGE_BUCKET", default="")
-)
-AWS_S3_REGION = config(
-    "AWS_S3_REGION", default=config("SUPABASE_STORAGE_REGION", default="us-east-1")
-)
-AWS_S3_CUSTOM_DOMAIN = config("AWS_CLOUDFRONT_DOMAIN", default="")
-SUPABASE_PROJECT_REF = config("SUPABASE_PROJECT_REF", default="")
-AWS_S3_ENDPOINT_URL = config(
-    "AWS_S3_ENDPOINT_URL",
-    default=(
-        f"https://{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/s3"
-        if SUPABASE_PROJECT_REF
-        else None
-    ),
-)
-AWS_DEFAULT_ACL       = "private"
+R2_ACCOUNT_ID = config("R2_ACCOUNT_ID")
+R2_PUBLIC_URL = config("R2_PUBLIC_URL").rstrip("/")
+AWS_ACCESS_KEY_ID = config("R2_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+AWS_S3_REGION_NAME = "auto"
+AWS_S3_CUSTOM_DOMAIN = R2_PUBLIC_URL.removeprefix("https://").removeprefix("http://")
+AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH  = False
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+
+# A single Gunicorn process does not need external cache/channel infrastructure.
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # ---------------------------------------------------------------------------
@@ -114,7 +104,7 @@ AWS_QUERYSTRING_AUTH  = False
 # ---------------------------------------------------------------------------
 sentry_sdk.init(
     dsn=config("SENTRY_DSN", default=""),
-    integrations=[DjangoIntegration(),CeleryIntegration(),RedisIntegration()],
+    integrations=[DjangoIntegration()],
     traces_sample_rate=0.2,
     send_default_pii=False,
 )

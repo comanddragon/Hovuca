@@ -3,7 +3,7 @@ ASGI config for ngo_platform.
 
 Exposes the ASGI callable as `application`.
 Handles both standard HTTP (via Django) and WebSocket connections
-(via Django Channels + Daphne).
+(via Django Channels + an ASGI server).
 """
 
 import os
