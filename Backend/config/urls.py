@@ -13,20 +13,10 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 def home(request):
-    return JsonResponse({"message": "API is live"})
-
-def health(request):
-    # Runs a trivial query (not just an app-level ping) so external cron
-    # hits to this endpoint also count as DB activity for Neon — otherwise
-    # the web service stays warm while the Neon compute still auto-suspends
-    # after ~5 min of no queries, and the next real API call pays the
-    # multi-second wake-up cost.
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
-    return JsonResponse({"status": "ok"})
+    return JsonResponse({"message": "API is live"})
 urlpatterns = [
-    path("", health),
-
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("admin/", admin.site.urls),
     path("", home),
