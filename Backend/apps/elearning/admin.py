@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, StackedInline, TabularInline
 from django import forms
-from django_ckeditor_5.widgets import CKEditor5Widget
+from core.widgets import AdminCKEditor5Widget
 
 from apps.elearning.models.chapter import Chapter
 from apps.elearning.models.course import Course, Subject
@@ -15,14 +15,14 @@ class ChapterAdminForm(forms.ModelForm):
     class Meta:
         model = Chapter
         fields = "__all__"
-        widgets = {"content_body": CKEditor5Widget(config_name="hovuca")}
+        widgets = {"content_body": AdminCKEditor5Widget(config_name="hovuca")}
 
 
 class CourseAdminForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
-        widgets = {"description": CKEditor5Widget(config_name="hovuca")}
+        widgets = {"description": AdminCKEditor5Widget(config_name="hovuca")}
 
 # ---------------------------------------------------------------------------
 # Subject
