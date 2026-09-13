@@ -2,6 +2,8 @@ import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
 from django.utils.text import slugify
+from django_ckeditor_5.fields import CKEditor5Field
+
 from core.models import BaseModel
 
 ARTICLE_BODY_ALLOWED_TAGS = [
@@ -110,7 +112,10 @@ class Article(BaseModel):
     excerpt = models.TextField(
         max_length=500, blank=True, help_text="Short summary shown in listing cards."
     )
-    body = models.TextField(help_text="Full article body. Supports Markdown / HTML.")
+    body = CKEditor5Field(
+        config_name="hovuca",
+        help_text="Full article body with rich-text formatting.",
+    )
     cover_image = models.ImageField(upload_to="blog/covers/", null=True, blank=True)
     cover_image_alt = models.CharField(max_length=255, blank=True)
 

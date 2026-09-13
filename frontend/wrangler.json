@@ -11,6 +11,16 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "routes": [
+    {
+      "pattern": "hovuca.org",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.hovuca.org",
+      "custom_domain": true
+    }
+  ],
   "vars": {
     "API_URL": "https://admin.hovuca.org/api/v1",
     "NEXT_PUBLIC_API_URL": "/api",

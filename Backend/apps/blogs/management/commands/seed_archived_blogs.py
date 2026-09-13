@@ -84,10 +84,16 @@ class Command(BaseCommand):
         with csv_path.open("r", encoding="utf-8-sig", newline="") as csv_file, transaction.atomic():
             for row in csv.DictReader(csv_file):
                 category_name = row.get("category", "").strip() or "News"
-                category, _ = Category.objects.get_or_create(
-                    slug=slugify(category_name)[:100],
-                    defaults={"name": category_name[:100], "color": "#183B35", "is_active": True},
-                )
+                category = Category.objects.filter(name=category_name[:100]).first()
+                if category is None:
+                    category, _ = Category.objects.get_or_create(
+                        slug=slugify(category_name)[:100],
+                        defaults={
+                            "name": category_name[:100],
+                            "color": "#183B35",
+                            "is_active": True,
+                        },
+                    )
                 slug = slugify(row["slug"] or row["title"])[:280]
                 body = self._import_body_images(row.get("body_html", ""), archive_root, slug, options["dry_run"])
                 published_at = self._date(row.get("published_at", ""))

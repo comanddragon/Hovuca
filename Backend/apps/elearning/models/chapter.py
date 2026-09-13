@@ -1,6 +1,7 @@
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 from core.models import BaseModel
 
 
@@ -40,7 +41,7 @@ class Chapter(BaseModel):
     content_url = models.URLField(blank=True)
 
     # For text/article content
-    content_body = models.TextField(blank=True)
+    content_body = CKEditor5Field(config_name="hovuca", blank=True)
 
     # For PDF/file
     content_file = models.FileField(upload_to="chapters/files/", null=True, blank=True)

@@ -3,17 +3,8 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
-from django import forms
-from django_ckeditor_5.widgets import CKEditor5Widget
 
 from .models import Article, Bookmark, Category, Comment, Like, Resource, Tag
-
-
-class ArticleAdminForm(forms.ModelForm):
-    class Meta:
-        model = Article
-        fields = "__all__"
-        widgets = {"body": CKEditor5Widget(config_name="hovuca")}
 
 
 @admin.register(Resource)
@@ -78,7 +69,6 @@ class CommentInline(TabularInline):
 
 @admin.register(Article)
 class ArticleAdmin(ModelAdmin):
-    form = ArticleAdminForm
     list_display = [
         "title",
         "author",

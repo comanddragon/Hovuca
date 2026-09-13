@@ -1,4 +1,6 @@
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
+
 from core.models import BaseModel
 
 
@@ -47,7 +49,7 @@ class Course(BaseModel):
     )
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    description = models.TextField(blank=True)
+    description = CKEditor5Field(config_name="hovuca", blank=True)
     thumbnail = models.ImageField(
         upload_to="courses/thumbnails/", null=True, blank=True
     )
