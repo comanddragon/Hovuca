@@ -5,12 +5,10 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 SEED_COMMANDS = (
-    "seed_data",
     "seed_old_site",
     "seed_archived_topics",
     "seed_archived_blogs",
     "seed_archived_resources",
-    "seed_donors",
     "seed_archived_donors",
 )
 
