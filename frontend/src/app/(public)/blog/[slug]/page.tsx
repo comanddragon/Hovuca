@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { authPath } from "@/lib/auth-return";
 
 function resolveArticleMedia(content: string) {
-    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL?.replace(/\/$/, "");
+    const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.hovuca.org").replace(/\/$/, "");
     const resolved = mediaBase
         ? content
             // Current Django media paths.
