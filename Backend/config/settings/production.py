@@ -8,13 +8,20 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = False
 
-ALLOWED_HOSTS = [
+configured_hosts = [
     host.strip()
     for host in config(
         "DJANGO_ALLOWED_HOSTS", default=config("ALLOWED_HOSTS", default="")
     ).split(",")
     if host.strip()
 ]
+render_hostname = config("RENDER_EXTERNAL_HOSTNAME", default="").strip()
+ALLOWED_HOSTS = list(
+    dict.fromkeys(
+        [*configured_hosts, "localhost", "127.0.0.1", render_hostname]
+    )
+)
+ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 # ---------------------------------------------------------------------------
 # Database — Postgres with connection pooling

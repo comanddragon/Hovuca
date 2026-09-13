@@ -21,7 +21,7 @@ urlpatterns = [
     path("", RedirectView.as_view(pattern_name="admin:index", permanent=False)),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("admin/", admin.site.urls),
-    path("health/", health),
+    path("health", health),
     path('api/health/', lambda request: JsonResponse({'status': 'ok'})),
     path("api/v1/", include("api.v1.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
