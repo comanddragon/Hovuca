@@ -334,6 +334,7 @@ export default function HomePage() {
                             <label htmlFor="home-email" className="sr-only">Email address</label>
                             <input
                                 id="home-email"
+                                suppressHydrationWarning
                                 type="email"
                                 required
                                 value={email}
@@ -341,7 +342,7 @@ export default function HomePage() {
                                 placeholder="Email address"
                                 className="min-h-14 flex-1 bg-white px-5 text-[#183b35] outline-none placeholder:text-[#183b35]/45"
                             />
-                            <button type="submit" className="min-h-14 bg-[#183b35] px-7 text-sm font-semibold text-white">Subscribe</button>
+                            <button suppressHydrationWarning type="submit" className="min-h-14 bg-[#183b35] px-7 text-sm font-semibold text-white">Subscribe</button>
                         </form>
                     )}
                 </div>

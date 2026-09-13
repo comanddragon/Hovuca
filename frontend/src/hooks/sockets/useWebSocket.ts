@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import Cookies from "js-cookie";
 
 const WS_BASE = process.env.NEXT_PUBLIC_WS_URL;
-const WS_ENABLED = process.env.NEXT_PUBLIC_WS_ENABLED;
+const WS_ENABLED = process.env.NEXT_PUBLIC_WS_ENABLED === "true";
 
 const HEARTBEAT_INTERVAL  = 30_000;
 const RECONNECT_DELAY     =  3_000;
@@ -106,7 +106,7 @@ export function useWebSocket({
             };
         };
 
-        if (enabled && WS_ENABLED && Cookies.get("access_token")) connect();
+        if (enabled && WS_ENABLED && WS_BASE && Cookies.get("access_token")) connect();
 
         return () => {
             mounted = false;
