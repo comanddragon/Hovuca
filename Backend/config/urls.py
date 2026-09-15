@@ -13,16 +13,28 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+
+# Render checks this frequently
 def health(request):
+    return JsonResponse({"status": "ok"})
+
+
+# cron-job.org hits this every 5-10 minutes
+def database_health(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
-    return JsonResponse({"status": "ok"})
+
+    return JsonResponse({
+        "status": "ok",
+        "database": "ok",
+    })
+    
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="admin:index", permanent=False)),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("admin/", admin.site.urls),
-    path("health", health),
-    path('api/health/', lambda request: JsonResponse({'status': 'ok'})),
+    path("health", health),                 # Render
+    path("api/health/", database_health),   # cron-job.org
     path("api/v1/", include("api.v1.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
