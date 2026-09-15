@@ -62,13 +62,17 @@ DATABASES = {
 def _env_bool(name, default):
     return config(name, default=str(default)).lower() in ("true", "1", "yes")
 
+# Render terminates TLS at its proxy and forwards requests to Django.
+# Trust X-Forwarded-Proto so Django can determine whether the original
+# request was HTTPS.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 SECURE_SSL_REDIRECT            = _env_bool("SECURE_SSL_REDIRECT", True)
 SECURE_HSTS_SECONDS            = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD            = True
 SESSION_COOKIE_SECURE          = _env_bool("SESSION_COOKIE_SECURE", True)
 CSRF_COOKIE_SECURE             = _env_bool("CSRF_COOKIE_SECURE", True)
-SECURE_BROWSER_XSS_FILTER      = True
 SECURE_CONTENT_TYPE_NOSNIFF    = True
 X_FRAME_OPTIONS                = "DENY"
 
