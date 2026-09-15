@@ -44,7 +44,7 @@ export default function BlogPage() {
                     <>
                         <article className="grid overflow-hidden rounded-2xl border border-neutral-200 bg-white lg:grid-cols-[1.1fr_.9fr]">
                             <div className="relative min-h-72 bg-neutral-100 lg:min-h-[430px]">
-                                {featured.cover_image ? <Image src={featured.cover_image} alt={featured.cover_image_alt || featured.title} fill priority loading="eager" sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" /> : <Image src="/heros/hero1.png" alt="HOVUCA community work" fill priority loading="eager" sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />}
+                                {featured.cover_image ? <Image src={featured.cover_image} alt={featured.cover_image_alt || featured.title} fill priority loading="eager" sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" /> : <Image src="/heros/hero1.webp" alt="HOVUCA community work" fill priority loading="eager" sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />}
                             </div>
                             <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-12">
                                 {featured.category && <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5d2d84]">{featured.category.name}</p>}

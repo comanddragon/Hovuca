@@ -91,7 +91,7 @@ export default function CourseDetailPage() {
     <div className={styles.page}>
       <section className={styles.courseHero} aria-labelledby="course-title">
         <Image
-          src="/assets/plates/course-hero-photo.png"
+          src="/assets/plates/course-hero-photo.webp"
           alt="Young people taking part in a HOVUCA learning session"
           fill
           priority
@@ -153,7 +153,7 @@ export default function CourseDetailPage() {
 
                 <div className={styles.lessonPhotoWrap}>
                   <Image
-                    src="/assets/plates/lesson-photo.png"
+                    src="/assets/plates/lesson-photo.webp"
                     alt="Young people in a facilitated outdoor learning discussion"
                     fill
                     priority

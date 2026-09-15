@@ -4,7 +4,7 @@ export default function Logo() {
     return (
         <div className="flex h-11 w-11 items-center justify-center overflow-hidden bg-white shadow-sm">
             <Image
-                src="/Hovuca-croped.png"
+                src="/Hovuca-croped.webp"
                 alt="HOVUCA logo"
                 width={40}
                 height={40}

@@ -119,7 +119,7 @@ export default function AboutPage() {
 
                 <motion.div className="absolute inset-0" style={{ y: heroY }}>
                     <Image
-                        src="/heros/hero1.png"
+                        src="/heros/hero1.webp"
                         alt="Hero background"
                         fill
                         priority
@@ -258,7 +258,7 @@ export default function AboutPage() {
                             className="relative"
                         >
                             <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                                <div className="absolute inset-0 bg-[url('/heros/hero1.png')] bg-cover bg-center" />
+                                <div className="absolute inset-0 bg-[url('/heros/hero1.webp')] bg-cover bg-center" />
                                 <div className="absolute inset-0 bg-black/10" />
                             </div>
                         </motion.div>
@@ -278,7 +278,7 @@ export default function AboutPage() {
                             className="relative order-2 lg:order-1"
                         >
                             <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                                <div className="absolute inset-0 bg-[url('/heros/hero1.png')] bg-cover bg-center" />
+                                <div className="absolute inset-0 bg-[url('/heros/hero1.webp')] bg-cover bg-center" />
                                 <div className="absolute inset-0 bg-black/10" />
                             </div>
                         </motion.div>

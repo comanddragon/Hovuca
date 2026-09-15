@@ -86,7 +86,7 @@ export default function FeaturedPrograms() {
                                 animate={isInView ? "visible" : "hidden"}
                             >
                                 {getVisiblePrograms().map((program, i) => {
-                                    const imageUrl = program.banner ?? "/Logos/Hovuca-cropped.png";
+                                    const imageUrl = program.banner ?? "/Hovuca-croped.webp";
                                     return (
                                         <motion.div
                                             key={`program-${program.slug}-${i}`}

@@ -98,7 +98,7 @@ export default function BlogsCarousel() {
                                 onAnimationComplete={handleAnimationComplete}
                             >
                                 {track.map((blog, i) => {
-                                    const imageUrl = blog.cover_image ?? "/Logos/Hovuca-cropped.png";
+                                    const imageUrl = blog.cover_image ?? "/Hovuca-croped.webp";
                                     const bucket = i < VISIBLE ? "tail" : i >= VISIBLE + real.length ? "head" : "real";
                                     const isFirst = bucket === "real" && i === VISIBLE;
                                     return (

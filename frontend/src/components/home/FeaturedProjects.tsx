@@ -119,7 +119,7 @@ export default function FeaturedProjects() {
                                 onAnimationComplete={handleAnimationComplete}
                             >
                                 {track.map((project, i) => {
-                                    const imageUrl = project.cover_image ?? "/Logos/Hovuca-cropped.png";
+                                    const imageUrl = project.cover_image ?? "/Hovuca-croped.webp";
                                     // Unique key: combine real id + position bucket to avoid key collisions
                                     // between real cards and their clones
                                     const bucket = i < VISIBLE ? "tail" : i >= VISIBLE + real.length ? "head" : "real";

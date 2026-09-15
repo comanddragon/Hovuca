@@ -51,7 +51,7 @@ export default function CoursesPage() {
         </div>
         <div className={styles.indexHeroPhoto}>
           <Image
-            src="/assets/plates/course-hero-photo.png"
+            src="/assets/plates/course-hero-photo.webp"
             alt="A HOVUCA facilitator learning alongside young people"
             fill
             priority
