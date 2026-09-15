@@ -39,6 +39,10 @@ export const programsService = {
 // ─── Donations ────────────────────────────────────────────────────────────────
 
 export const donationsService = {
+    getPaymentSettings: async (): Promise<import("@/types").DonationPaymentSettings> => {
+        const { data } = await api.get("/donation-payment-settings/");
+        return data;
+    },
     getCampaigns: async (params?: Record<string, string>): Promise<PaginatedResponse<DonationCampaign>> => {
         const q = new URLSearchParams(params).toString();
         const { data } = await api.get(`/campaigns/${q ? `?${q}` : ""}`);
@@ -119,6 +123,11 @@ export const coursesService = {
 // ─── Volunteers ───────────────────────────────────────────────────────────────
 
 export const volunteersService = {
+    submitApplication: async (payload: import("@/types").VolunteerApplicationPayload): Promise<{ id: string; status: string }> => {
+        const { data } = await api.post("/volunteer-applications/", payload);
+        return data;
+    },
+
     getMyProfile: async (): Promise<VolunteerProfile> => {
         const { data } = await api.get("/volunteers/me/");
         return data;

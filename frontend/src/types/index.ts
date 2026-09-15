@@ -225,6 +225,18 @@ export type CampaignStatus = "active" | "closed" | "draft";
 export type DonationStatus = "pending" | "completed" | "failed" | "refunded";
 export type DonationGateway = "stripe" | "paypal" | "manual";
 
+export interface DonationPaymentSettings {
+    bank_name: string;
+    account_name: string;
+    account_number: string;
+    iban: string;
+    swift_code: string;
+    bank_currency: string;
+    bank_instructions: string;
+    paypal_url: string;
+    campay_url: string;
+}
+
 export interface DonationCampaign {
     id: string;
     program: string | null;
@@ -375,6 +387,19 @@ export interface QuizAttempt {
 // ─── Volunteers ───────────────────────────────────────────────────────────────
 
 export type AvailabilityStatus = "available" | "busy" | "inactive";
+export interface VolunteerApplicationPayload {
+    full_name: string;
+    email: string;
+    phone: string;
+    location: string;
+    occupation: string;
+    skills: string;
+    interests: string;
+    availability: string;
+    hours_per_week: number;
+    motivation: string;
+    contact_consent: boolean;
+}
 export type TaskStatus = "pending" | "in_progress" | "completed" | "cancelled";
 
 export interface VolunteerProfile {

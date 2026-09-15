@@ -163,6 +163,7 @@ export function Navbar() {
             { href: "/documents", label: "Publications" },
             { href: "/courses", label: "Courses" },
             { href: "/volunteers", label: "Get involved" },
+            { href: "/contact", label: "Contact" },
         ];
         const visibleLinks = scrolled ? homeLinks.slice(0, 3) : homeLinks;
 
@@ -200,10 +201,10 @@ export function Navbar() {
                             </Link>
                         ))}
                         <Link
-                            href="/contact"
+                            href="/donate"
                             className={cn("inline-flex items-center bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934] focus-visible:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-[46px] px-8")}
                         >
-                            Partner with us
+                            Donate
                         </Link>
                         {!scrolled && (
                             <Link
@@ -244,11 +245,11 @@ export function Navbar() {
                                 </Link>
                             ))}
                             <Link
-                                href="/contact"
+                                href="/donate"
                                 onClick={() => setMobileOpen(false)}
                                 className="mt-4 bg-[#d85c43] px-5 py-3.5 text-center text-sm font-semibold text-white"
                             >
-                                Partner with us
+                                Donate
                             </Link>
                         </div>
                     </div>

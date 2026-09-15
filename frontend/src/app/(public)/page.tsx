@@ -41,7 +41,7 @@ const fallbackStories = [
         slug: "community-leadership",
         title: "Young people leading change where they live",
         excerpt: "A closer look at the ideas, partnerships and practical action growing from local communities.",
-        cover_image: "/heros/hero1.png",
+        cover_image: "/heros/hero1.webp",
         cover_image_alt: "Young people participating in a HOVUCA community activity",
         category: { name: "Field story" },
     },
@@ -50,7 +50,7 @@ const fallbackStories = [
         slug: "learning-together",
         title: "Learning together, building opportunity",
         excerpt: "How practical learning creates room for confidence, connection and possibility.",
-        cover_image: "/blogs/2.jpg",
+        cover_image: "/assets/plates/program-photo.webp",
         cover_image_alt: "HOVUCA participants learning together",
         category: { name: "From the field" },
     },
@@ -59,7 +59,7 @@ const fallbackStories = [
         slug: "stronger-communities",
         title: "Partnerships that strengthen communities",
         excerpt: "Community voices and shared responsibility remain at the centre of lasting progress.",
-        cover_image: "/assets/plates/program-photo.png",
+        cover_image: "/assets/plates/program-photo.webp",
         cover_image_alt: "A HOVUCA community partnership activity",
         category: { name: "Partnership" },
     },
@@ -155,7 +155,7 @@ export default function HomePage() {
                         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <Image
-                            src="/assets/plates/program-photo.png"
+                            src="/assets/plates/program-photo.webp"
                             alt="A young woman learning a practical skill"
                             fill
                             unoptimized
@@ -239,7 +239,7 @@ export default function HomePage() {
                                 <Link href={`/blog/${article.slug}`}>
                                     <div className="relative aspect-[4/3] overflow-hidden bg-[#e7e5de]">
                                         <Image
-                                            src={article.cover_image || "/blogs/2.jpg"}
+                                            src={article.cover_image || "/assets/plates/program-photo.webp"}
                                             alt={article.cover_image_alt || article.title}
                                             fill
                                             unoptimized

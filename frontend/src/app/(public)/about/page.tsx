@@ -1,75 +1,46 @@
-"use client";
-
+import type { Metadata } from "next";
 import Image from "next/image";
-import { useEffect } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import {
-    CheckCircle2,
-    HeartHandshake,
-    ShieldCheck,
-    Users,
-    Globe2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-/* ─── data ────────────────────────────────────────────────────── */
-const stats = [
-    { value: "15+", label: "Years of Service" },
-    { value: "5K+", label: "Children Supported" },
-    { value: "12", label: "Active Programs" },
-    { value: "98%", label: "Community Impact" },
-];
-
+export const metadata: Metadata = { title: "About", description: "Learn about HOVUCA’s mission, vision, principles, and work for vulnerable children in Cameroon." };
 const principles = [
     {
-        icon: Users,
-        title: "Best Interest of the Child",
-        text: "In all actions concerning children, the best interests of the child shall be a primary consideration.",
+        "title": "Best Interest of the Child",
+        "text": "In all actions concerning children, the best interests of the child shall be a primary consideration."
     },
     {
-        icon: ShieldCheck,
-        title: "Do No Harm",
-        text: "In all our activities, decisions made concerning children, their families, and the community we will seek to avoid causing harm.",
+        "title": "Do No Harm",
+        "text": "In all our activities, decisions made concerning children, their families, and the community we will seek to avoid causing harm."
     },
     {
-        icon: HeartHandshake,
-        title: "Gender Equality",
-        text: "Though we may have specific projects for girls because of their high vulnerability, most of our projects involve both boys and girls.",
+        "title": "Gender Equality",
+        "text": "Though we may have specific projects for girls because of their high vulnerability, most of our projects involve both boys and girls."
     },
     {
-        icon: Globe2,
-        title: "Integrity",
-        text: "HOVUCA endeavors to be transparent, accountable, and responsible in all its activities with youth groups, community heads, staff, volunteers and partners.",
+        "title": "Integrity",
+        "text": "HOVUCA endeavors to be transparent, accountable, and responsible in all its activities with youth groups, community heads, staff, volunteers and partners."
     },
     {
-        icon: ShieldCheck,
-        title: "Transparency",
-        text: "Honestly tell our success story and failures regardless of consequence.",
+        "title": "Transparency",
+        "text": "Honestly tell our success story and failures regardless of consequence."
     },
     {
-        icon: HeartHandshake,
-        title: "Non Discrimination",
-        text: "At HOVUCA, all children and young people regardless of class, race, creed, religion, sex, disability, ethnic origin or sexual orientation have a right to protection.",
+        "title": "Non Discrimination",
+        "text": "At HOVUCA, all children and young people regardless of class, race, creed, religion, sex, disability, ethnic origin or sexual orientation have a right to protection."
     },
     {
-        icon: Globe2,
-        title: "Participation & Sustainability",
-        text: "We believe that children's participation in the initiation, design and implementation of projects that concern them will give them ownership and hence sustainability.",
+        "title": "Participation & Sustainability",
+        "text": "We believe that children's participation in the initiation, design and implementation of projects that concern them will give them ownership and hence sustainability."
     },
     {
-        icon: HeartHandshake,
-        title: "Partnership",
-        text: "HOVUCA holds that success comes with developing partnerships with related organizations and government entities.",
+        "title": "Partnership",
+        "text": "HOVUCA holds that success comes with developing partnerships with related organizations and government entities."
     },
     {
-        icon: Globe2,
-        title: "Accountability",
-        text: "Our structure and system of management is credible and linked directly to our ability to take responsibility for our actions.",
-    },
+        "title": "Accountability",
+        "text": "Our structure and system of management is credible and linked directly to our ability to take responsibility for our actions."
+    }
 ];
-
 const objectives = [
     "Increase access to children's basic and developmental rights.",
     "Improve the health of HIV/AIDS infected children and other vulnerable children.",
@@ -77,364 +48,14 @@ const objectives = [
     "Increase awareness among children and community members on the rights of the child.",
     "Empower women to care and support vulnerable children with emotional and physical needs.",
     "Network and share information with development actors locally, nationally and internationally.",
-    "Advocate for the rights of children and empower girls and adolescent girls to uphold their rights.",
+    "Advocate for the rights of children and empower girls and adolescent girls to uphold their rights."
 ];
-
-/* ─── page ────────────────────────────────────────────────────── */
 export default function AboutPage() {
-    const scrollY = useMotionValue(0);
-    const heroY = useTransform(scrollY, [0, 600], ["0%", "25%"]);
-
-    useEffect(() => {
-        const update = () => scrollY.set(window.scrollY);
-        window.addEventListener("scroll", update, { passive: true });
-        return () => window.removeEventListener("scroll", update);
-    }, [scrollY]);
-
-    // CSS-driven scroll animations via IntersectionObserver
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("is-visible");
-                    } else {
-                        entry.target.classList.remove("is-visible");
-                    }
-                });
-            },
-            { threshold: 0.15 }
-        );
-        document
-            .querySelectorAll(".aos-fade-up, .aos-fade-in, .aos-slide-left, .aos-slide-right, .aos-scale-in")
-            .forEach((el) => observer.observe(el));
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <main className="min-h-screen bg-background">
-
-            {/* ── HERO ──────────────────────────────────────────── */}
-            <section className="relative py-24 lg:py-34 overflow-hidden">
-
-                <motion.div className="absolute inset-0" style={{ y: heroY }}>
-                    <Image
-                        src="/heros/hero1.webp"
-                        alt="Hero background"
-                        fill
-                        priority
-                        loading="eager"
-                        sizes="100vw"
-                        className="object-cover"
-                    />
-                </motion.div>
-
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/70 via-teal-900/60 to-black/80" />
-
-                <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-emerald-500/25 via-teal-600/20 to-cyan-700/30"
-                    animate={{
-                        background: [
-                            "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(20, 184, 166, 0.2) 50%, rgba(14, 165, 233, 0.3) 100%)",
-                            "linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(16, 185, 129, 0.25) 50%, rgba(20, 184, 166, 0.2) 100%)",
-                            "linear-gradient(135deg, rgba(20, 184, 166, 0.2) 0%, rgba(14, 165, 233, 0.3) 50%, rgba(16, 185, 129, 0.25) 100%)",
-                        ],
-                    }}
-                    transition={{ duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-                />
-
-                <div className="relative max-w-6xl mx-auto px-8 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <motion.div
-                            className="mb-8 text-white/80 text-sm font-light tracking-widest uppercase"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            About HOVUCA
-                        </motion.div>
-
-                        <h1 className="text-6xl md:text-8xl font-display font-light text-white mb-12 leading-[0.9] tracking-tight">
-                            Who <span className="font-extralight text-white/90">We Are</span>
-                        </h1>
-
-                        <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-16 font-light leading-relaxed">
-                            We champion young people as changemakers — equipping them with resources,
-                            community, and mentorship to lead with courage and compassion.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="#mission">
-                                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-                                    <Button size="lg" className="bg-background hover:bg-muted text-foreground font-light px-8">
-                                        Our Mission
-                                    </Button>
-                                </motion.div>
-                            </Link>
-                            <Link href="#principles">
-                                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-                                    <Button
-                                        size="lg"
-                                        variant="outline"
-                                        className="text-luxury-navy hover:text-white border-white/30 hover:bg-white/10 backdrop-blur-sm font-light px-8"
-                                    >
-                                        Our Principles
-                                    </Button>
-                                </motion.div>
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* ── STATS ─────────────────────────────────────────── */}
-            <section className="py-20 bg-background">
-                <div className="max-w-6xl mx-auto px-8">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-16">
-                        {stats.map((stat, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                viewport={{ once: false }}
-                                className="text-center"
-                                whileHover={{ y: -4 }}
-                            >
-                                <div className="aos-fade-up text-4xl md:text-5xl font-light text-foreground mb-3" style={{ animationDelay: `${index * 100}ms` }}>
-                                    {stat.value}
-                                </div>
-                                <div className="aos-fade-in text-muted-foreground font-light text-sm tracking-wide uppercase" style={{ animationDelay: `${index * 100 + 150}ms` }}>
-                                    {stat.label}
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── MISSION ───────────────────────────────────────── */}
-            <section id="mission" className="py-32 bg-muted/40">
-                <div className="max-w-7xl mx-auto px-8">
-                    <div className="grid lg:grid-cols-2 gap-20 items-center">
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            viewport={{ once: false }}
-                        >
-                            <div className="aos-fade-in mb-6 text-muted-foreground text-sm font-light tracking-widest uppercase">
-                                What drives us
-                            </div>
-                            <h2 className="aos-fade-up text-4xl md:text-5xl font-display font-light text-foreground mb-8 tracking-tight">
-                                Our Mission
-                            </h2>
-                            <div className="space-y-6 text-muted-foreground font-light leading-relaxed">
-                                <p>
-                                    Our mission is to use research, education, advocacy and community
-                                    partnerships to enhance child protection systems and facilitate
-                                    vulnerable children&apos;s access to basic facilities.
-                                </p>
-                                <p>
-                                    We are committed to{" "}
-                                    <span className="font-medium text-foreground">
-                                        breaking barriers for the girl child
-                                    </span>{" "}
-                                    — enabling them to have equal rights, equal opportunities, and equal
-                                    standing in every community we serve.
-                                </p>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            viewport={{ once: false }}
-                            className="relative"
-                        >
-                            <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                                <div className="absolute inset-0 bg-[url('/heros/hero1.webp')] bg-cover bg-center" />
-                                <div className="absolute inset-0 bg-black/10" />
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── VISION ────────────────────────────────────────── */}
-            <section className="py-32 bg-background">
-                <div className="max-w-7xl mx-auto px-8">
-                    <div className="grid lg:grid-cols-2 gap-20 items-center">
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            viewport={{ once: false }}
-                            className="relative order-2 lg:order-1"
-                        >
-                            <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                                <div className="absolute inset-0 bg-[url('/heros/hero1.webp')] bg-cover bg-center" />
-                                <div className="absolute inset-0 bg-black/10" />
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            viewport={{ once: false }}
-                            className="order-1 lg:order-2"
-                        >
-                            <div className="aos-fade-in mb-6 text-muted-foreground text-sm font-light tracking-widest uppercase">
-                                Where we&apos;re going
-                            </div>
-                            <h2 className="aos-fade-up text-4xl md:text-5xl font-display font-light text-foreground mb-8 tracking-tight">
-                                Our Vision
-                            </h2>
-                            <div className="space-y-6 text-muted-foreground font-light leading-relaxed">
-                                <p>
-                                    Our vision is to create an environment where children — especially
-                                    girls and those in rural communities — have the right to protection,
-                                    survival, development, and a voice.
-                                </p>
-                                <p>
-                                    We imagine a world where every child grows up with dignity, safety,
-                                    and the tools they need to become the changemakers of tomorrow.
-                                </p>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── PRINCIPLES ────────────────────────────────────── */}
-            <section id="principles" className="py-32 bg-muted/40">
-                <div className="max-w-7xl mx-auto px-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
-                        className="text-center mb-20"
-                    >
-                        <div className="aos-fade-in mb-8 text-muted-foreground text-sm font-light tracking-widest uppercase">
-                            How we operate
-                        </div>
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-8 tracking-tight">
-                            Our Principles
-                        </h2>
-                        <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
-                            These guidelines help us protect the wellbeing, dignity, and agency of everyone in our community.
-                        </p>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {principles.map(({ icon: Icon, title, text }, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.07 }}
-                                viewport={{ once: false }}
-                                whileHover={{ y: -4 }}
-                            >
-                                <Card className="h-full border-0 bg-card hover:shadow-md transition-all duration-300">
-                                    <CardContent className="p-6">
-                                        <div className="aos-scale-in h-9 w-9 bg-foreground rounded-full flex items-center justify-center mb-4">
-                                            <Icon className="h-4 w-4 text-background" />
-                                        </div>
-                                        <h3 className="text-base font-light text-card-foreground mb-3">{title}</h3>
-                                        <p className="text-muted-foreground font-light text-sm leading-relaxed">{text}</p>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── OBJECTIVES ────────────────────────────────────── */}
-            <section className="py-32 bg-background">
-                <div className="max-w-7xl mx-auto px-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
-                        className="text-center mb-20"
-                    >
-                        <div className="aos-fade-in mb-8 text-muted-foreground text-sm font-light tracking-widest uppercase">
-                            Our focus areas
-                        </div>
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-8 tracking-tight">
-                            Our Objectives
-                        </h2>
-                        <p className="text-lg text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
-                            Concrete goals that guide our programs, partnerships, and impact on the ground.
-                        </p>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                        {objectives.map((item, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.07 }}
-                                viewport={{ once: false }}
-                                whileHover={{ x: 4 }}
-                                className="flex items-start gap-4 p-5 rounded-lg bg-muted/40 hover:bg-card hover:shadow-md transition-all duration-300 border border-transparent hover:border-border"
-                            >
-                                <div className="h-6 w-6 rounded-full bg-foreground flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-background" />
-                                </div>
-                                <span className="text-sm font-light leading-relaxed text-muted-foreground">{item}</span>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── CTA ───────────────────────────────────────────── */}
-            <section className="py-32 bg-background">
-                <div className="max-w-4xl mx-auto px-8 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
-                    >
-                        <h2 className="aos-fade-up text-5xl md:text-6xl font-display font-light text-foreground mb-12 tracking-tight">
-                            Help us protect every child
-                        </h2>
-
-                        <p className="text-lg text-muted-foreground mb-16 max-w-xl mx-auto font-light leading-relaxed">
-                            Join our community of partners, volunteers, and advocates working
-                            to create a safer, fairer world for children everywhere.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/contact">
-                                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-                                    <Button size="lg" className="bg-foreground hover:bg-foreground/80 text-background font-light px-8">
-                                        Get involved
-                                    </Button>
-                                </motion.div>
-                            </Link>
-                            <Link href="/programs">
-                                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-                                    <Button size="lg" variant="ghost" className="text-muted-foreground hover:text-foreground font-light px-8">
-                                        Our programs
-                                    </Button>
-                                </motion.div>
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
-
-        </main>
-    );
+    return <div className="bg-[#f6f3eb] text-[#183b35]">
+        <section className="grid lg:grid-cols-[1.1fr_1fr]"><div className="bg-[#183b35] px-6 py-20 text-[#f6f3eb] sm:px-12 lg:pl-[max(3rem,calc((100vw-1280px)/2+1.5rem))]"><h1 className="max-w-2xl font-display text-5xl font-bold leading-[1.06] tracking-tight sm:text-7xl">Every child deserves protection. And possibility.</h1><p className="mt-8 max-w-lg text-lg leading-8 text-[#f6f3eb]/80">We are Hope for Vulnerable Children Association. We work with children, families, and communities to protect rights and open opportunities.</p><a href="#mission" className="mt-8 inline-flex min-h-12 items-center gap-3 border-b border-[#f6f3eb]/60 font-semibold">Discover what drives us <ArrowDown aria-hidden="true" className="size-4" /></a></div><div className="relative min-h-96"><Image src="/heros/hero1.webp" alt="Community gathering in support of children" fill priority sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" /></div></section>
+        <section id="mission" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-16 md:py-24"><h2 className="max-w-3xl font-display text-4xl font-bold leading-tight sm:text-5xl">Research, education, advocacy, and community partnership.</h2><div className="mt-12 grid gap-10 md:grid-cols-2"><div className="border-t border-[#183b35]/25 pt-6"><h3 className="font-display text-3xl font-bold">Our mission</h3><p className="mt-5 text-lg leading-8 text-[#53645f]">Our mission is to use research, education, advocacy and community partnerships to enhance child protection systems and facilitate vulnerable children’s access to basic facilities.</p><p className="mt-5 leading-7 text-[#53645f]">We are committed to breaking barriers for the girl child, enabling equal rights, equal opportunities, and equal standing in every community we serve.</p></div><div className="border-t border-[#183b35]/25 pt-6"><h3 className="font-display text-3xl font-bold">Our vision</h3><p className="mt-5 text-lg leading-8 text-[#53645f]">Our vision is to create an environment where children, especially girls and those in rural communities, have the right to protection, survival, development, and a voice.</p><p className="mt-5 leading-7 text-[#53645f]">We imagine a world where every child grows up with dignity, safety, and the tools they need to become the changemakers of tomorrow.</p></div></div></section>
+        <section id="principles" className="bg-[#e7ebdf]"><div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1fr_1.5fr]"><div><h2 className="font-display text-4xl font-bold sm:text-5xl">Our principles</h2><p className="mt-5 max-w-md leading-7 text-[#53645f]">The commitments that guide how we work, make decisions, and take responsibility for our actions.</p></div><div className="border-t border-[#183b35]/25">{principles.map(principle => <details key={principle.title} className="group border-b border-[#183b35]/25 py-5"><summary className="cursor-pointer font-display text-xl font-bold leading-8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]">{principle.title}</summary><p className="mt-4 pr-6 leading-7 text-[#53645f]">{principle.text}</p></details>)}</div></div></section>
+        <section className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1fr_1.5fr]"><div><h2 className="font-display text-4xl font-bold sm:text-5xl">What we work towards</h2><p className="mt-5 max-w-md leading-7 text-[#53645f]">Our objectives connect children’s rights with practical care, stronger communities, and shared action.</p><Link href="/projects" className="mt-6 inline-flex min-h-12 items-center gap-3 border-b border-[#183b35] font-semibold">Explore our projects <ArrowRight aria-hidden="true" className="size-4" /></Link></div><ul className="border-t border-[#183b35]/25">{objectives.map(objective => <li key={objective} className="border-b border-[#183b35]/25 py-5 text-lg leading-8">{objective}</li>)}</ul></section>
+        <section className="mx-auto max-w-7xl px-6 pb-20"><div className="border-t border-[#183b35]/25 pt-10"><h2 className="font-display text-4xl font-bold">Help us protect every child.</h2><p className="mt-5 max-w-xl leading-7 text-[#53645f]">Join our community of partners, volunteers, and advocates working to create a safer, fairer world for children.</p><div className="mt-8 flex flex-wrap gap-4"><Link href="/volunteers" className="inline-flex min-h-12 items-center bg-[#183b35] px-6 py-3 font-semibold text-white hover:bg-[#102c28]">Become a volunteer</Link><Link href="/contact" className="inline-flex min-h-12 items-center border border-[#183b35] px-6 py-3 font-semibold hover:bg-[#e7ebdf]">Partner with us</Link></div></div></section>
+    </div>;
 }

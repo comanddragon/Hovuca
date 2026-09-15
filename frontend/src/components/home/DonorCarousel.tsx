@@ -17,46 +17,6 @@ function SkeletonPill() {
     );
 }
 
-// function DonorPill({ donor }: { donor: DonorOrganization }) {
-//     const abbr =
-//         donor.abbreviation?.trim() ||
-//         donor.name
-//             .split(/\s+/)
-//             .slice(0, 2)
-//             .map((w) => w[0]?.toUpperCase() ?? "")
-//             .join("");
-//
-//     return (
-//         <motion.div
-//             whileHover={{ y: -3 }}
-//             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-//             className="flex-shrink-0 w-[180px] flex flex-col items-center gap-3 mx-6 cursor-default select-none group"
-//         >
-//             {/* Logo / initials */}
-//             <div className="relative h-14 w-[140px] flex items-center justify-center">
-//                 {donor.logo ? (
-//                     <Image
-//                         src={donor.logo}
-//                         alt={donor.name}
-//                         fill
-//                         sizes="140px"
-//                         className="object-contain opacity-60 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
-//                     />
-//                 ) : (
-//                     <span className="flex items-center justify-center h-14 w-[140px] rounded-lg text-sm font-light tracking-widest text-muted-foreground opacity-60 transition duration-300 group-hover:opacity-100 border border-border">
-//             {abbr}
-//           </span>
-//                 )}
-//             </div>
-//
-//             {/* Name */}
-//             <span className="text-xs font-light tracking-wide text-muted-foreground whitespace-nowrap opacity-60 transition duration-300 group-hover:opacity-100">
-//         {donor.name}
-//       </span>
-//         </motion.div>
-//     );
-// }
-
 function DonorPill({ donor }: { donor: DonorOrganization }) {
     const abbr =
         donor.abbreviation?.trim() ||

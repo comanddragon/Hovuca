@@ -6,7 +6,7 @@ import VolunteerApplication from "@/components/volunteers/VolunteerApplication";
 
 export const metadata: Metadata = {
     title: "Volunteer with us",
-    description: "Share your skills and time with HOVUCA. Explore volunteering and create your volunteer profile to support community-led work in Cameroon.",
+    description: "Apply to volunteer with HOVUCA. Share your information, skills and availability to support community-led work in Cameroon.",
 };
 
 const contributions = [
@@ -16,10 +16,11 @@ const contributions = [
 ];
 
 const questions = [
-    { question: "Do I need previous volunteering experience?", answer: "Use your profile to describe your skills, interests and experience, including anything you would like to learn. Contact the team to discuss what may be a suitable fit." },
+    { question: "Do I need previous volunteering experience?", answer: "Use the application to describe your skills, interests and experience, including anything you would like to learn. The team can discuss what may be a suitable fit." },
     { question: "Can I volunteer remotely?", answer: "Tell the team where you are based and whether you are interested in remote or in-person work. The arrangement will depend on the activity and the team's needs." },
     { question: "How much time should I commit?", answer: "Share the time you can realistically offer in your introduction. Discuss a commitment with the team before taking on any tasks." },
-    { question: "Does creating a profile guarantee a placement?", answer: "No. A profile records your interest and skills. Activities and assignments depend on available work and a discussion with the team." },
+    { question: "Does submitting an application guarantee a placement?", answer: "No. An application records your interest and skills. Activities and assignments depend on available work and a discussion with the team." },
+    { question: "Do I need an account to apply?", answer: "No. Fill in the form on this page and submit your application directly. Make sure your email address and phone number are correct so the team can contact you." },
 ];
 
 export default function VolunteersPage() {
@@ -61,8 +62,8 @@ export default function VolunteersPage() {
             <section id="volunteer-profile" aria-labelledby="profile-heading" className="mx-auto grid max-w-7xl scroll-mt-28 gap-10 px-6 py-16 sm:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:py-24">
                 <div>
                     <h2 id="profile-heading" className="font-display text-4xl font-bold tracking-[-0.02em] sm:text-5xl">Let’s start<br />with you.</h2>
-                    <p className="mt-6 max-w-md leading-7 text-[#53645f]">Create a volunteer profile and tell us what you can offer. Your profile helps the team understand your interests; it does not confirm a placement.</p>
-                    <ol className="mt-8 list-decimal space-y-4 pl-5 leading-7 text-[#53645f]"><li>Create an account or sign in.</li><li>Share your skills and availability.</li><li>Contact the team to discuss next steps.</li></ol>
+                    <p className="mt-6 max-w-md leading-7 text-[#53645f]">Fill in the volunteer application and tell us what you can offer. No account is required. The team will have your information available for review.</p>
+                    <ol className="mt-8 list-decimal space-y-4 pl-5 leading-7 text-[#53645f]"><li>Enter your contact information.</li><li>Share your skills, interests and availability.</li><li>Submit your application for review.</li></ol>
                     <Link href="/contact" className="mt-8 inline-flex min-h-11 items-center gap-3 font-semibold underline underline-offset-4 hover:text-[#b84733]">Talk to our team <ArrowRight aria-hidden="true" className="size-4" /></Link>
                 </div>
                 <VolunteerApplication />

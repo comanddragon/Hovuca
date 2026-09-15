@@ -1,88 +1,15 @@
 import Link from "next/link";
-import { Heart, Mail, Phone, MapPin } from "lucide-react";
-import Logo from "@/components/layout/Logo";
-
-const links = {
-    Platform: [
-        { label: "Programs", href: "/programs" },
-        { label: "Courses", href: "/courses" },
-        { label: "Blog", href: "/blog" },
-        { label: "Documents", href: "/documents" },
-        { label: "Donate", href: "/donate" },
-    ],
-    Organization: [
-        { label: "About Us", href: "/about" },
-        { label: "Our Team", href: "/team" },
-        { label: "Volunteers", href: "/volunteers" },
-        { label: "Contact", href: "/contact" },
-    ],
-    Legal: [
-        { label: "Legal Status", href: "/privacy" },
-        { label: "Policy", href: "/policy" },
-    ],
-};
-
+import { ArrowUpRight } from "lucide-react";
+import Logo from "./Logo";
+const groups = [
+    { title: "Our work", links: [["Programs", "/programs"], ["Projects", "/projects"], ["Courses", "/courses"]] },
+    { title: "Explore", links: [["About HOVUCA", "/about"], ["Field stories", "/blog"], ["Publications", "/documents"], ["Gallery", "/gallery"], ["Events", "/events"]] },
+    { title: "Get involved", links: [["Volunteer", "/volunteers"], ["Donate", "/donate"], ["Contact us", "/contact"]] },
+];
 export function Footer() {
-    return (
-            <footer className="border-t border-border bg-muted">
-                <div className="mx-auto max-w-7xl px-4 pb-12 pt-4 sm:px-6">
-                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Brand */}
-                        <div className="space-y-4 text-foreground">
-                            <Link href="/" className="flex items-center gap-2">
-                                <Logo/>
-                                <span className="font-display text-xl font-semibold">Hovuca</span>
-                            </Link>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                Empowering communities through education, meaningful programs, and collective action.
-                            </p>
-                            <div className="space-y-2 text-sm text-muted-foreground">
-                                <div className="flex items-center gap-2">
-                                    <Mail className="h-3.5 w-3.5" />
-                                    <span>contact@hovuca.org</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Phone className="h-3.5 w-3.5" />
-                                    <span>+237 (696) 23-0391</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-3.5 w-3.5" />
-                                    <span>Yaoundé, Cameroon</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Links */}
-                        {Object.entries(links).map(([section, items]) => (
-                            <div key={section}>
-                                <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase text-foreground">
-                                    {section}
-                                </h3>
-                                <ul className="space-y-2">
-                                    {items.map(({ label, href }) => (
-                                        <li key={href}>
-                                            <Link
-                                                href={href}
-                                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                {label}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
-                        <p className="text-xs text-muted-foreground">
-                            © {new Date().getFullYear()} Hope for Vulnerable Children Association. All rights reserved.
-                        </p>
-                        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                            Made with <Heart className="h-3 w-3 text-red-500 fill-red-500" /> for our Cameroonian communities
-                        </p>
-                    </div>
-                </div>
-            </footer>
-    );
+    return <footer className="bg-[#183b35] text-[#f6f3eb]"><div className="mx-auto max-w-7xl px-6">
+        <div className="flex flex-col gap-8 border-b border-[#f6f3eb]/25 py-14 md:flex-row md:items-center md:justify-between"><h2 className="max-w-2xl font-display text-4xl font-bold leading-tight sm:text-5xl">A safer future starts with us.</h2><Link href="/contact" className="inline-flex min-h-12 w-fit shrink-0 items-center gap-6 bg-[#ef886d] px-6 py-4 font-semibold text-[#183b35] hover:bg-[#f39b85] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f6f3eb]">Let’s work together <ArrowUpRight aria-hidden="true" className="size-5" /></Link></div>
+        <div className="grid gap-12 py-14 lg:grid-cols-[1.3fr_2fr]"><div><Link href="/" className="inline-flex items-center gap-3"><Logo /><span className="font-display text-3xl font-bold">HOVUCA</span></Link><p className="mt-5 max-w-sm leading-7 text-[#f6f3eb]/75">Hope for Vulnerable Children Association. Working for children’s protection, dignity, and opportunity.</p><address className="mt-6 space-y-2 text-sm not-italic leading-6"><a className="block w-fit underline underline-offset-4" href="mailto:contact@hovuca.org">contact@hovuca.org</a><a className="block w-fit underline underline-offset-4" href="tel:+237696230391">+237 696 230 391</a><p className="text-[#f6f3eb]/75">Grande Chefferie Simbock<br />Yaoundé, Cameroon</p></address></div><nav aria-label="Footer" className="grid grid-cols-2 gap-8 sm:grid-cols-3">{groups.map(group => <div key={group.title}><h3 className="font-semibold">{group.title}</h3><ul className="mt-5 space-y-3">{group.links.map(([label, href]) => <li key={href}><Link href={href} className="inline-block py-1 text-sm text-[#f6f3eb]/75 hover:text-white hover:underline hover:underline-offset-4">{label}</Link></li>)}</ul></div>)}</nav></div>
+        <div className="flex flex-wrap justify-between gap-4 border-t border-[#f6f3eb]/25 py-6 text-xs leading-6 text-[#f6f3eb]/70"><p>© {new Date().getFullYear()} HOVUCA. All rights reserved.</p><p>For children. With communities.</p></div>
+    </div></footer>;
 }
