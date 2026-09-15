@@ -1,27 +1,39 @@
-FROM node:24-alpine AS dependencies
+# Build stage
+FROM node:20-alpine AS builder
 
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
 RUN npm ci
 
-FROM node:24-alpine AS builder
-WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
+# Copy source code
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
 
-FROM node:24-alpine AS runner
+# Build arguments
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Build application
+RUN NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+
+# Production stage
+FROM node:20-alpine
+
 WORKDIR /app
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000 \
-    HOSTNAME=0.0.0.0
 
-COPY --from=builder /app/package.json /app/package-lock.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
+# Install only production dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy built application from builder
 COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+
+ENV NODE_ENV=production
+
+CMD ["npm", "start"]
