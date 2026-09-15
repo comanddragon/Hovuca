@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements/ requirements/
-RUN pip install --no-cache-dir -r requirements/development.txt
+# Allow dependency downloads to tolerate slow connections to PyPI.
+RUN python -m pip install --no-cache-dir --timeout 120 --retries 10 -r requirements/development.txt
 
 COPY . .
 

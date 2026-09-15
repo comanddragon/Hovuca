@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useRegister } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,13 @@ export default function RegisterPage() {
     });
 
     const selectedRole = useWatch({ control, name: "role" });
+
+    useEffect(() => {
+        const requestedRole = new URLSearchParams(window.location.search).get("role");
+        if (requestedRole === "volunteer" || requestedRole === "student" || requestedRole === "donor") {
+            setValue("role", requestedRole);
+        }
+    }, [setValue]);
 
   const onSubmit = (data: FormData) => {
     register(data, {

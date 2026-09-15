@@ -114,8 +114,6 @@ interface DonorCarouselProps {
 }
 
 export default function DonorCarousel({
-                                          label    = "Trusted by",
-                                          heading  = "Our partners & donors",
                                           duration = "32s",
                                       }: DonorCarouselProps) {
     const { data: donors, isLoading, isError } = useActiveDonors();
@@ -188,18 +186,6 @@ export default function DonorCarousel({
                     ))}
                 </div>
             </div>
-
-            {/* ── Footer count ────────────────────────────────────── */}
-            {/*<motion.p*/}
-            {/*    initial={{ opacity: 0 }}*/}
-            {/*    whileInView={{ opacity: 1 }}*/}
-            {/*    viewport={{ once: false }}*/}
-            {/*    transition={{ delay: 0.3 }}*/}
-            {/*    className="text-center mt-6 text-xs font-light tracking-widest uppercase text-muted-foreground"*/}
-            {/*>*/}
-            {/*    {donors.length} {donors.length === 1 ? "partner" : "partners"} &amp; counting*/}
-            {/*</motion.p>*/}
-
         </section>
     );
 }

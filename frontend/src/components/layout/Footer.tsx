@@ -39,7 +39,7 @@ export function Footer() {
                             <div className="space-y-2 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-2">
                                     <Mail className="h-3.5 w-3.5" />
-                                    <span>hovuca@contact.org</span>
+                                    <span>contact@hovuca.org</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Phone className="h-3.5 w-3.5" />

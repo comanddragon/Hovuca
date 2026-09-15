@@ -61,6 +61,7 @@ const navLinks: NavLink[] = [
     {
         href: "", label: "Get involved",
         children: [
+            { href: "/volunteers", label: "Volunteer with us" },
             { href: "/donate", label: "Donate" },
             { href: "/contact", label: "Partner with us" },
         ],
@@ -161,7 +162,7 @@ export function Navbar() {
             { href: "/blog", label: "Field stories" },
             { href: "/documents", label: "Publications" },
             { href: "/courses", label: "Courses" },
-            { href: "/contact", label: "Get involved" },
+            { href: "/volunteers", label: "Get involved" },
         ];
         const visibleLinks = scrolled ? homeLinks.slice(0, 3) : homeLinks;
 
