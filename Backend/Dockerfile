@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements/ requirements/
 RUN pip install --no-cache-dir -r requirements/production.txt && pip install --upgrade pip \
-		python manage.py collectstatic
+	python manage.py collectstatic
 
 COPY . .
 
