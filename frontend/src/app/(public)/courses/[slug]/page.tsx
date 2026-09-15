@@ -153,7 +153,7 @@ export default function CourseDetailPage() {
 
                 <div className={styles.lessonPhotoWrap}>
                   <Image
-                    src="/assets/plates/lesson-photo.webp"
+                    src="/assets/plates/lesson-photo.png"
                     alt="Young people in a facilitated outdoor learning discussion"
                     fill
                     priority

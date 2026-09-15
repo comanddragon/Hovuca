@@ -41,7 +41,7 @@ const fallbackStories = [
         slug: "community-leadership",
         title: "Young people leading change where they live",
         excerpt: "A closer look at the ideas, partnerships and practical action growing from local communities.",
-        cover_image: "/heros/hero1.webp",
+        cover_image: "/heros/hero1.png",
         cover_image_alt: "Young people participating in a HOVUCA community activity",
         category: { name: "Field story" },
     },
@@ -50,7 +50,7 @@ const fallbackStories = [
         slug: "learning-together",
         title: "Learning together, building opportunity",
         excerpt: "How practical learning creates room for confidence, connection and possibility.",
-        cover_image: "/heros/hero1.webp",
+        cover_image: "/blogs/2.jpg",
         cover_image_alt: "HOVUCA participants learning together",
         category: { name: "From the field" },
     },
@@ -59,7 +59,7 @@ const fallbackStories = [
         slug: "stronger-communities",
         title: "Partnerships that strengthen communities",
         excerpt: "Community voices and shared responsibility remain at the centre of lasting progress.",
-        cover_image: "/assets/plates/program-photo.webp",
+        cover_image: "/assets/plates/program-photo.png",
         cover_image_alt: "A HOVUCA community partnership activity",
         category: { name: "Partnership" },
     },
@@ -155,7 +155,7 @@ export default function HomePage() {
                         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <Image
-                            src="/assets/plates/program-photo.webp"
+                            src="/assets/plates/program-photo.png"
                             alt="A young woman learning a practical skill"
                             fill
                             unoptimized
@@ -239,7 +239,7 @@ export default function HomePage() {
                                 <Link href={`/blog/${article.slug}`}>
                                     <div className="relative aspect-[4/3] overflow-hidden bg-[#e7e5de]">
                                         <Image
-                                            src={article.cover_image || "/heros/hero1.webp"}
+                                            src={article.cover_image || "/blogs/2.jpg"}
                                             alt={article.cover_image_alt || article.title}
                                             fill
                                             unoptimized
@@ -304,7 +304,7 @@ export default function HomePage() {
                         Bring your skills to the work.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-[#294842]">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
-                    <Link href="/volunteer" className="mt-9 inline-flex items-center gap-3 border border-[#183b35] px-6 py-4 text-sm font-semibold">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
+                    <Link href="/volunteers" className="mt-9 inline-flex items-center gap-3 border border-[#183b35] px-6 py-4 text-sm font-semibold">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
                 </div>
                 <div className="bg-[#d85c43] px-6 py-20 text-white lg:px-10 lg:py-28">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Work together</p>
