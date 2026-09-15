@@ -2,24 +2,19 @@ name: Docker Compose Integration Tests
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
 
 jobs:
   integration-test:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build backend image
         uses: docker/build-push-action@v5
         with:
@@ -27,49 +22,60 @@ jobs:
           file: ./Backend/dev.Dockerfile
           load: true
           tags: hovuca-backend:test
-      
-      - name: Run integration tests with docker-compose
+
+      - name: Prepare integration services
         run: |
           cat > docker-compose.test.yml << 'EOF'
-version: '3.9'
-services:
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: hovuca_test
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+          services:
+            db:
+              image: postgres:16-alpine
+              environment:
+                POSTGRES_DB: hovuca_test
+                POSTGRES_USER: test
+                POSTGRES_PASSWORD: test
+              healthcheck:
+                test: ["CMD-SHELL", "pg_isready -U test -d hovuca_test"]
+                interval: 5s
+                timeout: 5s
+                retries: 12
+            redis:
+              image: redis:7-alpine
+              healthcheck:
+                test: ["CMD", "redis-cli", "ping"]
+                interval: 5s
+                timeout: 5s
+                retries: 12
+            backend:
+              image: hovuca-backend:test
+              environment:
+                DJANGO_SETTINGS_MODULE: config.settings.development
+                DJANGO_SECRET_KEY: test-secret-key
+                DB_NAME: hovuca_test
+                DB_USER: test
+                DB_PASSWORD: test
+                DB_HOST: db
+                DB_PORT: '5432'
+                REDIS_HOST: redis
+              depends_on:
+                db:
+                  condition: service_healthy
+                redis:
+                  condition: service_healthy
+          EOF
 
-  redis:
-    image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - name: Run integration checks
+        run: |
+          docker compose -f docker-compose.test.yml up -d --wait --wait-timeout 120 db redis
+          docker compose -f docker-compose.test.yml run --rm backend python manage.py migrate --noinput
+          docker compose -f docker-compose.test.yml run --rm backend python manage.py check
 
-  backend:
-    image: hovuca-backend:test
-    environment:
-      DEBUG: 'True'
-      DJANGO_SETTINGS_MODULE: config.settings.development
-      DATABASE_URL: postgresql://test:test@db:5432/hovuca_test
-      REDIS_URL: redis://redis:6379
-      DJANGO_SECRET_KEY: test-secret-key
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    ports:
-      - "8000:8000"
-EOF
-          docker-compose -f docker-compose.test.yml up -d
-          sleep 10
-          docker-compose -f docker-compose.test.yml exec -T backend python manage.py migrate --noinput
-          docker-compose -f docker-compose.test.yml down
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.test.yml logs
+
+      - name: Clean up integration services
+        if: always()
+        run: |
+          if [ -f docker-compose.test.yml ]; then
+            docker compose -f docker-compose.test.yml down --volumes
+          fi
