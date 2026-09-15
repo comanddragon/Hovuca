@@ -1,33 +1,42 @@
 from django_ckeditor_5.widgets import CKEditor5Widget
+from django.forms.widgets import Media as DjangoMedia
 
 
 class AdminCKEditor5Widget(CKEditor5Widget):
-    """CKEditor widget with an Unfold-safe late initialization pass."""
+    """CKEditor widget with proper Media merging for Unfold compatibility."""
 
     class Media:
         css = {"all": ["admin/ckeditor.css"]}
         js = ["admin/ckeditor-init.js"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     @property
     def media(self):
-        """Return merged media from parent and custom overrides."""
+        """Dynamically merge parent CKEditor5Widget media with custom overrides."""
+        # Get parent widget media
         parent_media = super().media
         
-        # Merge CSS
-        css = {}
-        for key in set(list(parent_media._css.keys()) + list(self.Media.css.keys())):
-            css[key] = list(parent_media._css.get(key, [])) + list(self.Media.css.get(key, []))
-        
-        # Merge JS
-        js = list(parent_media._js) + list(self.Media.js)
-        
-        # Create a new Media object with merged content
-        from django.forms.widgets import Media as DjangoMedia
+        # Create new merged Media object
         merged = DjangoMedia()
-        for key, files in css.items():
-            for f in files:
-                merged.add_css(key, f)
-        for f in js:
-            merged.add_js(f)
+        
+        # Add parent CSS
+        for media_type, files in parent_media._css.items():
+            for css_file in files:
+                merged.add_css(media_type, css_file)
+        
+        # Add custom CSS
+        for media_type, files in self.Media.css.items():
+            for css_file in files:
+                merged.add_css(media_type, css_file)
+        
+        # Add parent JS
+        for js_file in parent_media._js:
+            merged.add_js(js_file)
+        
+        # Add custom JS
+        for js_file in self.Media.js:
+            merged.add_js(js_file)
         
         return merged
