@@ -1,6 +1,6 @@
 "use client";
 
-import { useMe, useEnrollments, useMyDonations, useNotifications, useMyTasks } from "@/hooks";
+import { useEnrollments, useMyDonations, useNotifications, useMyTasks } from "@/hooks";
 import { useAuthStore } from "@/store/auth.store";
 import { SectionHeader, StatusBadge, ProgressBar, PageLoader } from "@/components/shared";
 import { formatCurrency, formatDate, timeAgo } from "@/lib/utils";
@@ -12,7 +12,6 @@ import {
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
-  const { data: profile } = useMe();
   const { data: enrollments } = useEnrollments();
   const { data: donations } = useMyDonations();
   const { data: notifications } = useNotifications();

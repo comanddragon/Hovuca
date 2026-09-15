@@ -58,17 +58,18 @@ export default function ProfilePage() {
     });
 
     const initialized = useRef(false);
+    const resetProfile = profileForm.reset;
 
     useEffect(() => {
         if (profile && !initialized.current) {
-            profileForm.reset({
+            resetProfile({
                 first_name: profile.first_name ?? "",
                 last_name: profile.last_name ?? "",
                 phone_number: profile.phone_number ?? "",
             });
             initialized.current = true;
         }
-    }, [profile]);
+    }, [profile, resetProfile]);
 
   if (isLoading || !user) return <PageLoader />;
 

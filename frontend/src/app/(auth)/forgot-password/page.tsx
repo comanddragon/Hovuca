@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
 
             setSubmittedEmail(data.email);
             setIsSubmitted(true);
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong. Please try again.");
         } finally {
             setIsLoading(false);

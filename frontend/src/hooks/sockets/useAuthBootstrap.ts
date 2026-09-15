@@ -36,7 +36,7 @@ export function useAuthBootstrap() {
                 setUser(null);
             })
             .finally(() => setLoading(false));
-    }, []);
+    }, [isAuthenticated, setLoading, setUser]);
 
     return { isLoading: useAuthStore(s => s.isLoading) };
 }

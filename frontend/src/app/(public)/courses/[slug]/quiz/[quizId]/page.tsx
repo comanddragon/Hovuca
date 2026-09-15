@@ -8,7 +8,7 @@ import { PageLoader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CheckCircle2, Clock, XCircle, AlertCircle, ChevronLeft, ChevronRight, Users, Trophy } from "lucide-react";
 
 export default function QuizPage() {
@@ -39,47 +39,9 @@ export default function QuizPage() {
     });
 
   const [submitted, setSubmitted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
-    const apiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Sync socket seconds with local display
-  useEffect(() => {
-    if (secondsRemaining !== null) {
-      setTimeLeft(secondsRemaining);
-      setSecondsRemaining(secondsRemaining);
-    } else if (quiz?.time_limit_minutes && !submitted) {
-      // Fallback: use local countdown if no socket timer
-      if (timeLeft === null) {
-        setTimeLeft(quiz.time_limit_minutes * 60);
-      }
-    }
-  }, [secondsRemaining, quiz, submitted, timeLeft, setSecondsRemaining]);
-
-  // Local countdown (fallback when socket timer is unavailable)
-  useEffect(() => {
-    if (secondsRemaining !== null || timeLeft === null || submitted) return;
-    if (timeLeft <= 0) { handleSubmit(); return; }
-    const id = setInterval(() => setTimeLeft((t) => (t !== null ? t - 1 : null)), 1000);
-    return () => clearInterval(id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft, submitted]);
-
-  // Sync with API result
-    useEffect(() => {
-        if (apiResult) {
-            setResult(apiResult);
-            if (apiTimeoutRef.current) {
-                clearTimeout(apiTimeoutRef.current);
-            }
-        }
-    }, [apiResult, setResult]);
-
-    useEffect(() => {
-        const timeout = apiTimeoutRef.current;
-        return () => {
-            if (timeout) clearTimeout(timeout);
-        };
-    }, []);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const timeLimit = quiz?.time_limit_minutes ? quiz.time_limit_minutes * 60 : null;
+  const timeLeft = secondsRemaining ?? (timeLimit === null ? null : Math.max(0, timeLimit - elapsedSeconds));
 
   const handleSubmit = useCallback(() => {
     if (submitted) return;
@@ -87,6 +49,31 @@ export default function QuizPage() {
     const payload = Object.entries(answers).map(([question, choice]) => ({ question, choice }));
     submitQuiz(payload);
   }, [submitted, answers, submitQuiz]);
+
+  // Sync socket seconds with local display
+  useEffect(() => {
+    setSecondsRemaining(timeLeft);
+  }, [timeLeft, setSecondsRemaining]);
+
+  // Local countdown (fallback when socket timer is unavailable)
+  useEffect(() => {
+    if (secondsRemaining !== null || timeLimit === null || submitted) return;
+    const id = setInterval(() => setElapsedSeconds((elapsed) => Math.min(timeLimit, elapsed + 1)), 1000);
+    return () => clearInterval(id);
+  }, [secondsRemaining, timeLimit, submitted]);
+
+  useEffect(() => {
+    if (timeLeft !== 0 || submitted) return;
+    const id = setTimeout(handleSubmit, 0);
+    return () => clearTimeout(id);
+  }, [timeLeft, submitted, handleSubmit]);
+
+  // Sync with API result
+    useEffect(() => {
+        if (apiResult) {
+            setResult(apiResult);
+        }
+    }, [apiResult, setResult]);
 
   if (isLoading) return <PageLoader />;
   if (!quiz) return <div className="p-8 text-center text-muted-foreground">Quiz not found.</div>;
@@ -147,6 +134,7 @@ export default function QuizPage() {
           {!result.passed && (
             <Button onClick={() => {
               setSubmitted(false);
+              setElapsedSeconds(0);
               useQuizStore.getState().resetSession();
             }}>
               Retry quiz

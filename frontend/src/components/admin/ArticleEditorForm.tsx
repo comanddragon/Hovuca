@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -64,7 +64,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
     const {
         register,
         handleSubmit,
-        watch,
+        control,
         setValue,
         formState: { errors },
     } = useForm<ArticleForm>({
@@ -83,9 +83,10 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
         },
     });
 
-    const excerpt = watch("excerpt") ?? "";
-    const metaTitle = watch("meta_title") ?? "";
-    const metaDescription = watch("meta_description") ?? "";
+    const values = useWatch({ control });
+    const excerpt = values.excerpt ?? "";
+    const metaTitle = values.meta_title ?? "";
+    const metaDescription = values.meta_description ?? "";
 
     const titleField = register("title");
     const slugField = register("slug");
@@ -173,7 +174,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                     <div className="space-y-1.5">
                         <Label>Body</Label>
                         <RichTextEditor
-                            value={watch("body")}
+                            value={values.body ?? ""}
                             onChange={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
                             error={errors.body?.message}
                         />
@@ -254,7 +255,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                     <div className="space-y-1.5 rounded-xl border border-border bg-card p-4">
                         <Label>Category</Label>
                         <Select
-                            value={watch("category") || "none"}
+                            value={values.category || "none"}
                             onValueChange={(v) => setValue("category", v === "none" ? "" : v)}
                         >
                             <SelectTrigger className="w-full">
@@ -306,7 +307,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                     <div className="space-y-3 rounded-xl border border-border bg-card p-4">
                         <div className="space-y-1.5">
                             <Label>Status</Label>
-                            <Select value={watch("status")} onValueChange={(v) => setValue("status", v as ArticleStatus)}>
+                            <Select value={values.status} onValueChange={(v) => setValue("status", v as ArticleStatus)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue />
                                 </SelectTrigger>
@@ -321,7 +322,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                         </div>
                         <label className="flex items-center gap-2 text-sm">
                             <Checkbox
-                                checked={watch("is_featured")}
+                                checked={values.is_featured ?? false}
                                 onCheckedChange={(v) => setValue("is_featured", v === true)}
                             />
                             Featured

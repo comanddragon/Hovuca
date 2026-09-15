@@ -4,9 +4,7 @@ import { useParams } from "next/navigation";
 import {useProject} from "@/hooks";
 import { PageLoader, StatusBadge } from "@/components/shared";
 import { formatDate } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getAvatarUrl, getInitials } from "@/lib/utils";
-import { Calendar, Users, Layers, DollarSign } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import Image from "next/image";
 
 export default function ProgramDetailPage() {

@@ -54,7 +54,8 @@ export const useChatStore = create<ChatState>()(
                 set((s) => ({ drafts: { ...s.drafts, [roomId]: text } })),
             clearDraft: (roomId) =>
                 set((s) => {
-                    const { [roomId]: _, ...rest } = s.drafts;
+                    const rest = { ...s.drafts };
+                    delete rest[roomId];
                     return { drafts: rest };
                 }),
 
