@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from "@sentry/browser";
 
 Sentry.init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -7,5 +7,3 @@ Sentry.init({
     tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
     sendDefaultPii: false,
 });
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
