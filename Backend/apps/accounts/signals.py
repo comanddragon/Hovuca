@@ -23,7 +23,6 @@ def on_user_created(sender, instance, created, **kwargs):
 
     try:
         from apps.notifications.tasks import send_notification
-        from apps.accounts.tasks import send_email_verification
 
         send_notification.enqueue(
             user_id=str(instance.id),
@@ -35,7 +34,6 @@ def on_user_created(sender, instance, created, **kwargs):
             ),
             action_url="/dashboard/",
         )
-        send_email_verification.enqueue()
     except Exception as exc:
         logger.error("on_user_created notification failed for %s: %s", instance.id, exc)
 

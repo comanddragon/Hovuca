@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import viewsets
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -19,6 +21,8 @@ from .serializers import (
     DepartmentSerializer,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class ContactMessageThrottle(SimpleRateThrottle):
     scope = "contact_message"
@@ -38,6 +42,16 @@ class ContactMessageCreateView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         message = serializer.save()
+
+        try:
+            from apps.organization.tasks import send_contact_message_email
+
+            send_contact_message_email.enqueue(str(message.id))
+        except Exception:
+            logger.exception(
+                "Could not enqueue contact message email for %s", message.id
+            )
+
         return Response({"id": str(message.id), "status": message.status}, status=status.HTTP_201_CREATED)
 
 

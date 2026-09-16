@@ -253,6 +253,9 @@ SPECTACULAR_SETTINGS = {
 # ---------------------------------------------------------------------------
 RESEND_API_KEY = config("RESEND_API_KEY", default="")
 RESEND_FROM = config("RESEND_FROM", default="")
+CONTACT_FORM_RECIPIENT = config(
+    "CONTACT_FORM_RECIPIENT", default="contact@hovuca.org"
+)
 
 TASKS = {
     "default": {

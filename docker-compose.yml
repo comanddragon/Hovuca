@@ -31,9 +31,14 @@ services:
       DB_PORT: "5432"
       REDIS_HOST: redis
       REDIS_URL: redis://redis:6379/0
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -42,7 +47,7 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
 
 volumes:
   pgdata:

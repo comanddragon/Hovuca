@@ -39,7 +39,12 @@ class IsStaffOrAdmin(BasePermission):
 class IsOwnerOrAdmin(BasePermission):
     """Object-level: owner or admin."""
 
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
     def has_object_permission(self, request, view, obj):
+        if not request.user or not request.user.is_authenticated:
+            return False
         if request.user.role == "admin":
             return True
         # Support models with `user`, `donor`, or `author` FK
@@ -57,6 +62,8 @@ class IsInstructor(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
+        if not request.user or not request.user.is_authenticated:
+            return False
         instructor = getattr(obj, "instructor", None)
         return instructor == request.user or request.user.role == "admin"
 
@@ -64,7 +71,12 @@ class IsInstructor(BasePermission):
 class IsSelfOrAdmin(BasePermission):
     """User can only access their own resource, unless admin."""
 
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
     def has_object_permission(self, request, view, obj):
+        if not request.user or not request.user.is_authenticated:
+            return False
         if request.user.role == "admin":
             return True
         return obj == request.user

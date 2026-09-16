@@ -1,7 +1,11 @@
+from unittest.mock import patch
+
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.organization.models import ContactMessage
+from apps.organization.tasks import send_contact_message_email
 
 
 class ContactMessageTests(APITestCase):
@@ -14,13 +18,26 @@ class ContactMessageTests(APITestCase):
             "contact_consent": True,
         }
 
-    def test_guest_submission_is_saved_and_status_cannot_be_injected(self):
+    @patch("apps.organization.tasks.send_contact_message_email")
+    def test_guest_submission_is_saved_and_email_is_enqueued(
+        self, email_task
+    ):
         response = self.client.post(self.url, {**self.payload, "status": "resolved"}, format="json")
         self.assertEqual(response.status_code, 201)
         message = ContactMessage.objects.get(pk=response.data["id"])
         self.assertEqual(message.message, self.payload["message"])
         self.assertEqual(message.status, "new")
         self.assertEqual(set(response.data), {"id", "status"})
+        email_task.enqueue.assert_called_once_with(str(message.id))
+
+    @patch("apps.organization.tasks.send_contact_message_email")
+    def test_submission_succeeds_when_email_cannot_be_enqueued(self, email_task):
+        email_task.enqueue.side_effect = RuntimeError("Email service unavailable")
+
+        response = self.client.post(self.url, self.payload, format="json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(ContactMessage.objects.filter(pk=response.data["id"]).exists())
 
     def test_invalid_data_is_not_saved(self):
         response = self.client.post(self.url, {**self.payload, "full_name": " ", "email": "invalid", "topic": "unknown", "message": " "}, format="json")
@@ -47,3 +64,23 @@ class ContactMessageTests(APITestCase):
 
     def test_guest_cannot_list_messages(self):
         self.assertEqual(self.client.get(self.url).status_code, 405)
+
+    @override_settings(
+        RESEND_API_KEY="test-key",
+        RESEND_FROM="HOVUCA <noreply@hovuca.org>",
+        CONTACT_FORM_RECIPIENT="contact@hovuca.org",
+    )
+    @patch("apps.organization.tasks.resend.Emails.send")
+    def test_email_is_sent_to_contact_address_with_enquirer_as_reply_to(
+        self, resend_send
+    ):
+        message = ContactMessage.objects.create(**self.payload)
+
+        send_contact_message_email.call(str(message.id))
+
+        email = resend_send.call_args.args[0]
+        self.assertEqual(email["to"], "contact@hovuca.org")
+        self.assertEqual(email["reply_to"], self.payload["email"])
+        self.assertEqual(email["subject"], "Contact form: Partnership enquiry")
+        self.assertIn("Test Enquirer", email["html"])
+        self.assertIn(self.payload["message"], email["html"])

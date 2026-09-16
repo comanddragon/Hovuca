@@ -11,19 +11,15 @@ import Cookies from "js-cookie";
  */
 
 export function useAuthBootstrap() {
-    const { setUser, setLoading, isAuthenticated } = useAuthStore();
+    const { setUser, setLoading } = useAuthStore();
 
     // useAuthBootstrap.ts
     useEffect(() => {
         const token = Cookies.get("access_token");
 
         if (!token) {
+            setUser(null);
             setLoading(false);
-            return;
-        }
-
-        if (isAuthenticated) {
-            setLoading(false); // ← immediately resolve, don't wait
             return;
         }
 
@@ -36,7 +32,7 @@ export function useAuthBootstrap() {
                 setUser(null);
             })
             .finally(() => setLoading(false));
-    }, [isAuthenticated, setLoading, setUser]);
+    }, [setLoading, setUser]);
 
     return { isLoading: useAuthStore(s => s.isLoading) };
 }

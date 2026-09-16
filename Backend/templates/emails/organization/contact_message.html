@@ -1,0 +1,14 @@
+{% extends "emails/base.html" %}
+
+{% block subject %}New contact form message{% endblock %}
+
+{% block body %}
+  <h1>New contact form message</h1>
+  <p><strong>From:</strong> {{ contact_message.full_name }}</p>
+  <p><strong>Email:</strong> {{ contact_message.email }}</p>
+  <p><strong>Phone:</strong> {{ contact_message.phone|default:"Not provided" }}</p>
+  <p><strong>Topic:</strong> {{ contact_message.get_topic_display }}</p>
+  <p><strong>Subject:</strong> {{ contact_message.subject }}</p>
+  <p><strong>Message:</strong></p>
+  <p>{{ contact_message.message|linebreaksbr }}</p>
+{% endblock %}

@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
+import { useAuthStore } from "@/store/auth.store";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -54,8 +55,9 @@ api.interceptors.response.use(
       if (!refresh) {
         isRefreshing = false;
         processQueue(error);
-        Cookies.remove("access_token");
-        Cookies.remove("refresh_token");
+        Cookies.remove("access_token", { path: "/" });
+        Cookies.remove("refresh_token", { path: "/" });
+        useAuthStore.getState().logout();
         // if (typeof window !== "undefined") window.location.href = "/login";
         return Promise.reject(error);
       }
@@ -68,8 +70,9 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        Cookies.remove("access_token");
-        Cookies.remove("refresh_token");
+        Cookies.remove("access_token", { path: "/" });
+        Cookies.remove("refresh_token", { path: "/" });
+        useAuthStore.getState().logout();
         // if (typeof window !== "undefined") window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
