@@ -54,6 +54,8 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at"]
 
     def get_article_count(self, obj):
+        if hasattr(obj, "_published_article_count"):
+            return obj._published_article_count
         return obj.articles.filter(
             status=Article.Status.PUBLISHED, deleted_at__isnull=True
         ).count()
@@ -73,6 +75,8 @@ class TagSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
     def get_article_count(self, obj):
+        if hasattr(obj, "_published_article_count"):
+            return obj._published_article_count
         return obj.articles.filter(
             status=Article.Status.PUBLISHED, deleted_at__isnull=True
         ).count()
@@ -175,8 +179,8 @@ class ArticleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     topics = ArticleTopicSerializer(many=True, read_only=True)
-    like_count = serializers.ReadOnlyField()
-    comment_count = serializers.ReadOnlyField()
+    like_count = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
 
@@ -207,16 +211,30 @@ class ArticleListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_is_liked(self, obj):
+        if hasattr(obj, "_is_liked"):
+            return obj._is_liked
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return obj.likes.filter(user=request.user).exists()
         return False
 
     def get_is_bookmarked(self, obj):
+        if hasattr(obj, "_is_bookmarked"):
+            return obj._is_bookmarked
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return obj.bookmarks.filter(user=request.user).exists()
         return False
+
+    def get_like_count(self, obj):
+        if hasattr(obj, "_like_count"):
+            return obj._like_count
+        return obj.like_count
+
+    def get_comment_count(self, obj):
+        if hasattr(obj, "_comment_count"):
+            return obj._comment_count
+        return obj.comment_count
 
 
 # ---------------------------------------------------------------------------
@@ -229,8 +247,8 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     topics = ArticleTopicSerializer(many=True, read_only=True)
-    like_count = serializers.ReadOnlyField()
-    comment_count = serializers.ReadOnlyField()
+    like_count = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
@@ -268,16 +286,30 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_is_liked(self, obj):
+        if hasattr(obj, "_is_liked"):
+            return obj._is_liked
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return obj.likes.filter(user=request.user).exists()
         return False
 
     def get_is_bookmarked(self, obj):
+        if hasattr(obj, "_is_bookmarked"):
+            return obj._is_bookmarked
         request = self.context.get("request")
         if request and request.user.is_authenticated:
             return obj.bookmarks.filter(user=request.user).exists()
         return False
+
+    def get_like_count(self, obj):
+        if hasattr(obj, "_like_count"):
+            return obj._like_count
+        return obj.like_count
+
+    def get_comment_count(self, obj):
+        if hasattr(obj, "_comment_count"):
+            return obj._comment_count
+        return obj.comment_count
 
     def get_comments(self, obj):
         # Top-level approved comments only; replies nested inside CommentSerializer

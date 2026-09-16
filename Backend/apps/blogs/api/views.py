@@ -2,6 +2,7 @@ import uuid
 
 from django.core.files.storage import default_storage
 from django.db import transaction
+from django.db.models import BooleanField, Count, Exists, OuterRef, Prefetch, Q, Value
 from django.utils import timezone
 from PIL import Image, UnidentifiedImageError
 from rest_framework import viewsets, status
@@ -152,11 +153,55 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        published_articles = Q(
+            articles__status=Article.Status.PUBLISHED,
+            articles__deleted_at__isnull=True,
+        )
+        category_queryset = Category.all_objects.annotate(
+            _published_article_count=Count(
+                "articles", filter=published_articles, distinct=True
+            )
+        )
+        tag_queryset = Tag.objects.annotate(
+            _published_article_count=Count(
+                "articles", filter=published_articles, distinct=True
+            )
+        )
         qs = (
             Article.objects.filter(deleted_at__isnull=True)
-            .select_related("author", "category", "program")
-            .prefetch_related("tags", "likes", "bookmarks")
+            .select_related("author", "program")
+            .prefetch_related(
+                Prefetch("category", queryset=category_queryset),
+                Prefetch("tags", queryset=tag_queryset),
+                "topics",
+            )
+            .annotate(
+                _like_count=Count("likes", distinct=True),
+                _comment_count=Count(
+                    "comments",
+                    filter=Q(
+                        comments__is_approved=True,
+                        comments__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                ),
+            )
         )
+
+        if user.is_authenticated:
+            qs = qs.annotate(
+                _is_liked=Exists(
+                    Like.objects.filter(article=OuterRef("pk"), user=user)
+                ),
+                _is_bookmarked=Exists(
+                    Bookmark.objects.filter(article=OuterRef("pk"), user=user)
+                ),
+            )
+        else:
+            qs = qs.annotate(
+                _is_liked=Value(False, output_field=BooleanField()),
+                _is_bookmarked=Value(False, output_field=BooleanField()),
+            )
 
         # Public: only published articles
         if not (user.is_authenticated and user.role in ("admin", "staff")):
