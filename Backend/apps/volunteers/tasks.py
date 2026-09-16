@@ -39,7 +39,11 @@ def send_task_assignment_email(self, task_id: str):
     user = task.volunteer.user
 
     try:
-        context = {"user": user, "task": task}
+        context = {
+            "user": user,
+            "task": task,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
+        }
         html_message = render_to_string("accounts/volunteers/task_assigned.html", context)
         plain_message = strip_tags(html_message)
 

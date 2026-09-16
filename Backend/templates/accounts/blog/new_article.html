@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% block subject %}New from HOVUCA: {{ article.title }}{% endblock %}
+{% block preheader %}{{ article.excerpt|default:article.title|truncatechars:120 }}{% endblock %}
+{% block body %}
+<h1 class="headline" style="margin:0 0 16px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:36px; line-height:42px; font-weight:normal;">{{ article.title }}</h1>
+<p style="margin:0 0 22px; color:#53665d; font-size:13px; line-height:21px;">{% if article.category %}{{ article.category.name }} &middot; {% endif %}{{ article.reading_time_minutes }} min read{% if article.author %} &middot; By {{ article.author.get_full_name }}{% endif %}</p>
+<p style="margin:0 0 26px; color:#40564c; font-size:16px; line-height:27px;">{{ article.excerpt|default:"A new story from the HOVUCA community is ready for you." }}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td class="button-cell" bgcolor="#176345" style="border-radius:8px;"><a class="button" href="{{ frontend_url|default:'https://hovuca.org' }}/blog/{{ article.slug }}" style="display:inline-block; padding:15px 24px; color:#ffffff; font-size:15px; font-weight:bold; text-decoration:none;">Read the article</a></td></tr></table>
+{% endblock %}
+{% block footer_reason %}You received this update because you are an active HOVUCA learner or volunteer.{% endblock %}

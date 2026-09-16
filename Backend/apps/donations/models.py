@@ -45,7 +45,7 @@ class DonationCampaign(BaseModel):
         related_name="campaigns",
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     goal_amount = models.DecimalField(max_digits=12, decimal_places=2)
     raised_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)

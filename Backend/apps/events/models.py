@@ -7,7 +7,7 @@ class EventCategory(BaseModel):
     """Top-level event category (e.g. 'Workshop', 'Fundraiser', 'Community Day')."""
 
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     color = models.CharField(
         max_length=7, default="#3B82F6", help_text="Hex color for UI badges."

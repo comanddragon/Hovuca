@@ -8,7 +8,7 @@ class Subject(BaseModel):
     """Top-level category: CSE, Web Dev, Data Science, etc."""
 
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=100, blank=True)  # CSS class or emoji key
     is_active = models.BooleanField(default=True)
@@ -48,7 +48,7 @@ class Course(BaseModel):
         related_name="taught_courses",
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = CKEditor5Field(config_name="hovuca", blank=True)
     thumbnail = models.ImageField(
         upload_to="courses/thumbnails/", null=True, blank=True

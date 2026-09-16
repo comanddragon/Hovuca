@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block subject %}Campaign goal reached: {{ campaign.title }}{% endblock %}
+{% block preheader %}{{ campaign.title }} has reached its fundraising goal.{% endblock %}
+{% block body %}
+<h1 class="headline" style="margin:0 0 16px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:36px; line-height:42px; font-weight:normal;">The goal is reached.</h1>
+<p style="margin:0 0 26px; color:#40564c; font-size:16px; line-height:26px;"><strong>{{ campaign.title }}</strong> has reached its fundraising target. This is an internal notification for the HOVUCA team.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f2f7f4; border-radius:12px;"><tr><td style="padding:24px;"><p style="margin:0 0 5px; color:#53665d; font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">Raised</p><p style="margin:0 0 14px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:29px; line-height:35px;">{{ campaign.raised_amount }} / {{ campaign.goal_amount }}</p><p style="margin:0; color:#40564c; font-size:14px; line-height:22px;">Progress: {{ campaign.progress_percentage }}%</p></td></tr></table>
+{% endblock %}
+{% block footer_reason %}This operational email was sent to HOVUCA staff.{% endblock %}

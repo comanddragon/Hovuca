@@ -130,7 +130,10 @@ def send_article_published_newsletter(article_id: str):
         return
 
     try:
-        context = {"article": article}
+        context = {
+            "article": article,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
+        }
         html_message = render_to_string("accounts/blog/new_article.html", context)
         plain_message = strip_tags(html_message)
 

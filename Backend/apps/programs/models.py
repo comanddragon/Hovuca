@@ -38,7 +38,7 @@ class Program(BaseModel):
         related_name="programs",
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     excerpt = models.TextField(
         max_length=500, blank=True, help_text="Short summary shown in listing cards."
     )
@@ -72,7 +72,7 @@ class Project(BaseModel):
         Program, on_delete=models.CASCADE, related_name="projects"
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=280)
     excerpt = models.TextField(
         max_length=500, blank=True, help_text="Short summary shown in listing cards."
     )

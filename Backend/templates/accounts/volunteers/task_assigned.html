@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% block subject %}New volunteer task: {{ task.title }}{% endblock %}
+{% block preheader %}A new HOVUCA volunteer task has been assigned to you.{% endblock %}
+{% block body %}
+<h1 class="headline" style="margin:0 0 16px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:36px; line-height:42px; font-weight:normal;">You have a new task</h1>
+<p style="margin:0 0 24px; color:#40564c; font-size:16px; line-height:26px;">Hi {{ user.first_name|default:"there" }}, here is your latest volunteer assignment.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:26px; background-color:#f2f7f4; border-radius:12px;"><tr><td style="padding:24px;"><h2 style="margin:0 0 10px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:22px; line-height:29px;">{{ task.title }}</h2>{% if task.description %}<p style="margin:0 0 16px; color:#40564c; font-size:14px; line-height:23px;">{{ task.description|striptags|truncatechars:280 }}</p>{% endif %}<p style="margin:0; color:#40564c; font-size:14px; line-height:22px;">{% if task.project %}<strong>Project:</strong> {{ task.project }}<br>{% endif %}<strong>Due:</strong> {{ task.due_date|date:"j F Y"|default:"No due date set" }}</p></td></tr></table>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td class="button-cell" bgcolor="#176345" style="border-radius:8px;"><a class="button" href="{{ frontend_url|default:'https://hovuca.org' }}/dashboard/volunteer" style="display:inline-block; padding:15px 24px; color:#ffffff; font-size:15px; font-weight:bold; text-decoration:none;">View my volunteer work</a></td></tr></table>
+{% endblock %}
+{% block footer_reason %}You received this email because you volunteer with HOVUCA.{% endblock %}

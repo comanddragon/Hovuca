@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% block subject %}You’re enrolled in {{ course.title }}{% endblock %}
+{% block preheader %}Your place in {{ course.title }} is confirmed.{% endblock %}
+{% block body %}
+<h1 class="headline" style="margin:0 0 16px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:36px; line-height:42px; font-weight:normal;">Your learning starts here</h1>
+<p style="margin:0 0 24px; color:#40564c; font-size:16px; line-height:26px;">Hi {{ user.first_name|default:"there" }}, you’re enrolled in <strong>{{ course.title }}</strong>.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:26px; background-color:#f2f7f4; border-radius:12px;"><tr><td style="padding:24px;"><h2 style="margin:0 0 10px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:22px; line-height:29px;">{{ course.title }}</h2><p style="margin:0; color:#40564c; font-size:14px; line-height:22px;">{{ course.get_difficulty_display }}{% if course.estimated_hours %} &middot; About {{ course.estimated_hours }} hours{% endif %}{% if course.subject %}<br>{{ course.subject.name }}{% endif %}</p></td></tr></table>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td class="button-cell" bgcolor="#176345" style="border-radius:8px;"><a class="button" href="{{ frontend_url|default:'https://hovuca.org' }}/courses/{{ course.slug }}" style="display:inline-block; padding:15px 24px; color:#ffffff; font-size:15px; font-weight:bold; text-decoration:none;">Start learning</a></td></tr></table>
+{% endblock %}
+{% block footer_reason %}You received this email because you enrolled in a HOVUCA course.{% endblock %}

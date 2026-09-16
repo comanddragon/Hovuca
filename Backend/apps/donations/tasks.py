@@ -102,6 +102,7 @@ def send_donation_receipt(self, donation_id: str):
             "donor": donation.donor,
             "donation": donation,
             "campaign": donation.campaign,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
         }
         html_message = render_to_string("accounts/donations/receipt.html", context)
         plain_message = strip_tags(html_message)
@@ -157,7 +158,10 @@ def notify_campaign_goal_reached(campaign_id: str):
         return
 
     try:
-        context = {"campaign": campaign}
+        context = {
+            "campaign": campaign,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
+        }
         html_message = render_to_string("accounts/donations/goal_reached.html", context)
         plain_message = strip_tags(html_message)
 

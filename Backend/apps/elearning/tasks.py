@@ -109,11 +109,18 @@ def send_certificate_email(self, enrollment_id: str):
         return
 
     try:
+        certificate_url = enrollment.certificate_url
+        if certificate_url and not certificate_url.startswith(("http://", "https://")):
+            certificate_url = (
+                f"{getattr(settings, 'BACKEND_URL', 'https://api.hovuca.org')}"
+                f"{certificate_url if certificate_url.startswith('/') else f'/{certificate_url}'}"
+            )
         context = {
             "user": enrollment.user,
             "course": enrollment.course,
-            "certificate_url": enrollment.certificate_url,
+            "certificate_url": certificate_url,
             "completed_at": enrollment.completed_at,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
         }
         html_message = render_to_string("accounts/elearning/certificate.html", context)
         plain_message = strip_tags(html_message)
@@ -157,7 +164,11 @@ def send_enrollment_confirmation(self, enrollment_id: str):
         return
 
     try:
-        context = {"user": enrollment.user, "course": enrollment.course}
+        context = {
+            "user": enrollment.user,
+            "course": enrollment.course,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
+        }
         html_message = render_to_string(
             "accounts/elearning/enrollment_confirmation.html", context
         )
@@ -205,7 +216,11 @@ def send_course_completion_email(enrollment_id: str):
         return
 
     try:
-        context = {"user": enrollment.user, "course": enrollment.course}
+        context = {
+            "user": enrollment.user,
+            "course": enrollment.course,
+            "frontend_url": getattr(settings, "FRONTEND_URL", "https://hovuca.org"),
+        }
         html_message = render_to_string(
             "accounts/elearning/course_completed.html", context
         )

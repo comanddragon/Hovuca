@@ -36,7 +36,7 @@ class Category(BaseModel):
     """Top-level blog category (e.g. 'News', 'Education', 'Stories')."""
 
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     color = models.CharField(
         max_length=7, default="#3B82F6", help_text="Hex color for UI badges."
@@ -61,7 +61,7 @@ class Tag(BaseModel):
     """Freeform tag for cross-cutting article topics."""
 
     name = models.CharField(max_length=60, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
 
     class Meta:
         db_table = "blog_tags"

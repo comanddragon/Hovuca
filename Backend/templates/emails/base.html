@@ -1,250 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
   <title>{% block subject %}HOVUCA{% endblock %}</title>
   <style>
-    /* ── Reset ── */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-
-    /* ── Tokens ── */
-    :root {
-      --brand:        #1B6B4A;   /* deep forest green */
-      --brand-light:  #2A9D6E;   /* mid green */
-      --brand-pale:   #E8F5EF;   /* tint */
-      --accent:       #F4A621;   /* warm amber */
-      --text-dark:    #1A1A2E;
-      --text-body:    #3D4451;
-      --text-muted:   #7A8394;
-      --border:       #DDE3ED;
-      --bg:           #F5F7FA;
-      --white:        #FFFFFF;
-      --radius:       12px;
-      --radius-sm:    6px;
-    }
-
-    /* ── Shell ── */
-    body {
-      background-color: #F0F4F1;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      color: var(--text-body);
-    }
-    .email-shell {
-      width: 100%;
-      background-color: #F0F4F1;
-      padding: 40px 16px;
-    }
-
-    /* ── Card ── */
-    .email-card {
-      max-width: 580px;
-      margin: 0 auto;
-      background: var(--white);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(27, 107, 74, 0.10), 0 1px 4px rgba(0,0,0,0.06);
-    }
-
-    /* ── Header ── */
-    .email-header {
-      background: linear-gradient(135deg, #1B6B4A 0%, #145838 60%, #0F3D28 100%);
-      padding: 36px 40px 28px;
-      position: relative;
-      overflow: hidden;
-    }
-    .email-header::before {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 160px; height: 160px;
-      background: rgba(244, 166, 33, 0.15);
-      border-radius: 50%;
-    }
-    .email-header::after {
-      content: '';
-      position: absolute;
-      bottom: -20px; left: 20px;
-      width: 80px; height: 80px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 50%;
-    }
-    .logo-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      z-index: 1;
-    }
-    .logo-mark {
-      width: 38px; height: 38px;
-      background: var(--accent);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: bold; color: #1A1A2E;
-      font-family: 'Georgia', serif;
-      flex-shrink: 0;
-    }
-    .logo-text {
-      font-family: 'Georgia', serif;
-      font-size: 22px;
-      font-weight: bold;
-      color: #FFFFFF;
-      letter-spacing: 1.5px;
-    }
-    .logo-text span {
-      color: var(--accent);
-    }
-
-    /* ── Accent bar below header ── */
-    .accent-bar {
-      height: 4px;
-      background: linear-gradient(90deg, var(--accent) 0%, #F4C46A 50%, var(--accent) 100%);
-    }
-
-    /* ── Body ── */
-    .email-body {
-      padding: 40px 40px 32px;
-    }
-    .greeting {
-      font-family: 'Georgia', serif;
-      font-size: 22px;
-      color: var(--text-dark);
-      margin-bottom: 16px;
-      line-height: 1.3;
-    }
-    .email-body p {
-      font-size: 15px;
-      line-height: 1.75;
-      color: var(--text-body);
-      margin-bottom: 16px;
-    }
-    .email-body p:last-child { margin-bottom: 0; }
-
-    /* ── CTA Button ── */
-    .btn-wrap { margin: 28px 0; }
-    .btn {
-      display: inline-block;
-      background: var(--brand);
-      color: #FFFFFF !important;
-      text-decoration: none;
-      font-family: 'Georgia', serif;
-      font-size: 15px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      padding: 14px 32px;
-      border-radius: var(--radius-sm);
-      border-bottom: 3px solid #0F3D28;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: var(--brand-light); }
-
-    /* ── Divider ── */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 28px 0;
-    }
-
-    /* ── Info box ── */
-    .info-box {
-      background: var(--brand-pale);
-      border-left: 4px solid var(--brand-light);
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      padding: 16px 20px;
-      margin: 24px 0;
-      font-size: 14px;
-      color: var(--text-body);
-      line-height: 1.6;
-    }
-
-    /* ── Warning box ── */
-    .warning-box {
-      background: #FFF8EC;
-      border-left: 4px solid var(--accent);
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      padding: 16px 20px;
-      margin: 24px 0;
-      font-size: 14px;
-      color: var(--text-body);
-      line-height: 1.6;
-    }
-
-    /* ── Footer ── */
-    .email-footer {
-      background: #F8FAF9;
-      border-top: 1px solid var(--border);
-      padding: 24px 40px;
-      text-align: center;
-    }
-    .footer-links {
-      margin-bottom: 12px;
-    }
-    .footer-links a {
-      color: var(--brand);
-      text-decoration: none;
-      font-size: 12px;
-      margin: 0 8px;
-    }
-    .footer-links a:hover { text-decoration: underline; }
-    .footer-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-    .footer-meta a {
-      color: var(--text-muted);
-      text-decoration: underline;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .email-header { padding: 28px 24px 20px; }
-      .email-body   { padding: 28px 24px 24px; }
-      .email-footer { padding: 20px 24px; }
-      .greeting     { font-size: 19px; }
+    html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+    table, td { border-collapse: collapse !important; mso-table-lspace: 0 !important; mso-table-rspace: 0 !important; }
+    img { border: 0; display: block; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    a { color: #176345; }
+    .preheader { display: none !important; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; }
+    .button:hover { background-color: #104b34 !important; }
+    @media screen and (max-width: 640px) {
+      .shell { padding: 20px 10px !important; }
+      .content { padding: 34px 24px 30px !important; }
+      .header { padding: 24px !important; }
+      .footer { padding: 24px !important; }
+      .headline { font-size: 29px !important; line-height: 35px !important; }
+      .button-cell, .button { display: block !important; text-align: center !important; }
+      .stack { display: block !important; width: 100% !important; }
     }
   </style>
 </head>
-<body>
-  <div class="email-shell">
-    <div class="email-card">
-
-      <!-- Header -->
-      <div class="email-header">
-        <div class="logo-row">
-          <div class="logo-mark">H</div>
-          <div class="logo-text">HO<span>VUCA</span></div>
-        </div>
-      </div>
-      <div class="accent-bar"></div>
-
-      <!-- Body -->
-      <div class="email-body">
-        {% block body %}{% endblock %}
-      </div>
-
-      <!-- Footer -->
-      <div class="email-footer">
-        <div class="footer-links">
-          <a href="{{ frontend_url|default:'#' }}/dashboard">Dashboard</a>
-          <a href="{{ frontend_url|default:'#' }}/courses">Courses</a>
-          <a href="{{ frontend_url|default:'#' }}/contact">Contact</a>
-        </div>
-        <div class="footer-meta">
-          &copy; {% now "Y" %} HOVUCA. All rights reserved.<br />
-          You received this email because you have an account with HOVUCA.<br />
-          <a href="{{ frontend_url|default:'#' }}/settings/notifications">Manage notifications</a>
-          &nbsp;&middot;&nbsp;
-          <a href="{{ frontend_url|default:'#' }}/unsubscribe">Unsubscribe</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<body style="margin:0; padding:0; background-color:#eef3ef; color:#24342d; font-family:Arial, Helvetica, sans-serif;">
+  <div class="preheader">{% block preheader %}A message from HOVUCA.{% endblock %}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; background-color:#eef3ef;">
+    <tr>
+      <td class="shell" align="center" style="padding:40px 16px;">
+        <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(20,69,49,.10);">
+          <tr>
+            <td class="header" style="background-color:#174f38; padding:28px 40px; border-bottom:5px solid #f0b44d;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td valign="middle" style="width:44px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="width:40px; height:40px; border-radius:10px; background-color:#f0b44d; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:21px; font-weight:bold;">H</td></tr></table>
+                  </td>
+                  <td valign="middle" style="padding-left:12px; color:#ffffff; font-family:Georgia, 'Times New Roman', serif; font-size:23px; font-weight:bold; letter-spacing:2px;">HOVUCA</td>
+                  <td align="right" valign="middle" style="color:#cce0d5; font-size:11px; letter-spacing:1.4px; text-transform:uppercase;">Community in action</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="content" style="padding:44px 40px 38px;">
+              {% block body %}{% endblock %}
+            </td>
+          </tr>
+          <tr>
+            <td class="footer" style="padding:28px 40px; background-color:#f7faf8; border-top:1px solid #dce7e0; text-align:center;">
+              <p style="margin:0 0 10px; color:#40564c; font-size:12px; line-height:19px;">{% block footer_reason %}You received this email from HOVUCA.{% endblock %}</p>
+              <p style="margin:0 0 12px; font-size:12px; line-height:20px;"><a href="{{ frontend_url|default:'https://hovuca.org' }}" style="color:#176345; font-weight:bold; text-decoration:none;">Visit hovuca.org</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a href="{{ frontend_url|default:'https://hovuca.org' }}/contact" style="color:#176345; text-decoration:none;">Contact us</a></p>
+              <p style="margin:0; color:#53665d; font-size:11px; line-height:18px;">&copy; {% now "Y" %} HOVUCA. Hope, opportunity and lasting change.</p>
+            </td>
+          </tr>
+        </table>
+        <!--[if mso]></td></tr></table><![endif]-->
+      </td>
+    </tr>
+  </table>
 </body>
 </html>

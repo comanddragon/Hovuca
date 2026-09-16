@@ -23,7 +23,7 @@ class Organization(BaseModel):
     """Top-level NGO profile."""
 
     name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     logo = models.ImageField(upload_to="org/logos/", null=True, blank=True)
     website = models.URLField(blank=True)
@@ -48,7 +48,7 @@ class Branch(BaseModel):
         Organization, on_delete=models.CASCADE, related_name="branches"
     )
     name = models.CharField(max_length=255)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=280)
     location = models.CharField(max_length=255, blank=True)
     manager = models.ForeignKey(
         "accounts.User",

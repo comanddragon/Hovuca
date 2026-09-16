@@ -1,14 +1,12 @@
 {% extends "emails/base.html" %}
-
-{% block subject %}New contact form message{% endblock %}
-
+{% block subject %}New contact message: {{ contact_message.subject }}{% endblock %}
+{% block preheader %}{{ contact_message.full_name }} sent a message through hovuca.org.{% endblock %}
 {% block body %}
-  <h1>New contact form message</h1>
-  <p><strong>From:</strong> {{ contact_message.full_name }}</p>
-  <p><strong>Email:</strong> {{ contact_message.email }}</p>
-  <p><strong>Phone:</strong> {{ contact_message.phone|default:"Not provided" }}</p>
-  <p><strong>Topic:</strong> {{ contact_message.get_topic_display }}</p>
-  <p><strong>Subject:</strong> {{ contact_message.subject }}</p>
-  <p><strong>Message:</strong></p>
-  <p>{{ contact_message.message|linebreaksbr }}</p>
+<h1 class="headline" style="margin:0 0 10px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:34px; line-height:40px; font-weight:normal;">New contact message</h1>
+<p style="margin:0 0 28px; color:#53665d; font-size:14px; line-height:22px;">Submitted {{ contact_message.created_at|date:"j F Y \a\t H:i" }}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px; background-color:#f2f7f4; border-radius:12px;"><tr><td style="padding:22px 24px;"><p style="margin:0 0 4px; color:#53665d; font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">From</p><p style="margin:0 0 16px; color:#173a2c; font-size:16px; line-height:24px;"><strong>{{ contact_message.full_name }}</strong><br><a href="mailto:{{ contact_message.email }}" style="color:#176345;">{{ contact_message.email }}</a>{% if contact_message.phone %}<br><a href="tel:{{ contact_message.phone }}" style="color:#176345;">{{ contact_message.phone }}</a>{% endif %}</p><p style="margin:0 0 4px; color:#53665d; font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">Topic</p><p style="margin:0; color:#40564c; font-size:14px; line-height:22px;">{{ contact_message.get_topic_display }}</p></td></tr></table>
+<h2 style="margin:0 0 10px; color:#173a2c; font-family:Georgia, 'Times New Roman', serif; font-size:22px; line-height:29px;">{{ contact_message.subject }}</h2>
+<div style="color:#40564c; font-size:15px; line-height:25px; word-break:break-word;">{{ contact_message.message|linebreaks }}</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;"><tr><td class="button-cell" bgcolor="#176345" style="border-radius:8px;"><a class="button" href="mailto:{{ contact_message.email }}?subject=Re:%20{{ contact_message.subject|urlencode }}" style="display:inline-block; padding:15px 24px; color:#ffffff; font-size:15px; font-weight:bold; text-decoration:none;">Reply by email</a></td></tr></table>
 {% endblock %}
+{% block footer_reason %}This message was submitted through the public HOVUCA contact form.{% endblock %}
