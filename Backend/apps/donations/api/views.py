@@ -1,5 +1,5 @@
 from django.db import transaction
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from core.pagination import StandardPagination
 from core.permissions import IsAdmin, IsStaffOrAdmin
 
-from apps.donations.models import Donation, DonationCampaign
+from apps.donations.models import Donation, DonationCampaign, DonationPaymentSettings
 from .serializers import (
     DonationCampaignListSerializer,
     DonationCampaignDetailSerializer,
@@ -15,7 +15,18 @@ from .serializers import (
     DonationListSerializer,
     DonationDetailSerializer,
     DonationCreateSerializer,
+    DonationPaymentSettingsSerializer,
 )
+
+
+class DonationPaymentSettingsView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    serializer_class = DonationPaymentSettingsSerializer
+
+    def get(self, request):
+        configuration = DonationPaymentSettings.objects.first() or DonationPaymentSettings()
+        return Response(self.get_serializer(configuration).data)
 
 
 class DonationCampaignViewSet(viewsets.ModelViewSet):

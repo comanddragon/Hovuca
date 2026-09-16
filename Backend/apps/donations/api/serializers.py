@@ -1,7 +1,17 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.donations.models import Donation, DonationCampaign
+from apps.donations.models import Donation, DonationCampaign, DonationPaymentSettings
+
+
+class DonationPaymentSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DonationPaymentSettings
+        fields = [
+            "bank_name", "account_name", "account_number", "iban", "swift_code",
+            "bank_currency", "bank_instructions", "paypal_url", "campay_url",
+        ]
+        read_only_fields = fields
 
 
 # ---------------------------------------------------------------------------

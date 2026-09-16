@@ -1,6 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.throttling import SimpleRateThrottle
 from rest_framework.response import Response
 
 from core.pagination import StandardPagination
@@ -13,7 +14,29 @@ from .serializers import (
     VolunteerProfileWriteSerializer,
     VolunteerTaskSerializer,
     VolunteerTaskListSerializer,
+    VolunteerApplicationSerializer,
 )
+
+
+class VolunteerApplicationThrottle(SimpleRateThrottle):
+    scope = "volunteer_application"
+    rate = "5/hour"
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {"scope": self.scope, "ident": self.get_ident(request)}
+
+
+class VolunteerApplicationCreateView(generics.CreateAPIView):
+    serializer_class = VolunteerApplicationSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    throttle_classes = [VolunteerApplicationThrottle]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        application = serializer.save()
+        return Response({"id": str(application.id), "status": application.status}, status=status.HTTP_201_CREATED)
 
 
 class VolunteerProfileViewSet(viewsets.ModelViewSet):

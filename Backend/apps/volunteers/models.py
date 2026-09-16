@@ -2,6 +2,36 @@ from django.db import models
 from core.models import BaseModel
 
 
+class VolunteerApplication(BaseModel):
+    """A prospective volunteer's application, reviewed independently of accounts."""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending review"
+        CONTACTED = "contacted", "Contacted"
+        ACCEPTED = "accepted", "Accepted"
+        CLOSED = "closed", "Closed"
+
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=40)
+    location = models.CharField(max_length=200)
+    occupation = models.CharField(max_length=200, blank=True)
+    skills = models.TextField()
+    interests = models.CharField(max_length=200)
+    availability = models.CharField(max_length=200)
+    hours_per_week = models.PositiveSmallIntegerField()
+    motivation = models.TextField()
+    contact_consent = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+
+    class Meta:
+        db_table = "volunteer_applications"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.full_name
+
+
 class VolunteerProfile(BaseModel):
     """Extended profile for users with the 'volunteer' role."""
 

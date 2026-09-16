@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.volunteers.models import VolunteerProfile, VolunteerTask
+from apps.volunteers.models import VolunteerProfile, VolunteerTask, VolunteerApplication
 
 
 # ---------------------------------------------------------------------------
@@ -87,6 +87,26 @@ class VolunteerProfileDetailSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class VolunteerApplicationSerializer(serializers.ModelSerializer):
+    phone = serializers.RegexField(r"^(?=(?:\D*[0-9]){6})[+0-9\s().-]{6,40}$", max_length=40)
+    skills = serializers.CharField(max_length=5000)
+    motivation = serializers.CharField(max_length=5000)
+    hours_per_week = serializers.IntegerField(min_value=1, max_value=168)
+    contact_consent = serializers.BooleanField(required=True)
+
+    class Meta:
+        model = VolunteerApplication
+        fields = [
+            "full_name", "email", "phone", "location", "occupation", "skills",
+            "interests", "availability", "hours_per_week", "motivation", "contact_consent",
+        ]
+
+    def validate_contact_consent(self, value):
+        if not value:
+            raise serializers.ValidationError("Please allow the team to contact you about your application.")
+        return value
 
 
 class VolunteerProfileWriteSerializer(serializers.ModelSerializer):

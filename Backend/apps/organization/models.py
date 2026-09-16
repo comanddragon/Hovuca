@@ -2,6 +2,23 @@ from django.db import models
 from core.models import BaseModel
 
 
+class ContactMessage(BaseModel):
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=40, blank=True)
+    topic = models.CharField(max_length=30, choices=[(value, value.title()) for value in ("general", "partnership", "volunteering", "donations")])
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    contact_consent = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, default="new", choices=[("new", "New"), ("in_progress", "In progress"), ("resolved", "Resolved")])
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.subject
+
+
 class Organization(BaseModel):
     """Top-level NGO profile."""
 

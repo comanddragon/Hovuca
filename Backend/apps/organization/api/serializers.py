@@ -2,6 +2,22 @@ from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
 from apps.organization.models import Organization, Branch, Department
+from apps.organization.models import ContactMessage
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    contact_consent = serializers.BooleanField(required=True)
+    message = serializers.CharField(max_length=5000)
+    phone = serializers.RegexField(r"^(?=(?:\D*[0-9]){6})[+0-9\s().-]{6,40}$", allow_blank=True, required=False)
+
+    class Meta:
+        model = ContactMessage
+        fields = ["full_name", "email", "phone", "topic", "subject", "message", "contact_consent"]
+
+    def validate_contact_consent(self, value):
+        if not value:
+            raise serializers.ValidationError("Please allow us to contact you about your enquiry.")
+        return value
 
 
 # ---------------------------------------------------------------------------

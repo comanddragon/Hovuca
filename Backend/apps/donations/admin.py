@@ -3,7 +3,23 @@ from django.utils import timezone
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Donation, DonationCampaign
+from .models import Donation, DonationCampaign, DonationPaymentSettings
+
+
+@admin.register(DonationPaymentSettings)
+class DonationPaymentSettingsAdmin(ModelAdmin):
+    readonly_fields = ["id", "created_at", "updated_at"]
+    fieldsets = (
+        ("Direct bank transfer", {"fields": ["bank_name", "account_name", "account_number", "iban", "swift_code", "bank_currency", "bank_instructions"]}),
+        ("PayPal", {"fields": ["paypal_url"], "description": "Paste your organization's HTTPS PayPal donation link."}),
+        ("CamPay", {"fields": ["campay_url"], "description": "Paste your CamPay payment link. Donors choose MTN MoMo or Orange Money at checkout. Never enter API secrets here."}),
+    )
+
+    def has_add_permission(self, request):
+        return super().has_add_permission(request) and not DonationPaymentSettings.all_objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class DonationInline(TabularInline):

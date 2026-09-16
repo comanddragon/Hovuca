@@ -26,8 +26,8 @@ def process_donation_payment(self, donation_id: str):
     Verify payment status with the gateway and update the Donation record.
     Triggered by: DonationViewSet.create()
 
-    In production, replace the stub below with real gateway SDK calls
-    (stripe.PaymentIntent.retrieve / paypal.Order.get).
+    Payment must remain pending until verified by a gateway integration or staff.
+    Hosted checkout links do not provide automatic verification to this task.
     """
     from .models import Donation
 
@@ -45,33 +45,7 @@ def process_donation_payment(self, donation_id: str):
         )
         return
 
-    try:
-        # --- Gateway verification stub ---
-        # In production call the appropriate gateway SDK here and set
-        # donation.gateway_transaction_id from the real transaction ID.
-        # For now we optimistically mark it completed.
-        donation.status = Donation.Status.COMPLETED
-        donation.save(update_fields=["status"])
-
-        # Update campaign raised_amount
-        if donation.campaign:
-            _update_campaign_raised_amount(donation.campaign)
-
-        logger.info(
-            "Donation %s (%s %s) processed successfully.",
-            donation_id,
-            donation.amount,
-            donation.currency,
-        )
-
-        # Fire receipt task
-        send_donation_receipt.enqueue(donation_id)
-
-    except Exception as exc:
-        logger.error("process_donation_payment failed for %s: %s", donation_id, exc)
-        donation.status = Donation.Status.FAILED
-        donation.save(update_fields=["status"])
-        raise self.retry(exc=exc)
+    logger.info("Donation %s remains pending until payment is verified.", donation_id)
 
 
 def _update_campaign_raised_amount(campaign):

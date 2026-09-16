@@ -3,6 +3,18 @@ from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
 
 from .models import Branch, Department, Organization
+from .models import ContactMessage
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(ModelAdmin):
+    list_display = ["subject", "full_name", "topic", "status", "created_at"]
+    list_filter = ["topic", "status"]
+    search_fields = ["full_name", "email", "subject", "message"]
+    readonly_fields = ["full_name", "email", "phone", "topic", "subject", "message", "contact_consent", "created_at", "updated_at"]
+
+    def has_add_permission(self, request):
+        return False
 
 
 class BranchInline(TabularInline):

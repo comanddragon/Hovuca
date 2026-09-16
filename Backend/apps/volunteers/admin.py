@@ -2,7 +2,15 @@ from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
 
-from .models import VolunteerProfile, VolunteerTask
+from .models import VolunteerProfile, VolunteerTask, VolunteerApplication
+
+
+@admin.register(VolunteerApplication)
+class VolunteerApplicationAdmin(ModelAdmin):
+    list_display = ["full_name", "email", "location", "interests", "status", "created_at"]
+    list_filter = ["status", "created_at"]
+    search_fields = ["full_name", "email", "phone", "location", "skills"]
+    readonly_fields = ["id", "created_at", "updated_at", "contact_consent"]
 
 
 class VolunteerTaskInline(TabularInline):

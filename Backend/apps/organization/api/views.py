@@ -1,4 +1,8 @@
 from rest_framework import viewsets
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
+from rest_framework.throttling import SimpleRateThrottle
+from .serializers import ContactMessageSerializer
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +18,27 @@ from .serializers import (
     BranchDetailSerializer,
     DepartmentSerializer,
 )
+
+
+class ContactMessageThrottle(SimpleRateThrottle):
+    scope = "contact_message"
+    rate = "5/hour"
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {"scope": self.scope, "ident": self.get_ident(request)}
+
+
+class ContactMessageCreateView(generics.CreateAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    throttle_classes = [ContactMessageThrottle]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        message = serializer.save()
+        return Response({"id": str(message.id), "status": message.status}, status=status.HTTP_201_CREATED)
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):

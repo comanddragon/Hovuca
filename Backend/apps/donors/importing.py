@@ -27,6 +27,9 @@ DONOR_DETAILS = {
     "y+ global.jpeg": ("Y+ Global", "", "ngo"),
 }
 
+# Keep archived filename compatibility while accepting the converted public assets.
+DONOR_DETAILS.update({str(Path(name).with_suffix(".webp")): details for name, details in list(DONOR_DETAILS.items())})
+
 
 @dataclass(frozen=True)
 class ArchivedDonor:
@@ -43,6 +46,8 @@ class ArchivedDonor:
 def scrape_donors(logo_directory: Path, project_root: Path) -> list[ArchivedDonor]:
     donors = []
     for logo in sorted(logo_directory.iterdir(), key=lambda item: item.name.lower()):
+        if logo.suffix.lower() != ".webp" and logo.with_suffix(".webp").is_file():
+            continue
         details = DONOR_DETAILS.get(logo.name.lower())
         if not logo.is_file() or details is None:
             continue

@@ -1,5 +1,32 @@
 from django.db import models
+from django.core.validators import URLValidator
 from core.models import BaseModel
+
+
+class DonationPaymentSettings(BaseModel):
+    """Public receiving details; payment credentials must never be stored here."""
+
+    singleton = models.PositiveSmallIntegerField(default=1, unique=True, editable=False)
+    bank_name = models.CharField(max_length=200, blank=True)
+    account_name = models.CharField(max_length=200, blank=True)
+    account_number = models.CharField(max_length=100, blank=True)
+    iban = models.CharField(max_length=100, blank=True)
+    swift_code = models.CharField(max_length=40, blank=True)
+    bank_currency = models.CharField(max_length=3, default="XAF")
+    bank_instructions = models.TextField(blank=True)
+    paypal_url = models.URLField(max_length=1000, blank=True, validators=[URLValidator(schemes=["https"])])
+    campay_url = models.URLField(max_length=1000, blank=True, validators=[URLValidator(schemes=["https"])])
+
+    class Meta:
+        verbose_name = "Donation payment settings"
+        verbose_name_plural = "Donation payment settings"
+
+    def save(self, *args, **kwargs):
+        self.singleton = 1
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Donation payment settings"
 
 
 class DonationCampaign(BaseModel):
