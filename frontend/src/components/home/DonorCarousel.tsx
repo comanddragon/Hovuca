@@ -82,11 +82,7 @@ export default function DonorCarousel({
 
     if (isLoading || !donors?.length) {
         return (
-            <section className="py-8 bg-background overflow-hidden">
-                <div className="max-w-7xl mx-auto px-8 text-center mb-16">
-                    <div className="h-3 w-20 rounded bg-muted mx-auto mb-4 animate-pulse" />
-                    <div className="h-10 w-72 rounded bg-muted mx-auto animate-pulse" />
-                </div>
+            <section className="flex h-[120px] items-center overflow-hidden bg-transparent">
                 <div className="flex">
                     {Array.from({ length: 8 }).map((_, i) => (
                         <SkeletonPill key={i} />
@@ -99,7 +95,7 @@ export default function DonorCarousel({
     const items = [...donors, ...donors];
 
     return (
-            <section className="py-4 bg-background overflow-hidden" style={{ height: "120px" }}>
+            <section className="py-4 bg-transparent overflow-hidden" style={{ height: "120px" }}>
 
             {/* ── Header ─────────────────────────────────────────── */}
             {/*<div className="max-w-7xl mx-auto px-8">*/}
@@ -125,14 +121,14 @@ export default function DonorCarousel({
                     className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to right, hsl(var(--background)), transparent)",
+                            "linear-gradient(to right, #f7f5f0, transparent)",
                     }}
                 />
                 <div
                     className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to left, hsl(var(--background)), transparent)",
+                            "linear-gradient(to left, #f7f5f0, transparent)",
                     }}
                 />
 

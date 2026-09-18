@@ -294,6 +294,185 @@ html {
     100% { background-position:  468px 0; }
 }
 
+/* A single editorial opening for the photo-led homepage. Content remains visible
+   when animation is unavailable or the visitor prefers reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes home-photo-settle {
+        from { transform: scale(1.045); filter: saturate(0.88); }
+        to { transform: scale(1); filter: saturate(1); }
+    }
+
+    @keyframes home-panel-reveal {
+        from { clip-path: inset(0 100% 0 0); }
+        to { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes home-rule-draw {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+    }
+
+    .home-hero-photo {
+        animation: home-photo-settle 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .home-hero-panel {
+        animation: home-panel-reveal 0.72s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .home-hero-rule {
+        animation: home-rule-draw 0.42s 0.78s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    [data-home-reveal] {
+        transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-home-reveal].home-reveal-pending {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    [data-home-reveal="story-feature"].home-reveal-pending,
+    [data-home-reveal="story-side"].home-reveal-pending {
+        opacity: 1;
+        transform: none;
+    }
+
+    .home-story-feature-image {
+        clip-path: inset(0 round 1rem);
+        transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .home-story-feature.home-reveal-pending .home-story-feature-image {
+        clip-path: inset(0 100% 0 0 round 1rem);
+    }
+
+    .home-story-feature-copy,
+    .home-story-side {
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .home-story-feature-copy {
+        transition-delay: 0.18s;
+    }
+
+    .home-story-feature.home-reveal-pending .home-story-feature-copy {
+        opacity: 0;
+        transform: translateY(26px);
+    }
+
+    .home-story-side.home-reveal-pending {
+        opacity: 0;
+        transform: translateX(28px);
+    }
+}
+
+
+.home-project-slide {
+    width: min(42vw, 760px);
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease;
+}
+
+.home-project-slide[data-position="active"] {
+    z-index: 3;
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.home-project-slide[data-position="previous"] {
+    z-index: 1;
+    transform:
+        translateX(calc(-50% - min(18vw, 300px)))
+        scale(0.88)
+        rotate(3deg);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.home-project-slide[data-position="next"] {
+    z-index: 1;
+    transform:
+        translateX(calc(-50% + min(18vw, 300px)))
+        scale(0.88)
+        rotate(-3deg);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/*
+ * The global public-site button rule sets border-radius: 0.625rem,
+ * so explicitly override it for carousel arrows.
+ */
+.home-project-arrow {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    padding: 0;
+    border: 0;
+    border-radius: 9999px !important;
+    flex-shrink: 0;
+    appearance: none;
+}
+
+/*
+ * Keep the carousel arrows circular even if the generic
+ * public-site button rule appears later in the stylesheet.
+ */
+:where(.public-site) button.home-project-arrow {
+    border-radius: 9999px !important;
+}
+
+@media (max-width: 640px) {
+    .home-project-slide {
+        width: 86vw;
+    }
+
+    .home-project-slide[data-position="previous"] {
+        transform:
+            translateX(calc(-50% - 77vw))
+            scale(0.88)
+            rotate(2deg);
+    }
+
+    .home-project-slide[data-position="next"] {
+        transform:
+            translateX(calc(-50% + 77vw))
+            scale(0.88)
+            rotate(-2deg);
+    }
+
+    .home-project-arrow {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        min-height: 46px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-project-slide {
+        transition: none;
+    }
+}
+
+:where(.public-site) :where(input, select, textarea, button) {
+    border-radius: 0.625rem;
+}
+
+:where(.public-site article .relative.overflow-hidden) {
+    border-radius: 0.75rem;
+}
+
 /* ── Animate-on-scroll classes (applied by IntersectionObserver) ─ */
 /* Elements start invisible; JS adds .is-visible to trigger the animation */
 .aos-fade-up,

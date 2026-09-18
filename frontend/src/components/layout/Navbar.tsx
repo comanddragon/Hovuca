@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -173,22 +174,19 @@ export function Navbar() {
                 className={cn(
                     "z-50 text-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
                     scrolled
-                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] border border-white/25 bg-[#183b35]/78 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl xl:w-[880px]"
+                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-2xl border border-white/25 bg-[#183b35]/78 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl xl:w-[880px]"
                         : isHome
                             ? "absolute inset-x-0 top-0 bg-[linear-gradient(to_bottom,rgba(54,62,64,0.68)_0%,rgba(28,38,37,0.25)_58%,rgba(10,25,22,0)_100%)] pb-6"
                             : "relative inset-x-0 top-0 bg-[#183b35]"
                 )}
             >
                 <nav className={cn("relative mx-auto flex w-full items-center transition-[height,padding] duration-500", scrolled ? "h-14 px-4" : "h-[72px] px-[clamp(1.5rem,3.8vw,3.75rem)]")} aria-label="Primary navigation">
-                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)]", !scrolled && "gap-6 lg:w-[24.5%] lg:min-w-[360px]")}>
-                        <span className={cn("font-extrabold leading-none tracking-[-0.035em] transition-[font-size] duration-500", scrolled ? "text-xl" : "text-[clamp(1.65rem,2.6vw,2.7rem)]")}>HOVUCA</span>
-                        {!scrolled && <span className="h-12 w-px bg-[#f2c14e]" aria-hidden="true" />}
+                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)]", scrolled ? "gap-2" : "gap-3 lg:w-[24.5%] lg:min-w-[360px]")}>
+                        <span className={cn("font-extrabold leading-none tracking-[-0.035em] transition-[font-size] duration-500", scrolled ? "text-xl" : "text-[clamp(1.55rem,2.3vw,2.35rem)]")}>HOVUCA</span>
+                        {!scrolled && <span className="hidden h-12 w-px bg-[#f2c14e] lg:block" aria-hidden="true" />}
+                        <Image src="/Hovuca-croped.webp" alt="" width={40} height={40} className={cn("shrink-0 rounded-md bg-white object-contain", scrolled ? "size-8" : "size-10")} />
+                        {!scrolled && <span className="hidden text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] lg:block">Hope for<br />Vulnerable Children<br />Association</span>}
                     </Link>
-                    {!scrolled && (
-                        <span className="pointer-events-none absolute left-[calc(16.6%+11px)] top-4 hidden h-[47px] w-[11.5%] min-w-[172px] text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)] lg:block">
-                            Hope for<br />Vulnerable Children<br />Association
-                        </span>
-                    )}
 
                     <div className={cn("ml-auto hidden items-center xl:flex", scrolled ? "gap-5" : "gap-[clamp(1.1rem,2vw,2.2rem)]")}>
                         {visibleLinks.map((link) => (
@@ -202,7 +200,7 @@ export function Navbar() {
                         ))}
                         <Link
                             href="/donate"
-                            className={cn("inline-flex items-center bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934] focus-visible:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-[46px] px-8")}
+                            className={cn("inline-flex items-center rounded-full bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934] focus-visible:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-11 px-7")}
                         >
                             Donate
                         </Link>
