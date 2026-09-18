@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { useCourses } from "@/hooks";
+import { useCourse, useCourses } from "@/hooks";
 import type { CourseLevel } from "@/types";
 import styles from "./course-handbook.module.css";
 
@@ -32,24 +32,38 @@ function plainText(html: string) {
 export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState<"" | CourseLevel>("");
-  const deferredSearch = useDeferredValue(search.trim());
-  const { data, isLoading, isError } = useCourses({
-    ...(deferredSearch && { search: deferredSearch }),
-    ...(difficulty && { difficulty }),
-  });
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
+  const { data, isLoading, isError } = useCourses({ page_size: "100" });
+  const { data: cseCourse } = useCourse("cse");
   const courses = data?.results ?? [];
+  const featured = cseCourse ?? courses.find((course) => course.slug === "cse" || course.slug === "cse-training");
+  const otherCourses = courses.filter((course) => course.id !== featured?.id);
+  const filteredCourses = otherCourses.filter((course) =>
+    (!difficulty || course.difficulty === difficulty) &&
+    (!deferredSearch || `${course.title} ${plainText(course.description)} ${course.subject?.name ?? ""}`.toLowerCase().includes(deferredSearch)),
+  );
 
   return (
     <div className={styles.page}>
-      <section className={styles.indexHero}>
-        <div className={styles.indexHeroCopy}>
-          <p className={styles.eyebrow}>HOVUCA learning library</p>
-          <h1 className={styles.indexTitle}>Field handbooks for everyday life.</h1>
-          <p className={styles.indexIntro}>
-            Practical, age-aware courses built for young people, families, facilitators, and community partners across Cameroon.
+      <section className={styles.featureStage} aria-labelledby="course-feature-heading">
+        <div className={styles.featureCopy}>
+          <p className={styles.featureLabel}>HOVUCA flagship course</p>
+          <h1 id="course-feature-heading" className={styles.featureTitle}>
+            {featured?.title.replace(/\s+Training$/i, "") ?? "Comprehensive Sexuality Education"}
+          </h1>
+          <p className={styles.featureDescription}>
+            {featured ? plainText(featured.description) : "Explore relationships, sexual and reproductive health, life skills, gender and rights through HOVUCA’s learning programme."}
           </p>
+          {featured && <div className={styles.featureFacts} aria-label="Course details">
+            <span>{featured.difficulty}</span>
+            {featured.estimated_hours > 0 && <span>{featured.estimated_hours} hours</span>}
+            {featured.is_free && <span>Free to learn</span>}
+          </div>}
+          {featured ? <Link href={`/courses/${featured.slug}`} className={styles.featureAction}>
+            Explore the course <ArrowUpRight size={20} aria-hidden="true" />
+          </Link> : isError ? <p className={styles.featureError}>The course is temporarily unavailable. Please try again shortly.</p> : <span className={styles.featureLoading}>Opening the course…</span>}
         </div>
-        <div className={styles.indexHeroPhoto}>
+        <div className={styles.featurePhoto}>
           <Image
             src="/assets/plates/course-hero-photo.webp"
             alt="A HOVUCA facilitator learning alongside young people"
@@ -57,15 +71,34 @@ export default function CoursesPage() {
             priority
             loading="eager"
             unoptimized
-            sizes="(max-width: 760px) 100vw, 40vw"
+            sizes="(max-width: 760px) 100vw, 50vw"
           />
+          <span className={styles.featureMonogram} aria-hidden="true">CSE</span>
+          <div className={styles.featureCaption}>Knowledge for real life <span aria-hidden="true">↗</span></div>
         </div>
       </section>
 
-      <section className={styles.catalog} aria-labelledby="course-index-heading">
+      <section className={styles.courseOverview} aria-labelledby="course-overview-heading">
+        <div className={styles.overviewHeading}>
+          <h2 id="course-overview-heading">A course for the questions that matter.</h2>
+          <p>Move through the themes at your own pace, from everyday relationships to health, safety and rights.</p>
+        </div>
+        <div className={styles.topicStrip}>
+          <div><strong>Relationships</strong><span>Communication, friendship and healthy boundaries</span></div>
+          <div><strong>Sexual &amp; reproductive health</strong><span>Puberty, menstrual health, HIV and contraception</span></div>
+          <div><strong>Life skills</strong><span>Decision-making, confidence and finding support</span></div>
+          <div><strong>Gender &amp; rights</strong><span>Equality, safety and human rights</span></div>
+        </div>
+      </section>
+
+      {otherCourses.length > 0 && <section className={styles.catalog} aria-labelledby="course-index-heading">
+        <div className={styles.moreCoursesHeading}>
+          <h2 id="course-index-heading">More ways to learn.</h2>
+          <p>Explore the rest of HOVUCA’s course library.</p>
+        </div>
         <div className={styles.catalogTools}>
           <div>
-            <label className={styles.searchLabel} htmlFor="course-search">Search the library</label>
+            <label className={styles.searchLabel} htmlFor="course-search">Search other courses</label>
             <input
               id="course-search"
               type="search"
@@ -90,8 +123,8 @@ export default function CoursesPage() {
           </div>
         </div>
 
-        <p id="course-index-heading" className={styles.catalogCount} aria-live="polite">
-          {isLoading ? "Opening the course register…" : `${courses.length} ${courses.length === 1 ? "handbook" : "handbooks"} available`}
+        <p className={styles.catalogCount} aria-live="polite">
+          {isLoading ? "Opening the course register…" : `${filteredCourses.length} ${filteredCourses.length === 1 ? "course" : "courses"} available`}
         </p>
 
         <div className={styles.courseIndex}>
@@ -106,13 +139,13 @@ export default function CoursesPage() {
               <h2>The library could not be opened.</h2>
               <p>Please refresh the page or try again in a moment.</p>
             </div>
-          ) : courses.length === 0 ? (
+          ) : filteredCourses.length === 0 ? (
             <div className={styles.emptyCatalog}>
-              <h2>No handbooks match that search.</h2>
+              <h3>No courses match that search.</h3>
               <p>Clear a filter or try a broader topic.</p>
             </div>
           ) : (
-            courses.map((course, index) => (
+            filteredCourses.map((course, index) => (
               <Link key={course.id} href={`/courses/${course.slug}`} className={styles.courseRow}>
                 <span className={styles.courseFolio}>{String(index + 1).padStart(2, "0")}</span>
                 <div>
@@ -129,7 +162,7 @@ export default function CoursesPage() {
             ))
           )}
         </div>
-      </section>
+      </section>}
     </div>
   );
 }

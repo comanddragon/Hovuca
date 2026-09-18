@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -51,19 +51,28 @@ function ArticleBody({ content }: { content: string }) {
         return <div className={proseClass} dangerouslySetInnerHTML={{ __html: resolveArticleMedia(content) }} />;
     }
 
-    return (
-        <div className={proseClass}>
-            {content.split("\n").map((line, index) => {
-                if (!line.trim()) return <br key={index} />;
-                if (line.startsWith("# ")) return <h1 key={index}>{line.slice(2)}</h1>;
-                if (line.startsWith("## ")) return <h2 key={index}>{line.slice(3)}</h2>;
-                if (line.startsWith("### ")) return <h3 key={index}>{line.slice(4)}</h3>;
-                if (line.startsWith("- ") || line.startsWith("* ")) return <li key={index}>{line.slice(2)}</li>;
-                if (line.startsWith("> ")) return <blockquote key={index}><p>{line.slice(2)}</p></blockquote>;
-                return <p key={index}>{line}</p>;
-            })}
-        </div>
-    );
+    const blocks: ReactNode[] = [];
+    let listItems: string[] = [];
+    const flushList = (key: number) => {
+        if (!listItems.length) return;
+        blocks.push(<ul key={`list-${key}`}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ul>);
+        listItems = [];
+    };
+    content.split("\n").forEach((line, index) => {
+        if (line.startsWith("- ") || line.startsWith("* ")) {
+            listItems.push(line.slice(2));
+            return;
+        }
+        flushList(index);
+        if (!line.trim()) return;
+        if (line.startsWith("# ")) blocks.push(<h2 key={index}>{line.slice(2)}</h2>);
+        else if (line.startsWith("## ")) blocks.push(<h3 key={index}>{line.slice(3)}</h3>);
+        else if (line.startsWith("### ")) blocks.push(<h4 key={index}>{line.slice(4)}</h4>);
+        else if (line.startsWith("> ")) blocks.push(<blockquote key={index}><p>{line.slice(2)}</p></blockquote>);
+        else blocks.push(<p key={index}>{line}</p>);
+    });
+    flushList(blocks.length);
+    return <div className={proseClass}>{blocks}</div>;
 }
 
 export default function ArticlePage() {

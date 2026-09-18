@@ -188,6 +188,40 @@
     content: "";
 }
 
+.rich-content ul,
+.rich-content ol {
+    margin-block: 1rem;
+    padding-inline-start: 1.6rem;
+    list-style-position: outside;
+}
+
+.rich-content ul { list-style-type: disc; }
+.rich-content ol { list-style-type: decimal; }
+.rich-content li { padding-inline-start: 0.2rem; }
+.rich-content li + li { margin-top: 0.4rem; }
+.rich-content li::marker { color: #d85c43; }
+
+.rich-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote) {
+    margin-top: 1rem;
+}
+
+.rich-content :where(h2, h3, h4) {
+    margin-block: 2rem 0.75rem;
+    color: #183b35;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.rich-content h2 { font-size: clamp(1.6rem, 3vw, 2rem); }
+.rich-content h3 { font-size: clamp(1.35rem, 2.4vw, 1.65rem); }
+.rich-content h4 { font-size: 1.25rem; }
+.rich-content :where(h2, h3, h4):first-child { margin-top: 0; }
+.rich-content blockquote {
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid #d85c43;
+}
+
 .hovuca-ckeditor .ck-editor__editable_inline {
     min-height: 24rem;
     padding: 1.25rem 1.5rem;
