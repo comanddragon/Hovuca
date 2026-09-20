@@ -166,7 +166,8 @@ export function Navbar() {
             { href: "/volunteers", label: "Get involved" },
             { href: "/contact", label: "Contact" },
         ];
-        const visibleLinks = scrolled ? homeLinks.slice(0, 3) : homeLinks;
+        const visibleLinks = scrolled ? homeLinks.slice(0, 4) : homeLinks;
+        const overflowLinks = homeLinks.slice(4);
 
         return (
             <>
@@ -174,16 +175,16 @@ export function Navbar() {
                 className={cn(
                     "z-50 text-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
                     scrolled
-                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-full border border-white/25 bg-[#183b35]/78 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl xl:w-[880px]"
+                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-full border border-white/25 bg-[#183b35]/78 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl xl:w-220"
                         : isHome
                             ? "absolute inset-x-0 top-0 bg-[linear-gradient(to_bottom,rgba(54,62,64,0.68)_0%,rgba(28,38,37,0.25)_58%,rgba(10,25,22,0)_100%)] pb-6"
                             : "relative inset-x-0 top-0 bg-[#183b35]"
                 )}
             >
-                <nav className={cn("relative mx-auto flex w-full items-center transition-[height,padding] duration-500", scrolled ? "h-16 px-4" : "h-[72px] px-[clamp(1.5rem,3.8vw,3.75rem)]")} aria-label="Primary navigation">
-                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)]", scrolled ? "gap-2" : "gap-3 lg:w-[24.5%] lg:min-w-[360px]")}>
+                <nav className={cn("relative mx-auto flex w-full items-center transition-[height,padding] duration-500", scrolled ? "h-16 px-4" : "h-18 px-[clamp(1.5rem,3.8vw,3.75rem)]")} aria-label="Primary navigation">
+                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.45)]", scrolled ? "gap-2" : "gap-3 lg:w-[24.5%] lg:min-w-90")}>
                         <span className={cn("font-extrabold leading-none tracking-[-0.035em] transition-[font-size] duration-500", scrolled ? "text-xl" : "text-[clamp(1.55rem,2.3vw,2.35rem)]")}>HOVUCA</span>
-                        {!scrolled && <span className="hidden h-12 w-px bg-[#f2c14e] lg:block" aria-hidden="true" />}
+                        <span className={cn("hidden w-px bg-[#f2c14e] lg:block", scrolled ? "h-8" : "h-12")} aria-hidden="true" />
                         <Image src="/Hovuca-croped.webp" alt="" width={40} height={40} className={cn("aspect-square shrink-0 bg-white object-contain", scrolled ? "size-8" : "size-10")} />
                         {!scrolled && <span className="hidden text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] lg:block">Hope for<br />Vulnerable Children<br />Association</span>}
                     </Link>
@@ -193,23 +194,60 @@ export function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={cn("text-[13px] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.62)] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]", pathname.startsWith(link.href) && "text-[#f2c14e]")}
+                                className={cn("text-[13px] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.62)] transition-colors hover:text-[#f2c14e]", pathname.startsWith(link.href) && "text-[#f2c14e]")}
                             >
                                 {link.label}
                             </Link>
                         ))}
                         <Link
                             href="/donate"
-                            className={cn("inline-flex items-center gap-2 rounded-full bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934] focus-visible:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-11 px-7")}
+                            className={cn("inline-flex items-center gap-2 rounded-full bg-[#d85c43] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[#bd4934]", scrolled ? "h-10 px-5" : "h-11 px-7")}
                         >
                             Donate
                            <Image src="/hands-holding-heart.svg" alt="" width={16} height={16} className="size-4 shrink-0" />
                         </Link>
+
+                        {scrolled && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        aria-label="More navigation"
+                                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[#f2c14e]/60 hover:bg-white/10 hover:text-[#f2c14e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2c14e]/70"
+                                    >
+                                        <Menu className="h-5 w-5" />
+                                    </button>
+                                </DropdownMenuTrigger>
+
+                                <DropdownMenuContent
+                                    align="end"
+                                    sideOffset={12}
+                                    className="w-52 rounded-2xl border border-white/25 bg-[#183b35]/78 p-2 shadow-[0_16px_48px_rgba(10,25,22,0.24)] backdrop-blur-xl"
+                                >
+                                    {overflowLinks.map((link) => (
+                                        <DropdownMenuItem key={link.href} asChild>
+                                            <Link
+                                                href={link.href}
+                                                className={cn(
+                                                    "cursor-pointer rounded-md px-3 py-2.5 font-semibold",
+                                                    pathname.startsWith(link.href)
+                                                        ? "text-[#f2c14e]"
+                                                        : "text-white"
+                                                )}
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+
                         {!scrolled && (
                             <Link
                                 href="/blog"
                                 aria-label="Search HOVUCA stories"
-                                className="group/search mr-[22px] inline-flex h-7 w-[21px] items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]"
+                                className="group/search mr-5.5 inline-flex h-7 w-5.25 items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]"
                             >
                                 <span className="relative block h-6 w-6" aria-hidden="true">
                                     <span className="absolute left-px top-px h-[17px] w-[17px] rounded-full border-[2px] border-current" />
