@@ -6,7 +6,7 @@ from urllib.parse import parse_qsl, urlparse
 
 from .base import *  # noqa: F401, F403
 
-DEBUG = False
+DEBUG = True
 
 # All Django email APIs use Resend in production.
 EMAIL_BACKEND = "core.email_backends.ResendEmailBackend"
