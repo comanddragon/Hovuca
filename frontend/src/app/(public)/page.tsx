@@ -129,7 +129,6 @@ export default function HomePage() {
                         <h1
                             id="home-heading"
                             className="max-w-[400px] text-[2.3rem] font-semibold leading-[1.02] tracking-[-0.03em] sm:text-[2.75rem] lg:text-[clamp(2.55rem,3vw,3rem)]"
-                            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                         >
                             Young people<br />are partners<br />in change.
                         </h1>
@@ -155,7 +154,6 @@ export default function HomePage() {
                                 {index === 0 && <span className="absolute inset-y-8 left-3 w-[3px] bg-[#e0aa18]" aria-hidden="true" />}
                                 <span
                                     className={`text-[1.35rem] leading-none ${index === 0 ? "text-[#d99800]" : "text-[#2d3540]"}`}
-                                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                                 >
                                     {item.number}
                                 </span>
@@ -172,18 +170,18 @@ export default function HomePage() {
                     </p>
                 </section>
 
-                <section className="min-w-0 overflow-hidden border-y border-[#183b35]/15 bg-[#f7f5f0] py-6">
+                <section className="min-w-0 overflow-hidden border-y border-[#183b35]/15 bg-white py-6">
                     <p className="mb-8 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-[#46525b]">Partners in the work</p>
                     <DonorCarousel />
                 </section>
             </div>
 
-            <section className="bg-[#f2f0ea] px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading">
+            <section className="bg-white px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading">
                 <div className="mx-auto max-w-[1280px]">
                     <div data-home-reveal="rise" className="grid gap-10 border-b border-[#183b35]/25 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                         <SectionKicker>Where we work</SectionKicker>
                         <div>
-                            <h2 id="programs-heading" className="max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                            <h2 id="programs-heading" className="max-w-3xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl">
                                 Programs shaped around real lives.
                             </h2>
                             <p className="mt-6 max-w-2xl text-base leading-7 text-[#566067]">
@@ -200,7 +198,7 @@ export default function HomePage() {
                                 className="group flex min-h-[300px] flex-col border-b border-[#183b35]/25 px-0 py-9 text-[#183b35] lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
                             >
                                 <span className="text-sm text-[#d85c43]">0{index + 1}</span>
-                                <h3 className="mt-auto max-w-sm text-3xl font-semibold leading-[1.07] tracking-[-0.025em]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                                <h3 className="mt-auto max-w-sm text-3xl font-bold leading-[1.07] tracking-[-0.025em]">
                                     {program.title}
                                 </h3>
                                 <p className="mt-5 max-w-sm text-sm leading-6 text-[#59636a]">{program.excerpt}</p>
@@ -220,7 +218,7 @@ export default function HomePage() {
                     <div data-home-reveal="rise" className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
                         <div>
                             <SectionKicker>Field stories</SectionKicker>
-                            <h2 id="stories-heading" className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                            <h2 id="stories-heading" className="mt-5 text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl">
                                 Voices from the work.
                             </h2>
                         </div>
@@ -246,7 +244,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="home-story-feature-copy relative -mt-10 ml-5 rounded-tl-2xl bg-white px-6 pb-2 pt-6 sm:-mt-16 sm:ml-12 sm:px-9 sm:pt-8">
                                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d85c43]">{articles[0].category?.name || "HOVUCA story"}</p>
-                                        <h3 className="mt-3 max-w-xl text-2xl font-semibold leading-[1.1] tracking-[-0.025em] text-[#183b35] sm:text-4xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{articles[0].title}</h3>
+                                        <h3 className="mt-3 max-w-xl text-2xl font-bold leading-[1.1] tracking-[-0.025em] text-[#183b35] sm:text-4xl">{articles[0].title}</h3>
                                         <p className="mt-4 max-w-xl line-clamp-3 text-sm leading-6 text-[#5b646a]">{articles[0].excerpt}</p>
                                         <span className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-[#d85c43]">Read the story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
                                     </div>
@@ -269,7 +267,7 @@ export default function HomePage() {
                                         </div>
                                         <div className="min-w-0">
                                             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d85c43]">{article.category?.name || "HOVUCA story"}</p>
-                                            <h3 className="mt-3 text-2xl font-semibold leading-[1.12] tracking-[-0.02em] text-[#183b35]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{article.title}</h3>
+                                            <h3 className="mt-3 text-2xl font-bold leading-[1.12] tracking-[-0.02em] text-[#183b35]">{article.title}</h3>
                                             <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#5b646a]">{article.excerpt}</p>
                                             <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#d85c43]">Read story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
                                         </div>
@@ -285,7 +283,7 @@ export default function HomePage() {
                 <div data-home-reveal="rise" className="flex min-h-[440px] flex-col justify-between border-b border-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
                     <SectionKicker light>Knowledge for action</SectionKicker>
                     <div>
-                        <h2 id="resources-heading" className="max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.03em] md:text-6xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 id="resources-heading" className="max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                             Resources made to be used.
                         </h2>
                         <p className="mt-6 max-w-lg text-base leading-7 text-white/70">
@@ -306,7 +304,7 @@ export default function HomePage() {
                             <span className="text-sm text-[#f2c14e]">0{index + 1}</span>
                             <span>
                                 <small className="text-[10px] font-bold uppercase tracking-[0.24em] text-white/55">{resource.category}</small>
-                                <strong className="mt-3 block max-w-2xl text-xl font-semibold leading-tight md:text-2xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>{resource.title}</strong>
+                                <strong className="mt-3 block max-w-2xl text-xl font-bold leading-tight md:text-2xl">{resource.title}</strong>
                             </span>
                             <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/35 text-[#f2c14e] transition-transform group-hover:translate-x-1" aria-hidden="true"><FileText className="h-5 w-5" /></span>
                         </Link>
@@ -314,10 +312,10 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="bg-[#fcfbf7] px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading">
+            <section className="bg-white px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading">
                 <div className="mx-auto flex max-w-[1280px] flex-col gap-8 border-y border-[#183b35]/20 py-12 md:flex-row md:items-center md:justify-between md:gap-16 lg:py-14">
                     <div className="max-w-2xl">
-                        <h2 id="approach-cta-heading" className="text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-[#183b35] md:text-4xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 id="approach-cta-heading" className="text-3xl font-bold leading-[1.08] tracking-[-0.03em] text-[#183b35] md:text-4xl">
                             Explore the thinking behind the work.
                         </h2>
                         <p className="mt-4 max-w-xl text-base leading-7 text-[#566067]">
@@ -333,7 +331,7 @@ export default function HomePage() {
             <section className="grid lg:grid-cols-2" aria-labelledby="involved-heading">
                 <div className="bg-[#e0aa18] px-6 py-16 text-[#183b35] lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Get involved</p>
-                    <h2 id="involved-heading" className="mt-5 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.03em] md:text-6xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                    <h2 id="involved-heading" className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Bring your skills to the work.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-[#294842]">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
@@ -341,7 +339,7 @@ export default function HomePage() {
                 </div>
                 <div className="bg-[#d85c43] px-6 py-16 text-white lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Work together</p>
-                    <h2 className="mt-5 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.03em] md:text-6xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                    <h2 className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Build a lasting partnership.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-white/80">Partner with HOVUCA to strengthen programs, knowledge and opportunity in Cameroon.</p>
@@ -353,7 +351,7 @@ export default function HomePage() {
                 <div className="mx-auto grid max-w-[1280px] gap-10 border-t border-[#183b35] pt-10 lg:grid-cols-[1fr_0.85fr] lg:items-end">
                     <div>
                         <SectionKicker>Stay connected</SectionKicker>
-                        <h2 className="mt-6 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-[-0.03em] text-[#183b35] md:text-5xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        <h2 className="mt-6 max-w-3xl text-3xl font-bold leading-[1.05] tracking-[-0.03em] text-[#183b35] md:text-5xl">
                             Stories and opportunities, sent with purpose.
                         </h2>
                     </div>

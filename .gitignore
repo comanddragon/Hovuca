@@ -25,3 +25,6 @@ frontend/public/donors/
 /hovuca.org/
 /Backend/.test_media/
 /Backend/.env.production
+
+# Windows Mark-of-the-Web metadata
+*:Zone.Identifier

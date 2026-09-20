@@ -4,7 +4,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
     AccessibilityHelp, Alignment, Autoformat, BlockQuote, Bold, ClassicEditor,
     Code, CodeBlock, Essentials, FindAndReplace, FontBackgroundColor, FontColor,
-    FontFamily, FontSize, Fullscreen, GeneralHtmlSupport, Heading, Highlight,
+    FontSize, Fullscreen, GeneralHtmlSupport, Heading, Highlight,
     HorizontalLine, Image, ImageCaption, ImageInsert, ImageResize, ImageStyle,
     ImageToolbar, ImageUpload, Indent, IndentBlock, Italic, Link, LinkImage,
     List, ListProperties, MediaEmbed, PageBreak, Paragraph, PasteFromOffice,
@@ -41,7 +41,7 @@ const editorConfig = {
     licenseKey: "GPL",
     plugins: [
         AccessibilityHelp, Alignment, Autoformat, BlockQuote, Bold, Code, CodeBlock,
-        Essentials, FindAndReplace, FontBackgroundColor, FontColor, FontFamily,
+        Essentials, FindAndReplace, FontBackgroundColor, FontColor,
         FontSize, Fullscreen, GeneralHtmlSupport, Heading, Highlight, HorizontalLine,
         Image, ImageCaption, ImageInsert, ImageResize, ImageStyle, ImageToolbar,
         ImageUpload, Indent, IndentBlock, Italic, Link, LinkImage, List,
@@ -54,7 +54,7 @@ const editorConfig = {
     extraPlugins: [HovucaUploadAdapterPlugin],
     toolbar: {
         items: [
-            "undo", "redo", "findAndReplace", "|", "heading", "fontFamily", "fontSize",
+            "undo", "redo", "findAndReplace", "|", "heading", "fontSize",
             "|", "bold", "italic", "underline", "strikethrough", "code", "subscript",
             "superscript", "removeFormat", "|", "fontColor", "fontBackgroundColor",
             "highlight", "|", "alignment", "bulletedList", "numberedList", "outdent",
@@ -64,7 +64,6 @@ const editorConfig = {
         ],
         shouldNotGroupWhenFull: true,
     },
-    fontFamily: { supportAllValues: true },
     fontSize: { options: [9, 11, 13, "default", 17, 20, 24, 30, 36], supportAllValues: true },
     htmlSupport: {
         allow: [{ name: /.*/, attributes: /.*/, classes: /.*/, styles: /.*/ }],

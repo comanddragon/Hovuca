@@ -16,29 +16,29 @@ colors:
   white: "#ffffff"
 typography:
   display:
-    fontFamily: "var(--font-judson), Georgia, serif"
+    fontFamily: "var(--font-atkinson), Arial, sans-serif"
     fontSize: "clamp(2.8rem, 4.2vw, 4.1rem)"
     fontWeight: 700
     lineHeight: 0.94
     letterSpacing: "-0.02em"
   folio-display:
-    fontFamily: "var(--font-baskervville), Georgia, serif"
+    fontFamily: "var(--font-atkinson), Arial, sans-serif"
     fontSize: "clamp(3.2rem, 5vw, 4.8rem)"
     fontWeight: 700
     lineHeight: 0.94
     letterSpacing: "-0.04em"
   body:
-    fontFamily: "var(--font-dm-sans), sans-serif"
+    fontFamily: "var(--font-atkinson), Arial, sans-serif"
     fontSize: "0.98rem"
     fontWeight: 400
     lineHeight: 1.55
   editorial-body:
-    fontFamily: "var(--font-judson), Georgia, serif"
+    fontFamily: "var(--font-atkinson), Arial, sans-serif"
     fontSize: "1.1rem"
     fontWeight: 700
     lineHeight: 1.62
   label:
-    fontFamily: "var(--font-dm-sans), sans-serif"
+    fontFamily: "var(--font-atkinson), Arial, sans-serif"
     fontSize: "0.68rem"
     fontWeight: 800
     lineHeight: 1.35
@@ -92,7 +92,7 @@ The system persuades through a concise course entry, then becomes a reading envi
 
 **Key Characteristics:**
 
-- Editorial hierarchy built from folios, rules, contents rails, and serif display type.
+- Editorial hierarchy built from folios, rules, contents rails, and one highly legible sans-serif family.
 - Deep forest, mineral paper, coral actions, and sparing warm-gold orientation cues.
 - Crisp square geometry with almost no decorative depth.
 - Real course facts and access state are visible proof, never invented marketing claims.
@@ -134,24 +134,22 @@ The palette is earthy and high-contrast: forest provides authority, paper keeps 
 
 ## Typography
 
-**Display Font:** Judson (with Georgia and serif fallbacks)  
-**Folio Display Font:** Baskervville SC (with Georgia and serif fallbacks)  
-**Body Font:** DM Sans (with sans-serif fallback)
+**Unified Font:** Atkinson Hyperlegible Next (with Arial and sans-serif fallbacks)
 
-**Character:** Judson supplies approachable editorial authority; Baskervville SC gives active module titles the emphatic character of a printed folio. DM Sans keeps metadata, controls, and factual content crisp.
+**Character:** Atkinson Hyperlegible Next gives the whole experience UNFPA-like clarity and accessibility. Hierarchy comes from scale, weight, color, tracking, and line height rather than changing families.
 
 ### Hierarchy
 
-- **Display:** Bold, tightly set Judson for masthead and catalog titles; balance multi-line headings and keep line-height below one.
-- **Folio Display:** Bold Baskervville SC for the active module title only; it is the reading spread’s loudest typographic moment.
-- **Section Headline:** Judson at roughly 1.35–2.5rem for rail titles, chapter titles, readers, and empty states.
-- **Editorial Body:** Judson at 1.05–1.1rem with generous leading for module and chapter prose.
-- **Body:** DM Sans near 1rem for summaries and explanatory copy.
-- **Label:** Heavy uppercase DM Sans at 0.65–0.7rem with 0.12–0.18em tracking for eyebrows, metadata, and section markers.
+- **Display:** Bold Atkinson at the largest scale, tightly tracked and balanced for masthead and catalog titles.
+- **Folio Display:** Bold Atkinson for the active module title, distinguished by scale and color rather than a second face.
+- **Section Headline:** Bold Atkinson at roughly 1.35–2.5rem for rail titles, chapter titles, readers, and empty states.
+- **Editorial Body:** Regular Atkinson at 1.05–1.1rem with generous leading for module and chapter prose.
+- **Body:** Regular Atkinson near 1rem for summaries and explanatory copy.
+- **Label:** Bold uppercase Atkinson at 0.65–0.7rem with 0.12–0.18em tracking for metadata and section markers.
 
 ### Named Rules
 
-**The One Folio Voice Rule.** Baskervville SC belongs to the active module title; use Judson for the rest of the editorial hierarchy and DM Sans for interface language.
+**The One Family Rule.** Atkinson Hyperlegible Next is the only text family. Create hierarchy through size, weight, color, spacing, and line height.
 
 ## Layout
 
@@ -184,7 +182,7 @@ Controls, rows, reading panels, image plates, and rails use square corners. One-
 
 ### Search and Filters
 
-- **Search:** Transparent paper field with only a bottom rule and Judson input type; no rounded container.
+- **Search:** Transparent paper field with only a bottom rule and Atkinson input type; no rounded container.
 - **Filters:** Compact uppercase square controls with a forest border; selected state reverses to forest and white. Preserve native `aria-pressed` state.
 
 ### Course Register Rows

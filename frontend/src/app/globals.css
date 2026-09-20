@@ -43,8 +43,8 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
-    --font-sans: var(--font-dm-sans), sans-serif;
-    --font-display: var(--font-manrope), sans-serif;
+    --font-sans: var(--font-atkinson), Arial, sans-serif;
+    --font-display: var(--font-atkinson), Arial, sans-serif;
 }
 
 :root {
@@ -124,6 +124,13 @@
     body {
         @apply bg-white text-neutral-800 antialiased font-sans;
     }
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+        font: inherit;
+    }
 }
 
 @layer utilities {
@@ -172,7 +179,7 @@
 
 /* ── Editorial drop cap (article first paragraph) ─────────────── */
 .article-content > p:first-of-type::first-letter {
-    font-family: var(--font-display);
+    font-family: inherit;
     font-size: 4.5rem;
     line-height: 3.5rem;
     font-weight: 300;
@@ -208,9 +215,13 @@
 .rich-content :where(h2, h3, h4) {
     margin-block: 2rem 0.75rem;
     color: #183b35;
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: inherit;
     font-weight: 700;
     line-height: 1.2;
+}
+
+.rich-content [style*="font-family"] {
+    font-family: inherit !important;
 }
 
 .rich-content h2 { font-size: clamp(1.6rem, 3vw, 2rem); }
@@ -360,7 +371,7 @@ html {
 
     [data-home-reveal] {
         transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     [data-home-reveal].home-reveal-pending {
@@ -372,6 +383,29 @@ html {
     [data-home-reveal="story-side"].home-reveal-pending {
         opacity: 1;
         transform: none;
+    }
+
+    [data-home-reveal="projects"] {
+        transition: none;
+    }
+
+    [data-home-reveal="projects"] .home-project-copy {
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-home-reveal="projects"] .home-project-viewport {
+        clip-path: inset(0 round 0.5rem);
+        transition: clip-path 0.9s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-home-reveal="projects"].home-reveal-pending .home-project-copy {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    [data-home-reveal="projects"].home-reveal-pending .home-project-viewport {
+        clip-path: inset(0 50% round 0.5rem);
     }
 
     .home-story-feature-image {
@@ -386,7 +420,7 @@ html {
     .home-story-feature-copy,
     .home-story-side {
         transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .home-story-feature-copy {
@@ -405,41 +439,87 @@ html {
 }
 
 
-.home-project-slide {
-    width: min(42vw, 760px);
-    transform: translateX(-50%) scale(0.8);
+.home-project-swiper {
+    overflow: visible;
+}
+
+.home-project-stage {
+    width: 100%;
+}
+
+@media (min-width: 980px) {
+    .home-project-stage {
+        width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .home-project-stage {
+        width: 1100px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .home-project-stage {
+        width: 1300px;
+    }
+}
+
+.home-project-swiper .home-project-slide {
+    width: min(calc(100vw - 40px), 720px);
+}
+
+@media (min-width: 720px) and (max-width: 979px) {
+    .home-project-swiper .home-project-slide {
+        width: min(85vw, 580px);
+    }
+}
+
+@media (max-width: 719px) {
+    .home-project-swiper .home-project-slide {
+        width: 80vw;
+    }
+}
+
+.home-project-copy {
+    position: relative;
+}
+
+.home-project-copy-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+.home-project-copy-panel.is-active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+}
+
+.home-project-card::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(180deg, transparent 35%, rgb(0 0 0 / 0.62) 100%);
     pointer-events: none;
-    transition:
-        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.4s ease;
 }
 
-.home-project-slide[data-position="active"] {
-    z-index: 3;
-    transform: translateX(-50%) scale(1);
-    opacity: 1;
-    pointer-events: auto;
+.home-project-card-copy {
+    transition: opacity 0.35s ease;
 }
 
-.home-project-slide[data-position="previous"] {
-    z-index: 1;
-    transform:
-        translateX(calc(-50% - min(18vw, 300px)))
-        scale(0.88)
-        rotate(3deg);
-    opacity: 1;
-    pointer-events: auto;
+.home-project-slide:not(.swiper-slide-active) .home-project-card-copy {
+    opacity: 0;
 }
 
-.home-project-slide[data-position="next"] {
-    z-index: 1;
-    transform:
-        translateX(calc(-50% + min(18vw, 300px)))
-        scale(0.88)
-        rotate(-3deg);
-    opacity: 1;
-    pointer-events: auto;
+@media (max-width: 979px) {
+    .home-project-card-copy > span:first-child {
+        display: none;
+    }
 }
 
 /*
@@ -447,10 +527,10 @@ html {
  * so explicitly override it for carousel arrows.
  */
 .home-project-arrow {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    min-height: 50px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
     padding: 0;
     border: 0;
     border-radius: 9999px !important;
@@ -464,39 +544,6 @@ html {
  */
 :where(.public-site) button.home-project-arrow {
     border-radius: 9999px !important;
-}
-
-@media (max-width: 640px) {
-    .home-project-slide {
-        width: 86vw;
-    }
-
-    .home-project-slide[data-position="previous"] {
-        transform:
-            translateX(calc(-50% - 77vw))
-            scale(0.88)
-            rotate(2deg);
-    }
-
-    .home-project-slide[data-position="next"] {
-        transform:
-            translateX(calc(-50% + 77vw))
-            scale(0.88)
-            rotate(-2deg);
-    }
-
-    .home-project-arrow {
-        width: 46px;
-        height: 46px;
-        min-width: 46px;
-        min-height: 46px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .home-project-slide {
-        transition: none;
-    }
 }
 
 :where(.public-site) :where(input, select, textarea, button) {

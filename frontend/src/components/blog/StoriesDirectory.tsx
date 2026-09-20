@@ -7,7 +7,6 @@ import { useArticles, useCategories, useFeaturedArticles } from "@/hooks";
 import type { Article } from "@/types";
 
 const PAGE_SIZE = 9;
-const serif = { fontFamily: "Georgia, 'Times New Roman', serif" } as const;
 
 function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -15,7 +14,7 @@ function formatDate(iso: string) {
 
 function Cover({ article, sizes, className = "" }: { article: Article; sizes: string; className?: string }) {
     if (!article.cover_image) {
-        return <div className={`absolute inset-0 flex items-center justify-center bg-[#234d44] px-6 text-center text-lg font-semibold text-white ${className}`} style={serif}>{article.title}</div>;
+        return <div className={`absolute inset-0 flex items-center justify-center bg-[#234d44] px-6 text-center text-lg font-semibold text-white ${className}`}>{article.title}</div>;
     }
     return <Image src={article.cover_image} alt={article.cover_image_alt || article.title} fill sizes={sizes} className={`object-cover ${className}`} />;
 }
@@ -99,7 +98,7 @@ export default function StoriesDirectory() {
         {picks.length > 0 && <section className="bg-[#f7f5f0] px-6 py-16 md:py-20" aria-labelledby="picks-heading">
             <div className="mx-auto max-w-[1280px]">
                 <p className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.28em] text-[#46525b]"><span className="h-px w-12 bg-[#e0aa18]" aria-hidden="true" />Editor&rsquo;s picks</p>
-                <h2 id="picks-heading" className="mt-4 text-3xl leading-[1.05] tracking-[-0.02em] sm:text-4xl" style={serif}>Stories worth your time.</h2>
+                <h2 id="picks-heading" className="mt-4 text-3xl font-bold leading-[1.05] tracking-[-0.02em] sm:text-4xl">Stories worth your time.</h2>
 
                 <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
                     <article className="group min-w-0">
@@ -109,7 +108,7 @@ export default function StoriesDirectory() {
                             </div>
                             <div className="relative -mt-10 ml-5 rounded-tl-2xl bg-[#f7f5f0] px-6 pt-6 sm:-mt-14 sm:ml-10 sm:px-8 sm:pt-8">
                                 <StoryMeta article={picks[0]} />
-                                <h3 className="mt-3 max-w-xl text-2xl leading-[1.12] tracking-[-0.02em] text-[#183b35] sm:text-3xl" style={serif}>{picks[0].title}</h3>
+                                <h3 className="mt-3 max-w-xl text-2xl font-bold leading-[1.12] tracking-[-0.02em] text-[#183b35] sm:text-3xl">{picks[0].title}</h3>
                                 <p className="mt-3 line-clamp-3 max-w-xl text-sm leading-6 text-[#53645f]">{picks[0].excerpt}</p>
                                 <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#d85c43]">Read the story <ArrowUpRight className="size-4" aria-hidden="true" /></span>
                             </div>
@@ -123,7 +122,7 @@ export default function StoriesDirectory() {
                                 </div>
                                 <div className="min-w-0">
                                     <StoryMeta article={story} />
-                                    <h3 className="mt-3 text-xl leading-[1.2] tracking-[-0.01em] text-[#183b35] sm:text-2xl" style={serif}>{story.title}</h3>
+                                    <h3 className="mt-3 text-xl font-bold leading-[1.2] tracking-[-0.01em] text-[#183b35] sm:text-2xl">{story.title}</h3>
                                     <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#53645f]">{story.excerpt}</p>
                                     <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#d85c43]">Read story <ArrowUpRight className="size-4" aria-hidden="true" /></span>
                                 </div>
@@ -139,15 +138,15 @@ export default function StoriesDirectory() {
             <div className="flex flex-wrap items-end justify-between gap-6 border-b border-[#183b35]/20 pb-7">
                 <div>
                     <p className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.28em] text-[#46525b]"><span className="h-px w-12 bg-[#e0aa18]" aria-hidden="true" />Just published</p>
-                    <h2 id="stories-heading" className="mt-4 text-3xl leading-[1.05] tracking-[-0.02em] sm:text-4xl" style={serif}>Latest from the field.</h2>
+                    <h2 id="stories-heading" className="mt-4 text-3xl font-bold leading-[1.05] tracking-[-0.02em] sm:text-4xl">Latest from the field.</h2>
                 </div>
                 <p aria-live="polite" className="text-sm text-[#53645f]">{isLoading ? "Loading stories…" : isFetching ? "Updating stories…" : isError ? "Stories are temporarily unavailable." : `${data?.count ?? 0} ${data?.count === 1 ? "story" : "stories"} found`}</p>
             </div>
 
             {isError ? (
-                <div role="alert" className="border-b border-[#183b35]/20 py-12"><h3 className="text-2xl" style={serif}>We couldn&rsquo;t load the stories.</h3><p className="mt-3 text-[#53645f]">Please try again to see the latest articles.</p><button disabled={isFetching} className="mt-6 inline-flex min-h-12 items-center border border-[#183b35]/40 px-5 py-3 font-semibold hover:bg-[#183b35] hover:text-white disabled:opacity-40" onClick={() => refetch()}>Try again</button></div>
+                <div role="alert" className="border-b border-[#183b35]/20 py-12"><h3 className="text-2xl font-bold">We couldn&rsquo;t load the stories.</h3><p className="mt-3 text-[#53645f]">Please try again to see the latest articles.</p><button disabled={isFetching} className="mt-6 inline-flex min-h-12 items-center border border-[#183b35]/40 px-5 py-3 font-semibold hover:bg-[#183b35] hover:text-white disabled:opacity-40" onClick={() => refetch()}>Try again</button></div>
             ) : !isLoading && !articles.length ? (
-                <div className="border-b border-[#183b35]/20 py-14"><h3 className="text-2xl" style={serif}>{query || category ? "No stories match these filters." : "Stories will appear here when published."}</h3>{(query || category) && <button className="mt-6 inline-flex min-h-12 items-center border border-[#183b35]/40 px-5 py-3 font-semibold hover:bg-[#183b35] hover:text-white" onClick={clear}>Show all stories</button>}</div>
+                <div className="border-b border-[#183b35]/20 py-14"><h3 className="text-2xl font-bold">{query || category ? "No stories match these filters." : "Stories will appear here when published."}</h3>{(query || category) && <button className="mt-6 inline-flex min-h-12 items-center border border-[#183b35]/40 px-5 py-3 font-semibold hover:bg-[#183b35] hover:text-white" onClick={clear}>Show all stories</button>}</div>
             ) : <div aria-busy={isFetching}>
 
                 {lead && <article className="grid gap-10 pt-12 pb-14 md:grid-cols-[1.15fr_0.85fr] md:gap-12">
@@ -158,7 +157,7 @@ export default function StoriesDirectory() {
                     <div>
                         <div className="relative -mt-16 ml-5 rounded-2xl rounded-bl-none bg-white px-7 pb-1 pt-7 md:mt-0 md:ml-0 md:rounded-none md:bg-transparent md:px-0 md:pt-6">
                             {lead.category && <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d85c43]">{lead.category.name}</p>}
-                            <h3 className="mt-3 text-2xl leading-[1.15] tracking-[-0.02em] sm:text-3xl" style={serif}><Link href={`/blog/${lead.slug}`} className="hover:underline hover:underline-offset-4">{lead.title}</Link></h3>
+                            <h3 className="mt-3 text-2xl font-bold leading-[1.15] tracking-[-0.02em] sm:text-3xl"><Link href={`/blog/${lead.slug}`} className="hover:underline hover:underline-offset-4">{lead.title}</Link></h3>
                             <p className="mt-4 line-clamp-4 text-[14.5px] leading-7 text-[#5b646a]">{lead.excerpt}</p>
                             <Link href={`/blog/${lead.slug}`} className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#d85c43]">Read the story <ArrowUpRight aria-hidden="true" className="size-4" /></Link>
                         </div>
@@ -171,7 +170,7 @@ export default function StoriesDirectory() {
                             <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#f2f0ea]"><Cover article={article} sizes="(max-width: 768px) 40vw, 220px" className="transition-transform duration-500 group-hover:scale-[1.03]" /></div>
                             <div>
                                 {article.category && <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d85c43]">{article.category.name}</p>}
-                                <h4 className="mt-2 text-lg leading-[1.25] tracking-[-0.01em] group-hover:underline group-hover:underline-offset-4" style={serif}>{article.title}</h4>
+                                <h4 className="mt-2 text-lg font-bold leading-[1.25] tracking-[-0.01em] group-hover:underline group-hover:underline-offset-4">{article.title}</h4>
                                 <StoryMeta article={article} className="mt-2" />
                             </div>
                         </Link>
@@ -181,8 +180,8 @@ export default function StoriesDirectory() {
                 {gridRows.length > 0 && <div className="mt-10 grid gap-x-10 gap-y-10 border-t border-[#183b35]/20 pt-10 sm:grid-cols-2 lg:grid-cols-3">
                     {gridRows.map((article, index) => (
                         <article key={article.id} className="border-t border-[#e0aa18] pt-6">
-                            <span className="text-lg text-[#d85c43]" style={serif}>{String(gridStart + index).padStart(2, "0")}</span>
-                            <h4 className="mt-3 text-xl leading-[1.25] tracking-[-0.01em]" style={serif}><Link href={`/blog/${article.slug}`} className="hover:underline hover:underline-offset-4">{article.title}</Link></h4>
+                            <span className="text-lg font-semibold text-[#d85c43]">{String(gridStart + index).padStart(2, "0")}</span>
+                            <h4 className="mt-3 text-xl font-bold leading-[1.25] tracking-[-0.01em]"><Link href={`/blog/${article.slug}`} className="hover:underline hover:underline-offset-4">{article.title}</Link></h4>
                             <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#5b646a]">{article.excerpt}</p>
                             <StoryMeta article={article} className="mt-4" />
                         </article>
@@ -197,13 +196,13 @@ export default function StoriesDirectory() {
         <section className="grid md:grid-cols-2">
             <div className="bg-[#e0aa18] px-6 py-16 text-[#183b35] md:px-12 md:py-20">
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Stay connected</p>
-                <h3 className="mt-4 max-w-xs text-3xl leading-[1.1] tracking-[-0.02em] sm:text-4xl" style={serif}>Get new field stories in your inbox.</h3>
+                <h3 className="mt-4 max-w-xs text-3xl font-bold leading-[1.1] tracking-[-0.02em] sm:text-4xl">Get new field stories in your inbox.</h3>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-[#294842]">One dispatch a month. No noise, just what&rsquo;s happening in the communities we work alongside.</p>
                 <Link href="/contact" className="mt-7 inline-flex items-center gap-3 rounded-full border border-[#183b35] px-6 py-3 text-sm font-semibold">Subscribe <ArrowRight className="h-4 w-4" /></Link>
             </div>
             <div className="bg-[#d85c43] px-6 py-16 text-white md:px-12 md:py-20">
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Get involved</p>
-                <h3 className="mt-4 max-w-xs text-3xl leading-[1.1] tracking-[-0.02em] sm:text-4xl" style={serif}>Have a story from the field?</h3>
+                <h3 className="mt-4 max-w-xs text-3xl font-bold leading-[1.1] tracking-[-0.02em] sm:text-4xl">Have a story from the field?</h3>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-white/80">If you work alongside HOVUCA and have a story worth telling, we&rsquo;d like to help you tell it.</p>
                 <Link href="/contact" className="mt-7 inline-flex items-center gap-3 rounded-full border border-white px-6 py-3 text-sm font-semibold">Pitch a story <ArrowRight className="h-4 w-4" /></Link>
             </div>

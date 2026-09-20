@@ -82,7 +82,7 @@
 .heroTitle {
   max-width: 47rem;
   margin: 0.7rem 0 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(2.8rem, 4.2vw, 4.1rem);
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -129,7 +129,7 @@
   margin: 0 0 1.5rem;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid var(--gold);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
 }
@@ -208,7 +208,7 @@
 .folio {
   flex: none;
   color: var(--gold);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -216,7 +216,7 @@
 
 .moduleTitle {
   margin: 0.5rem 0 0;
-  font-family: var(--font-baskervville), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(3.2rem, 5vw, 4.8rem);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -228,7 +228,7 @@
   max-width: 48rem;
   margin: 1.1rem 0 1.7rem;
   color: #284e47;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(1.45rem, 2.2vw, 2.05rem);
   line-height: 1.12;
 }
@@ -253,7 +253,7 @@
   max-width: 50rem;
   margin: 1.55rem 0 0;
   color: #3e514c;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.62;
@@ -316,7 +316,7 @@
   height: 2rem;
   border: 1px solid rgba(24, 59, 53, 0.27);
   color: var(--coral);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-weight: 700;
 }
 
@@ -356,7 +356,7 @@
 .chapterReader h4 {
   margin: 0.65rem 0 0;
   color: var(--forest-deep);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.5rem);
   line-height: 1.08;
 }
@@ -373,7 +373,7 @@
 .readerText {
   margin: 1rem 0 0;
   color: #344943;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.05rem;
   line-height: 1.72;
 }
@@ -539,7 +539,7 @@
 
 .notFound h1 {
   margin: 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(2.5rem, 7vw, 5rem);
 }
 
@@ -585,7 +585,7 @@
 .featureTitle {
   max-width: 10ch;
   margin: 1.4rem 0 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(3.5rem, 5.7vw, 6rem);
   font-weight: 700;
   letter-spacing: -0.035em;
@@ -667,7 +667,7 @@
   left: -0.04em;
   bottom: 0.05em;
   color: transparent;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(10rem, 23vw, 25rem);
   font-weight: 700;
   letter-spacing: -0.08em;
@@ -712,7 +712,7 @@
 .overviewHeading h2, .moreCoursesHeading h2 {
   max-width: 17ch;
   margin: 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(2.5rem, 4.5vw, 4.5rem);
   line-height: 1;
   letter-spacing: -0.03em;
@@ -742,7 +742,7 @@
 }
 
 .topicStrip strong {
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.45rem;
   line-height: 1.1;
 }
@@ -788,7 +788,7 @@
 .indexTitle {
   max-width: 46rem;
   margin: 0.75rem 0 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(3.4rem, 6vw, 6.5rem);
   line-height: 0.87;
   letter-spacing: -0.045em;
@@ -854,7 +854,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--forest);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.25rem;
 }
 
@@ -913,7 +913,7 @@
 
 .courseFolio {
   color: var(--coral);
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 1.6rem;
   font-weight: 700;
 }
@@ -929,7 +929,7 @@
 
 .courseName {
   margin: 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: clamp(1.55rem, 2.5vw, 2.4rem);
   line-height: 1.02;
 }
@@ -959,7 +959,7 @@
 
 .emptyCatalog h2, .emptyCatalog h3 {
   margin: 0;
-  font-family: var(--font-judson), Georgia, serif;
+  font-family: var(--font-atkinson), Arial, sans-serif;
   font-size: 2.4rem;
 }
 
