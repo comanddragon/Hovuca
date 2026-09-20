@@ -214,7 +214,7 @@ export default function GalleryAlbumPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-neutral-900 to-neutral-950" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.5)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,var(--brand-black-50)_100%)]" />
 
                 {/* Back button */}
                 <motion.div

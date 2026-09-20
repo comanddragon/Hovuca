@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { X, Upload, Plus } from "lucide-react";
-
+import { resolveArticleMedia, unresolveArticleMedia } from "@/lib/article-media";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,7 +55,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
     const saving = creating || updating;
 
     const [slugTouched, setSlugTouched] = useState(mode === "edit");
-    const [tagIds, setTagIds] = useState<string[]>(article?.tags.map((t) => t.id) ?? []);
+    const [tagIds, setTagIds] = useState<string[]>(article?.tags?.map((t) => t.id) ?? []);
     const [newTagName, setNewTagName] = useState("");
     const [coverFile, setCoverFile] = useState<File | null>(null);
     const [coverPreview, setCoverPreview] = useState<string | null>(article?.cover_image ?? null);
@@ -73,7 +73,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
             title: article?.title ?? "",
             slug: article?.slug ?? "",
             excerpt: article?.excerpt ?? "",
-            body: article?.body ?? "",
+            body: resolveArticleMedia(article?.body ?? ""),
             cover_image_alt: article?.cover_image_alt ?? "",
             category: article?.category?.id ?? "",
             status: article?.status ?? "draft",
@@ -117,6 +117,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
     const onSubmit = (data: ArticleForm) => {
         const payload = {
             ...data,
+            body: unresolveArticleMedia(data.body),
             category: data.category || null,
             tag_ids: tagIds,
             ...(coverFile && { cover_image: coverFile }),
@@ -169,16 +170,6 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                             {errors.excerpt ? <span className="text-destructive">{errors.excerpt.message}</span> : <span />}
                             <span>{excerpt.length}/500</span>
                         </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label>Body</Label>
-                        <RichTextEditor
-                            value={values.body ?? ""}
-                            onChange={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
-                            error={errors.body?.message}
-                        />
-                        {errors.body && <p className="text-xs text-destructive">{errors.body.message}</p>}
                     </div>
 
                     <div className="space-y-3 rounded-xl border border-border bg-card p-4">
@@ -329,6 +320,16 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                         </label>
                     </div>
                 </div>
+            </div>
+
+            <div className="space-y-1.5">
+                <Label>Body</Label>
+                <RichTextEditor
+                    value={values.body ?? ""}
+                    onChange={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
+                    error={errors.body?.message}
+                />
+                {errors.body && <p className="text-xs text-destructive">{errors.body.message}</p>}
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border pt-6">

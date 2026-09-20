@@ -28,10 +28,11 @@ const nextConfig: NextConfig = {
                 ? "script-src 'self' 'unsafe-inline'"
                 : "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
             "style-src 'self' 'unsafe-inline'",
-            "img-src 'self' data: blob: https://images.unsplash.com https://media.hovuca.org",
+            "img-src 'self' data: blob: https://images.unsplash.com https://media.hovuca.org" +
+            (isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000"),
             "font-src 'self' data:",
             `connect-src 'self' https://api.hovuca.org wss://api.hovuca.org https://*.ingest.de.sentry.io${isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000 ws://127.0.0.1:8000 ws://localhost:8000" }`,
-            "media-src 'self' https://media.hovuca.org",
+            "media-src 'self' https://media.hovuca.org" + (isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000"),
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",

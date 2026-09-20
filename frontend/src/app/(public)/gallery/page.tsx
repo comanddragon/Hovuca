@@ -238,7 +238,7 @@ export default function GalleryPage() {
                         opacity: 0.2,
                     }}
                 />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(123,82,171,0.75)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--brand-overlay-purple-75)_100%)]" />
                 <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/50 via-transparent to-neutral-950/80" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 

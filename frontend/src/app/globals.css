@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./palette.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -204,9 +205,19 @@ body::-webkit-scrollbar {
     color: var(--primary);
 }
 
-/* Published article typography and the frontend CKEditor authoring canvas.
-   Keeping both selectors together makes the editor a faithful preview. */
-.rich-content::after {
+/* One article canvas for publication and both authoring experiences. */
+.rich-content,
+.hovuca-ckeditor .ck-content,
+.ck-fullscreen__main-wrapper .ck-content {
+    color: var(--brand-body);
+    font-family: Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 2rem;
+}
+
+.rich-content::after,
+.hovuca-ckeditor .ck-content::after,
+.ck-fullscreen__main-wrapper .ck-content::after {
     display: table;
     clear: both;
     content: "";
@@ -234,19 +245,36 @@ body::-webkit-scrollbar {
 .ck-fullscreen__main-wrapper .ck-content li + li { margin-top: 0.4rem; }
 .rich-content li::marker,
 .hovuca-ckeditor .ck-content li::marker,
-.ck-fullscreen__main-wrapper .ck-content li::marker { color: #b84733; }
+.ck-fullscreen__main-wrapper .ck-content li::marker { color: var(--brand-coral-dark); }
 
 .rich-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote),
 .hovuca-ckeditor .ck-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote),
 .ck-fullscreen__main-wrapper .ck-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote) {
     margin-top: 1rem;
 }
+.rich-content .image-style-align-left,
+.rich-content .image-style-side,
+.hovuca-ckeditor .ck-content .image-style-align-left,
+.hovuca-ckeditor .ck-content .image-style-side,
+.ck-fullscreen__main-wrapper .image-style-align-left,
+.ck-fullscreen__main-wrapper .image-style-side {
+    float: left;
+    margin: 0.5rem 2rem 1.25rem 0;
+    max-width: 42%;
+}
+
+.rich-content .image-style-align-right,
+.hovuca-ckeditor .ck-content .image-style-align-right,
+.ck-fullscreen__main-wrapper .image-style-align-right {
+    float: right;
+    margin: 0.5rem 0 1.25rem 2rem;
+    max-width: 42%;
+}
 
 .rich-content :where(h2, h3, h4),
 .hovuca-ckeditor .ck-content :where(h2, h3, h4),
 .ck-fullscreen__main-wrapper .ck-content :where(h2, h3, h4) {
-    margin-block: 2rem 0.75rem;
-    color: #183b35;
+    color: var(--brand-forest);
     font-family: inherit;
     font-weight: 700;
     line-height: 1.2;
@@ -258,38 +286,59 @@ body::-webkit-scrollbar {
 
 .rich-content h2,
 .hovuca-ckeditor .ck-content h2,
-.ck-fullscreen__main-wrapper .ck-content h2 { font-size: clamp(1.6rem, 3vw, 2rem); }
+.ck-fullscreen__main-wrapper .ck-content h2 {
+    margin: 3rem 0 0.75rem;
+    font-size: 2rem;
+}
 .rich-content h3,
 .hovuca-ckeditor .ck-content h3,
-.ck-fullscreen__main-wrapper .ck-content h3 { font-size: clamp(1.35rem, 2.4vw, 1.65rem); }
+.ck-fullscreen__main-wrapper .ck-content h3 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.65rem;
+}
 .rich-content h4,
 .hovuca-ckeditor .ck-content h4,
-.ck-fullscreen__main-wrapper .ck-content h4 { font-size: 1.25rem; }
+.ck-fullscreen__main-wrapper .ck-content h4 {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.25rem;
+}
 .rich-content :where(h2, h3, h4):first-child,
 .hovuca-ckeditor .ck-content > :where(h2, h3, h4):first-child,
 .ck-fullscreen__main-wrapper .ck-content > :where(h2, h3, h4):first-child { margin-top: 0; }
 .rich-content blockquote,
 .hovuca-ckeditor .ck-content blockquote,
 .ck-fullscreen__main-wrapper .ck-content blockquote {
+    margin-block: 1.5rem;
     padding-inline-start: 1rem;
-    border-inline-start: 2px solid #d85c43;
+    border-inline-start: 2px solid var(--brand-coral-dark);
+    color: var(--brand-body-muted);
 }
 
 .hovuca-ckeditor .ck-editor__editable_inline {
     min-height: 24rem;
     padding: 1.25rem 1.5rem;
-    color: #404a47;
+    color: var(--brand-body);
     font-size: 1.0625rem;
     line-height: 2rem;
+}
+
+.hovuca-ckeditor {
+    width: min(100%, 64rem);
+    margin-inline: auto;
 }
 
 /* The Fullscreen plugin relocates the editor beneath <body>, outside the
    .hovuca-ckeditor wrapper. Keep its content canvas visually identical. */
 .ck-fullscreen__main-wrapper .ck-editor__editable_inline {
     padding: 1.25rem 1.5rem;
-    color: #404a47;
+    color: var(--brand-body);
     font-size: 1.0625rem;
     line-height: 2rem;
+}
+
+.ck-fullscreen__main-wrapper .ck-editor {
+    width: min(100%, 64rem);
+    margin-inline: auto;
 }
 
 .hovuca-ckeditor .ck-toolbar__items {
@@ -302,15 +351,17 @@ body::-webkit-scrollbar {
 }
 
 .rich-content figure.image,
+.hovuca-ckeditor .ck-content figure.image,
 .ck-fullscreen__main-wrapper figure.image {
     display: table;
     clear: both;
     max-width: 100%;
     height: auto;
-    margin: 1.25rem auto;
+    margin-block: 1.5rem;
 }
 
 .rich-content figure.image img,
+.hovuca-ckeditor .ck-content figure.image img,
 .ck-fullscreen__main-wrapper figure.image img {
     display: block;
     width: 100%;
@@ -318,30 +369,37 @@ body::-webkit-scrollbar {
 }
 
 .rich-content figure.image figcaption,
+.hovuca-ckeditor .ck-content figure.image figcaption,
 .ck-fullscreen__main-wrapper figure.image figcaption {
     display: table-caption;
     caption-side: bottom;
     padding: 0.6rem;
-    color: #525252;
+    color: var(--brand-caption);
     font-size: 0.875rem;
     text-align: center;
 }
 
-.rich-content .image-style-align-left,
-.rich-content .image-style-side,
-.ck-fullscreen__main-wrapper .image-style-align-left,
-.ck-fullscreen__main-wrapper .image-style-side {
+.rich-content figure.image.image-style-align-left,
+.rich-content figure.image.image-style-side,
+.hovuca-ckeditor .ck-content figure.image.image-style-align-left,
+.hovuca-ckeditor .ck-content figure.image.image-style-side,
+.ck-fullscreen__main-wrapper figure.image.image-style-align-left,
+.ck-fullscreen__main-wrapper figure.image.image-style-side {
     float: left;
-    margin: 0.4rem 1.5rem 1rem 0;
+    margin: 0.5rem 2rem 1.25rem 0;
+    max-width: 42%;
 }
 
-.rich-content .image-style-align-right,
-.ck-fullscreen__main-wrapper .image-style-align-right {
+.rich-content figure.image.image-style-align-right,
+.hovuca-ckeditor .ck-content figure.image.image-style-align-right,
+.ck-fullscreen__main-wrapper figure.image.image-style-align-right {
     float: right;
-    margin: 0.4rem 0 1rem 1.5rem;
+    margin: 0.5rem 0 1.25rem 2rem;
+    max-width: 42%;
 }
 
 .rich-content table,
+.hovuca-ckeditor .ck-content table,
 .ck-fullscreen__main-wrapper table {
     width: 100%;
     margin-block: 1.5rem;
@@ -350,9 +408,11 @@ body::-webkit-scrollbar {
 
 .rich-content th,
 .rich-content td,
+.hovuca-ckeditor .ck-content th,
+.hovuca-ckeditor .ck-content td,
 .ck-fullscreen__main-wrapper th,
 .ck-fullscreen__main-wrapper td {
-    border: 1px solid #d4d4d4;
+    border: 1px solid var(--brand-border);
     padding: 0.65rem 0.8rem;
     text-align: left;
 }
@@ -361,6 +421,9 @@ body::-webkit-scrollbar {
     .rich-content .image-style-align-left,
     .rich-content .image-style-align-right,
     .rich-content .image-style-side,
+    .hovuca-ckeditor .ck-content .image-style-align-left,
+    .hovuca-ckeditor .ck-content .image-style-align-right,
+    .hovuca-ckeditor .ck-content .image-style-side,
     .ck-fullscreen__main-wrapper .image-style-align-left,
     .ck-fullscreen__main-wrapper .image-style-align-right,
     .ck-fullscreen__main-wrapper .image-style-side {
@@ -644,7 +707,7 @@ html {
     position: absolute;
     inset: 0;
     content: "";
-    background: linear-gradient(180deg, transparent 35%, rgb(0 0 0 / 0.62) 100%);
+    background: linear-gradient(180deg, transparent 35%, var(--brand-black-62) 100%);
     pointer-events: none;
 }
 
@@ -713,7 +776,7 @@ html {
 /* ── Shimmer loading skeleton ─────────────────────────────────── */
 .shimmer {
     animation: shimmer 1.2s ease-in-out infinite;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+    background: linear-gradient(90deg, var(--brand-skeleton-base) 25%, var(--brand-skeleton) 37%, var(--brand-skeleton-base) 63%);
     background-size: 400% 100%;
 }
 

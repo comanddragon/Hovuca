@@ -22,8 +22,8 @@ function BrandIcon({ platform, ...props }: SVGProps<SVGSVGElement> & { platform:
 
 export function SocialLinks({ tone = "light" }: { tone?: "light" | "dark" }) {
     const colors = tone === "light"
-        ? "border-[#f6f3eb]/30 text-[#f6f3eb] hover:border-[#f6f3eb] hover:bg-[#f6f3eb]/10 focus-visible:outline-[#f6f3eb]"
-        : "border-[#183b35]/25 text-[#183b35] hover:border-[#183b35] hover:bg-[#183b35]/5 focus-visible:outline-[#183b35]";
+        ? "border-[var(--brand-paper)]/30 text-[var(--brand-paper)] hover:border-[var(--brand-paper)] hover:bg-[var(--brand-paper)]/10 focus-visible:outline-[var(--brand-paper)]"
+        : "border-[var(--brand-forest)]/25 text-[var(--brand-forest)] hover:border-[var(--brand-forest)] hover:bg-[var(--brand-forest)]/5 focus-visible:outline-[var(--brand-forest)]";
 
     return <ul className="flex flex-wrap gap-2">{socialLinks.map(({ label, href, platform }) => (
         <li key={label}><a href={href} target="_blank" rel="noopener noreferrer" aria-label={`HOVUCA on ${label} (opens in a new tab)`} className={`group inline-flex size-11 items-center justify-center rounded-full border transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 ${colors}`}><BrandIcon platform={platform} className="size-[19px] transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-focus-visible:scale-110" /></a></li>

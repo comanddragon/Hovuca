@@ -86,6 +86,8 @@ export function ProgressBar({ value, className }: { value: number; className?: s
 
 // ─── Avatar stack ─────────────────────────────────────────────────────────────
 
+const avatarColors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)"];
+
 export function AvatarStack({ count, label }: { count: number; label: string }) {
   return (
     <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -94,7 +96,7 @@ export function AvatarStack({ count, label }: { count: number; label: string }) 
           <div
             key={i}
             className="h-6 w-6 rounded-full border-2 border-background bg-muted"
-            style={{ backgroundColor: `hsl(${i * 60 + 150} 50% 60%)` }}
+            style={{ backgroundColor: avatarColors[i] }}
           />
         ))}
       </div>

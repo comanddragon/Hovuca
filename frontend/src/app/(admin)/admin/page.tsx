@@ -41,15 +41,15 @@ export default function AdminHomePage() {
 
     return (
         <div className="space-y-8 pb-10">
-            <section className="overflow-hidden border border-border bg-[#183b35] text-white">
+            <section className="overflow-hidden border border-border bg-[var(--brand-forest)] text-white">
                 <div className="grid gap-8 px-6 py-7 sm:px-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:py-9">
                     <div className="max-w-2xl">
                         <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Welcome back, {firstName}.</h1>
-                        <p className="mt-3 max-w-xl text-sm leading-6 text-[#dce8e4] sm:text-base">
+                        <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--brand-mint-light)] sm:text-base">
                             Shape HOVUCA&apos;s public story, prepare work for review, and keep published content current.
                         </p>
                     </div>
-                    <Button asChild className="h-11 bg-[#d85c43] px-5 text-white hover:bg-[#b84733] focus-visible:ring-[#e0aa18]">
+                    <Button asChild className="h-11 bg-[var(--brand-coral)] px-5 text-white hover:bg-[var(--brand-coral-dark)] focus-visible:ring-[var(--brand-gold)]">
                         <Link href="/admin/blog/new">
                             <Plus className="h-4 w-4" />
                             Write an article
@@ -113,7 +113,7 @@ export default function AdminHomePage() {
                                                         />
                                                     </span>
                                                 ) : (
-                                                    <span className="mt-0.5 flex h-11 w-14 shrink-0 items-center justify-center bg-[#edf3f0] text-[#183b35] dark:bg-[#183b35] dark:text-[#edf3f0]">
+                                                    <span className="mt-0.5 flex h-11 w-14 shrink-0 items-center justify-center bg-[var(--brand-mint-wash)] text-[var(--brand-forest)] dark:bg-[var(--brand-forest)] dark:text-[var(--brand-mint-wash)]">
                                                         <FilePenLine className="h-4 w-4" />
                                                     </span>
                                                 )}
@@ -153,21 +153,21 @@ export default function AdminHomePage() {
                     </div>
                 </section>
 
-                <aside className="border-t-2 border-[#e0aa18] bg-[#f6f3eb] p-6 text-[#193832] dark:bg-[#102c28] dark:text-white" aria-labelledby="publishing-desk">
+                <aside className="border-t-2 border-[var(--brand-gold)] bg-[var(--brand-paper)] p-6 text-[var(--brand-ink)] dark:bg-[var(--brand-forest-deep)] dark:text-white" aria-labelledby="publishing-desk">
                     <h2 id="publishing-desk" className="text-lg font-semibold tracking-tight">Publishing desk</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#53645f] dark:text-[#cbd9d5]">The clearest next actions for keeping public content moving.</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--brand-body-muted)] dark:text-[var(--brand-mint-border)]">The clearest next actions for keeping public content moving.</p>
                     <div className="mt-6 space-y-5">
                         <Link href="/admin/blog" className="group flex gap-3">
-                            <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-[#d85c43]" />
-                            <span><strong className="block text-sm">Review pending work</strong><span className="mt-1 block text-xs leading-5 text-[#53645f] dark:text-[#cbd9d5]">{reviews.data?.count ?? 0} article{reviews.data?.count === 1 ? "" : "s"} currently awaiting review.</span></span>
+                            <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand-coral)]" />
+                            <span><strong className="block text-sm">Review pending work</strong><span className="mt-1 block text-xs leading-5 text-[var(--brand-body-muted)] dark:text-[var(--brand-mint-border)]">{reviews.data?.count ?? 0} article{reviews.data?.count === 1 ? "" : "s"} currently awaiting review.</span></span>
                         </Link>
                         <Link href="/admin/blog" className="group flex gap-3">
-                            <FilePenLine className="mt-0.5 h-5 w-5 shrink-0 text-[#d85c43]" />
-                            <span><strong className="block text-sm">Continue drafting</strong><span className="mt-1 block text-xs leading-5 text-[#53645f] dark:text-[#cbd9d5]">Return to unfinished stories and prepare them for review.</span></span>
+                            <FilePenLine className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand-coral)]" />
+                            <span><strong className="block text-sm">Continue drafting</strong><span className="mt-1 block text-xs leading-5 text-[var(--brand-body-muted)] dark:text-[var(--brand-mint-border)]">Return to unfinished stories and prepare them for review.</span></span>
                         </Link>
                         <Link href="/blog" target="_blank" className="group flex gap-3">
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#d85c43]" />
-                            <span><strong className="block text-sm">Check the public blog</strong><span className="mt-1 block text-xs leading-5 text-[#53645f] dark:text-[#cbd9d5]">See the published experience exactly as visitors do.</span></span>
+                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand-coral)]" />
+                            <span><strong className="block text-sm">Check the public blog</strong><span className="mt-1 block text-xs leading-5 text-[var(--brand-body-muted)] dark:text-[var(--brand-mint-border)]">See the published experience exactly as visitors do.</span></span>
                         </Link>
                     </div>
                 </aside>

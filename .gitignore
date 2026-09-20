@@ -5,6 +5,7 @@ __pycache__/
 *.zip
 *.tar
 *.sqlite3
+*.log
 /Backend/media/
 /Backend/staticfiles/
 /Backend/logs/

@@ -35,7 +35,7 @@ function DonorPill({ donor, duplicate = false }: { donor: DonorOrganization; dup
         >
             <Wrapper
                 {...wrapperProps}
-                className={`group flex flex-col items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18] ${donor.website ? "cursor-pointer" : "cursor-default"}`}
+                className={`group flex flex-col items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-gold)] ${donor.website ? "cursor-pointer" : "cursor-default"}`}
             >
                 <div className="relative flex h-14 w-[140px] items-center justify-center">
                     {donor.logo ? (
@@ -47,13 +47,13 @@ function DonorPill({ donor, duplicate = false }: { donor: DonorOrganization; dup
                             className="object-contain opacity-70 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
                         />
                     ) : (
-                        <span className="flex h-14 w-[140px] items-center justify-center rounded-lg border border-[#183b35]/20 text-sm font-normal tracking-widest text-[#53645f] transition-colors duration-200 group-hover:border-[#183b35]/45 group-hover:text-[#183b35]">
+                        <span className="flex h-14 w-[140px] items-center justify-center rounded-lg border border-[var(--brand-forest)]/20 text-sm font-normal tracking-widest text-[var(--brand-body-muted)] transition-colors duration-200 group-hover:border-[var(--brand-forest)]/45 group-hover:text-[var(--brand-forest)]">
                             {abbr}
                         </span>
                     )}
                 </div>
 
-                <span className="whitespace-nowrap text-xs font-normal tracking-wide text-[#53645f] transition-colors duration-200 group-hover:text-[#183b35]">
+                <span className="whitespace-nowrap text-xs font-normal tracking-wide text-[var(--brand-body-muted)] transition-colors duration-200 group-hover:text-[var(--brand-forest)]">
                     {donor.name}
                 </span>
             </Wrapper>
@@ -82,9 +82,9 @@ export default function DonorCarousel({ duration = "32s" }: DonorCarouselProps) 
 
     if (isError) {
         return (
-            <div className="flex h-[120px] items-center justify-center gap-4 px-6 text-center text-sm text-[#53645f]" role="alert">
+            <div className="flex h-[120px] items-center justify-center gap-4 px-6 text-center text-sm text-[var(--brand-body-muted)]" role="alert">
                 <span>Partners could not be loaded.</span>
-                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-full border border-[#183b35] px-5 font-semibold text-[#183b35] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18]">
+                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-full border border-[var(--brand-forest)] px-5 font-semibold text-[var(--brand-forest)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-gold)]">
                     Try again
                 </button>
             </div>
@@ -92,7 +92,7 @@ export default function DonorCarousel({ duration = "32s" }: DonorCarouselProps) 
     }
 
     if (!donors?.length) {
-        return <p className="flex h-[120px] items-center justify-center px-6 text-sm text-[#53645f]">Partner information will be added soon.</p>;
+        return <p className="flex h-[120px] items-center justify-center px-6 text-sm text-[var(--brand-body-muted)]">Partner information will be added soon.</p>;
     }
 
     return (
@@ -102,14 +102,14 @@ export default function DonorCarousel({ duration = "32s" }: DonorCarouselProps) 
                     className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to right, #ffffff, transparent)",
+                            "linear-gradient(to right, var(--brand-white), transparent)",
                     }}
                 />
                 <div
                     className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to left, #ffffff, transparent)",
+                            "linear-gradient(to left, var(--brand-white), transparent)",
                     }}
                 />
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.blogs.importing import ArchivedResource, scrape_resources
+from apps.blogs.importing import ArchivedResource, scrape_resources, scrape_uploads
 
 
 class Command(BaseCommand):
@@ -33,6 +33,9 @@ class Command(BaseCommand):
             for resource in scrape_resources(page):
                 digest = hashlib.sha256((archive_root / resource.file_path).read_bytes()).hexdigest()
                 resources_by_digest.setdefault(digest, resource)
+        for resource in scrape_uploads(archive_root):
+            digest = hashlib.sha256((archive_root / resource.file_path).read_bytes()).hexdigest()
+            resources_by_digest.setdefault(digest, resource)
         resources = list(resources_by_digest.values())
         output.parent.mkdir(parents=True, exist_ok=True)
         with output.open("w", encoding="utf-8-sig", newline="") as csv_file:

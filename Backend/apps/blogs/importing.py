@@ -218,6 +218,43 @@ def scrape_resources(index_path: Path) -> list[ArchivedResource]:
         resources_by_digest.setdefault(digest, resource)
     return list(resources_by_digest.values())
 
+UPLOAD_CATEGORIES = {
+    "Image": {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".ico"},
+    "Video": {".mp4", ".mov", ".avi", ".webm", ".mkv", ".m4v"},
+    "Document": {".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".csv"},
+}
+
+
+def _category_for_suffix(suffix: str) -> str:
+    suffix = suffix.lower()
+    for category, extensions in UPLOAD_CATEGORIES.items():
+        if suffix in extensions:
+            return category
+    return "Other"
+
+
+def scrape_uploads(archive_root: Path) -> list[ArchivedResource]:
+    uploads_root = archive_root / "wp-content" / "uploads"
+    if not uploads_root.is_dir():
+        return []
+    resources = []
+    for file_path in sorted(uploads_root.rglob("*")):
+        if not file_path.is_file():
+            continue
+        relative = file_path.relative_to(archive_root).as_posix()
+        title = file_path.stem.replace("-", " ").replace("_", " ").strip()
+        resources.append(
+            ArchivedResource(
+                title=title,
+                slug=slugify(title)[:280],
+                description="",
+                category=_category_for_suffix(file_path.suffix),
+                file_path=relative,
+                published_at="",
+                source_url=f"https://hovuca.org/{relative}",
+            )
+        )
+    return resources
 
 def scrape_archive(index_path: Path) -> list[ArchivedArticle]:
     index_path = index_path.resolve()
