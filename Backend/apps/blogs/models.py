@@ -28,7 +28,7 @@ ARTICLE_BODY_ALLOWED_ATTRS = {
 
 ARTICLE_BODY_ALLOWED_STYLES = [
     "width", "height", "margin-left", "margin-right", "float",
-    "background-color", "border-color", "text-align", "color", "font-family",
+    "background-color", "border-color", "text-align", "color",
     "font-size",
 ]
 

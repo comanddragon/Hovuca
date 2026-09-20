@@ -1,0 +1,89 @@
+/* HOVUCA's published article rhythm, mirrored in the Django authoring canvas. */
+.ck.ck-content {
+    color: #404a47;
+    font-family: Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 2rem;
+}
+
+.ck.ck-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote) {
+    margin-top: 1rem;
+}
+
+.ck.ck-content :where(h2, h3, h4) {
+    color: #183b35;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.ck.ck-content h2 {
+    margin: 3rem 0 0.75rem;
+    font-size: 2rem;
+}
+
+.ck.ck-content h3 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.65rem;
+}
+
+.ck.ck-content h4 {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.25rem;
+}
+
+.ck.ck-content > :where(h2, h3, h4):first-child {
+    margin-top: 0;
+}
+
+.ck.ck-content ul,
+.ck.ck-content ol {
+    margin-block: 1rem;
+    padding-inline-start: 1.6rem;
+}
+
+.ck.ck-content li + li { margin-top: 0.4rem; }
+.ck.ck-content li::marker { color: #b84733; }
+
+.ck.ck-content blockquote {
+    margin-block: 1.5rem;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid #b84733;
+    color: #53645f;
+}
+
+.ck.ck-content figure.image { margin-block: 1.5rem; }
+.ck.ck-content figure.image figcaption { color: #53645f; font-size: 0.875rem; }
+
+/* Native fullscreen mode used by the Django CKEditor build. */
+.ck.ck-editor:fullscreen,
+.ck.ck-editor:-webkit-full-screen {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    background: #fff;
+}
+
+.ck.ck-editor:fullscreen .ck-editor__main,
+.ck.ck-editor:-webkit-full-screen .ck-editor__main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.ck.ck-editor:fullscreen .ck-editor__editable_inline,
+.ck.ck-editor:-webkit-full-screen .ck-editor__editable_inline {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.hovuca-ckeditor-fullscreen svg {
+    width: 1rem;
+    height: 1rem;
+}

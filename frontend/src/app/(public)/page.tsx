@@ -125,8 +125,6 @@ export default function HomePage() {
                         alt="Young people taking part in a community-led discussion in Cameroon"
                         fill
                         priority
-                        loading="eager"
-                        unoptimized
                         sizes="100vw"
                         className="home-hero-photo object-cover object-[54%_center] lg:object-center"
                     />
@@ -145,7 +143,7 @@ export default function HomePage() {
                         <Link
                             href="/projects"
                             data-home-action
-                            className="group mt-5 inline-flex h-11 w-[210px] items-center justify-between rounded-full bg-[#d85c43] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#b84733] focus-visible:bg-[#b84733]"
+                            className="group mt-5 inline-flex h-11 w-[210px] items-center justify-between rounded-full bg-[#b84733] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#963827] focus-visible:bg-[#963827] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18]"
                         >
                             Explore our impact <ArrowRight className="h-7 w-7 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1" strokeWidth={1.5} />
                         </Link>
@@ -156,15 +154,15 @@ export default function HomePage() {
                             <Link
                                 key={item.number}
                                 href={item.href}
-                                className="group relative flex h-[8.26vw] max-h-[124px] flex-col justify-center border-b border-[#e0aa18]/65 px-5 last:border-b-0"
+                                className="group relative flex h-[8.26vw] max-h-[124px] flex-col justify-center border-b border-[#e0aa18]/65 px-5 last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#e0aa18]"
                             >
                                 {index === 0 && <span className="absolute inset-y-8 left-3 w-[3px] bg-[#e0aa18]" aria-hidden="true" />}
                                 <span
-                                    className={`text-[1.35rem] leading-none ${index === 0 ? "text-[#d99800]" : "text-[#2d3540]"}`}
+                                    className={`text-[1.35rem] leading-none ${index === 0 ? "text-[#946b00]" : "text-[#2d3540]"}`}
                                 >
                                     {item.number}
                                 </span>
-                                <span className="mt-2 text-xs font-semibold text-[#183b35] transition-colors group-hover:text-[#d85c43]">
+                                <span className="mt-2 text-xs font-semibold text-[#183b35] transition-colors group-hover:text-[#b84733]">
                                     {item.label}
                                 </span>
                             </Link>
@@ -183,7 +181,7 @@ export default function HomePage() {
                 </section>
             </div>
 
-            <section className="home-programs bg-white px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading" data-home-reveal="programs">
+            <section className="home-deferred-section home-programs bg-white px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading" data-home-reveal="programs">
                 <div className="mx-auto max-w-[1280px]">
                     <div className="home-program-heading grid gap-10 border-b border-[#183b35]/25 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                         <SectionKicker>{programsArePreviews ? "Program previews" : "Where we work"}</SectionKicker>
@@ -209,14 +207,14 @@ export default function HomePage() {
                             <Link
                                 key={program.id}
                                 href={programsArePreviews ? "/programs" : `/programs/${program.slug}`}
-                                className="group flex min-h-[300px] flex-col border-b border-[#183b35]/25 px-0 py-9 text-[#183b35] lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
+                                className="group flex min-h-[300px] flex-col border-b border-[#183b35]/25 px-0 py-9 text-[#183b35] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#e0aa18] lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
                             >
-                                <span className="text-sm text-[#d85c43]">0{index + 1}</span>
+                                <span className="text-sm text-[#b84733]">0{index + 1}</span>
                                 <h3 className="mt-auto max-w-sm text-3xl font-bold leading-[1.07] tracking-[-0.025em]">
                                     {program.title}
                                 </h3>
                                 <p className="mt-5 max-w-sm text-sm leading-6 text-[#59636a]">{program.excerpt}</p>
-                                <span className="mt-8 inline-flex items-center gap-3 text-xs font-semibold text-[#d85c43]">
+                                <span className="mt-8 inline-flex items-center gap-3 text-xs font-semibold text-[#b84733]">
                                     Discover the program <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </span>
                             </Link>
@@ -227,7 +225,7 @@ export default function HomePage() {
 
             <HomeProjects />
 
-            <section className="px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="stories-heading">
+            <section className="home-deferred-section px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="stories-heading">
                 <div className="mx-auto max-w-[1280px]">
                     <div data-home-reveal="rise" className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
                         <div>
@@ -236,7 +234,7 @@ export default function HomePage() {
                                 Voices from the work.
                             </h2>
                         </div>
-                        <Link href="/blog" data-home-action className="inline-flex items-center gap-3 text-sm font-semibold text-[#d85c43]">
+                        <Link href="/blog" data-home-action className="inline-flex items-center gap-3 text-sm font-semibold text-[#b84733] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18]">
                             Read all stories <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
@@ -257,17 +255,16 @@ export default function HomePage() {
                                             src={articles[0].cover_image || "/assets/plates/program-photo.webp"}
                                             alt={articles[0].cover_image_alt || articles[0].title}
                                             fill
-                                            unoptimized
                                             sizes="(max-width: 1024px) 100vw, 58vw"
                                             className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
                                         />
                                         <span className="absolute left-5 top-5 rounded-full bg-white/95 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#183b35] shadow-sm">Featured story</span>
                                     </div>
                                     <div className="home-story-feature-copy relative -mt-10 ml-5 rounded-tl-2xl bg-white px-6 pb-2 pt-6 sm:-mt-16 sm:ml-12 sm:px-9 sm:pt-8">
-                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d85c43]">{articles[0].category?.name || "HOVUCA story"}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#b84733]">{articles[0].category?.name || "HOVUCA story"}</p>
                                         <h3 className="mt-3 max-w-xl text-2xl font-bold leading-[1.1] tracking-[-0.025em] text-[#183b35] sm:text-4xl">{articles[0].title}</h3>
                                         <p className="mt-4 max-w-xl line-clamp-3 text-sm leading-6 text-[#5b646a]">{articles[0].excerpt}</p>
-                                        <span className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-[#d85c43]">Read the story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
+                                        <span className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-[#b84733]">Read the story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
                                     </div>
                                 </Link>
                             </article>
@@ -281,16 +278,15 @@ export default function HomePage() {
                                                 src={article.cover_image || "/assets/plates/program-photo.webp"}
                                                 alt={article.cover_image_alt || article.title}
                                                 fill
-                                                unoptimized
                                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 40vw, 18vw"
                                                 className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                                             />
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d85c43]">{article.category?.name || "HOVUCA story"}</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#b84733]">{article.category?.name || "HOVUCA story"}</p>
                                             <h3 className="mt-3 text-2xl font-bold leading-[1.12] tracking-[-0.02em] text-[#183b35]">{article.title}</h3>
                                             <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#5b646a]">{article.excerpt}</p>
-                                            <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#d85c43]">Read story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
+                                            <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#b84733]">Read story <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
                                         </div>
                                     </Link>
                                 </article>
@@ -300,7 +296,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="home-resources grid bg-[#183b35] text-white lg:grid-cols-[0.78fr_1.22fr]" aria-labelledby="resources-heading" data-home-reveal="resources">
+            <section className="home-deferred-section home-resources grid bg-[#183b35] text-white lg:grid-cols-[0.78fr_1.22fr]" aria-labelledby="resources-heading" data-home-reveal="resources">
                 <div className="home-resource-intro flex min-h-[440px] flex-col justify-between border-b border-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
                     <SectionKicker light>{resourcesArePreviews ? "Resource previews" : "Knowledge for action"}</SectionKicker>
                     <div>
@@ -310,7 +306,7 @@ export default function HomePage() {
                         <p className="mt-6 max-w-lg text-base leading-7 text-white/70">
                             Explore policies, reports, advocacy materials and practical learning from our work in Cameroon.
                         </p>
-                        <Link href="/documents" data-home-action className="mt-8 inline-flex items-center gap-3 text-sm font-semibold text-[#f2c14e]">
+                        <Link href="/documents" data-home-action className="mt-8 inline-flex items-center gap-3 text-sm font-semibold text-[#f2c14e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f2c14e]">
                             Browse publications <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
@@ -336,7 +332,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="bg-white px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading" data-home-reveal="approach">
+            <section className="home-deferred-section bg-white px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading" data-home-reveal="approach">
                 <div className="home-approach mx-auto flex max-w-[1280px] flex-col gap-8 border-y border-[#183b35]/20 py-12 md:flex-row md:items-center md:justify-between md:gap-16 lg:py-14">
                     <div className="max-w-2xl">
                         <h2 id="approach-cta-heading" className="text-3xl font-bold leading-[1.08] tracking-[-0.03em] text-[#183b35] md:text-4xl">
@@ -352,26 +348,26 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="home-involved grid overflow-hidden lg:grid-cols-2" aria-labelledby="involved-heading" data-home-reveal="involved">
+            <section className="home-deferred-section home-involved grid overflow-hidden lg:grid-cols-2" aria-labelledby="involved-heading" data-home-reveal="involved">
                 <div className="home-involved-panel home-involved-panel-start bg-[#e0aa18] px-6 py-16 text-[#183b35] lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Get involved</p>
                     <h2 id="involved-heading" className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Bring your skills to the work.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-[#294842]">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
-                    <Link href="/volunteers" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-[#183b35] px-6 py-3 text-sm font-semibold">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
+                    <Link href="/volunteers" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-[#183b35] px-6 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
                 </div>
-                <div className="home-involved-panel home-involved-panel-end bg-[#d85c43] px-6 py-16 text-white lg:px-12 lg:py-20">
+                <div className="home-involved-panel home-involved-panel-end bg-[#b84733] px-6 py-16 text-white lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Work together</p>
                     <h2 className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Build a lasting partnership.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-white/80">Partner with HOVUCA to strengthen programs, knowledge and opportunity in Cameroon.</p>
-                    <Link href="/contact" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-white px-6 py-3 text-sm font-semibold">Start a conversation <ArrowRight className="h-4 w-4" /></Link>
+                    <Link href="/contact" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-white px-6 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Start a conversation <ArrowRight className="h-4 w-4" /></Link>
                 </div>
             </section>
 
-            <section className="bg-white px-6 py-20 lg:px-10 lg:py-24">
+            <section className="home-deferred-section bg-white px-6 py-20 lg:px-10 lg:py-24">
                 <div className="mx-auto grid max-w-[1280px] gap-10 border-t border-[#183b35] pt-10 lg:grid-cols-[1fr_0.85fr] lg:items-end">
                     <div>
                         <SectionKicker>Stay connected</SectionKicker>
@@ -383,7 +379,7 @@ export default function HomePage() {
                         <div className="rounded-xl border border-[#183b35]/20 bg-[#f4f6f3] p-6">
                             <p className="font-semibold text-[#183b35]">Newsletter subscriptions are not open yet.</p>
                             <p className="mt-2 text-sm leading-6 text-[#566067]">For current stories and opportunities, follow HOVUCA or contact the team directly.</p>
-                            <Link href="/contact" data-home-action className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-[#183b35] px-5 py-2.5 text-sm font-semibold text-white">
+                            <Link href="/contact" data-home-action className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-[#183b35] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18]">
                                 Contact HOVUCA <ArrowRight aria-hidden="true" className="size-4" />
                             </Link>
                         </div>

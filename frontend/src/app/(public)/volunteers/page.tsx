@@ -25,7 +25,7 @@ const questions = [
 
 export default function VolunteersPage() {
     return (
-        <div className="bg-[#fcfbf7] text-[#183b35]">
+        <div className="bg-background text-[#183b35]">
             <section aria-labelledby="volunteer-heading" className="grid lg:min-h-[620px] lg:grid-cols-[0.9fr_1.1fr]">
                 <div className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-[max(2.5rem,calc((100vw-1280px)/2))] lg:pr-12 lg:py-20">
                     <h1 id="volunteer-heading" className="max-w-xl font-display text-5xl font-bold leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-7xl">Your skills.<br />Our shared future.</h1>

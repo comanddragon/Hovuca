@@ -1,11 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { useActiveDonors } from "@/hooks";
 import type { DonorOrganization } from "@/types";
-
-
 
 function SkeletonPill() {
     return (
@@ -32,62 +29,54 @@ function DonorPill({ donor, duplicate = false }: { donor: DonorOrganization; dup
         : {};
 
     return (
-        <motion.div
+        <div
             aria-hidden={duplicate || undefined}
-            whileHover={{ y: -3 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="flex-shrink-0 w-[180px] flex flex-col items-center mx-6 select-none"
+            className="mx-6 flex w-[180px] flex-shrink-0 select-none flex-col items-center motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-[3px]"
         >
             <Wrapper
                 {...wrapperProps}
-                className={`flex flex-col items-center gap-3 group ${donor.website ? "cursor-pointer" : "cursor-default"}`}
+                className={`group flex flex-col items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18] ${donor.website ? "cursor-pointer" : "cursor-default"}`}
             >
-                {/* Logo / initials */}
-                <div className="relative h-14 w-[140px] flex items-center justify-center">
+                <div className="relative flex h-14 w-[140px] items-center justify-center">
                     {donor.logo ? (
                         <Image
                             src={donor.logo}
-                            alt={donor.name}
+                            alt=""
                             fill
                             sizes="140px"
-                            className="object-contain opacity-60 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
+                            className="object-contain opacity-70 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
                         />
                     ) : (
-                        <span className="flex items-center justify-center h-14 w-[140px] rounded-lg text-sm font-light tracking-widest text-muted-foreground opacity-60 transition duration-300 group-hover:opacity-100 border border-border">
-              {abbr}
-            </span>
+                        <span className="flex h-14 w-[140px] items-center justify-center rounded-lg border border-[#183b35]/20 text-sm font-normal tracking-widest text-[#53645f] transition-colors duration-200 group-hover:border-[#183b35]/45 group-hover:text-[#183b35]">
+                            {abbr}
+                        </span>
                     )}
                 </div>
 
-                {/* Name */}
-                <span className="text-xs font-light tracking-wide text-muted-foreground whitespace-nowrap opacity-60 transition duration-300 group-hover:opacity-100">
-          {donor.name}
-        </span>
+                <span className="whitespace-nowrap text-xs font-normal tracking-wide text-[#53645f] transition-colors duration-200 group-hover:text-[#183b35]">
+                    {donor.name}
+                </span>
             </Wrapper>
-        </motion.div>
+        </div>
     );
 }
 
 interface DonorCarouselProps {
-    label?:    string;
-    heading?:  string;
     duration?: string;
 }
 
-export default function DonorCarousel({
-                                          duration = "32s",
-                                      }: DonorCarouselProps) {
+export default function DonorCarousel({ duration = "32s" }: DonorCarouselProps) {
     const { data: donors, isLoading, isError, refetch } = useActiveDonors();
 
     if (isLoading) {
         return (
-            <section className="flex h-[120px] items-center overflow-hidden bg-transparent">
+            <div className="flex h-[120px] items-center overflow-hidden bg-transparent">
                 <div className="flex">
                     {Array.from({ length: 8 }).map((_, i) => (
                         <SkeletonPill key={i} />
                     ))}
                 </div>
-            </section>
+            </div>
         );
     }
 
@@ -95,7 +84,7 @@ export default function DonorCarousel({
         return (
             <div className="flex h-[120px] items-center justify-center gap-4 px-6 text-center text-sm text-[#53645f]" role="alert">
                 <span>Partners could not be loaded.</span>
-                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-full border border-[#183b35] px-5 font-semibold text-[#183b35]">
+                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-full border border-[#183b35] px-5 font-semibold text-[#183b35] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0aa18]">
                     Try again
                 </button>
             </div>
@@ -107,48 +96,25 @@ export default function DonorCarousel({
     }
 
     return (
-            <section className="py-4 bg-transparent overflow-hidden" style={{ height: "120px" }}>
-
-            {/* ── Header ─────────────────────────────────────────── */}
-            {/*<div className="max-w-7xl mx-auto px-8">*/}
-            {/*    <motion.div*/}
-            {/*        initial={{ opacity: 0, y: 20 }}*/}
-            {/*        whileInView={{ opacity: 1, y: 0 }}*/}
-            {/*        viewport={{ once: false }}*/}
-            {/*        transition={{ duration: 0.5 }}*/}
-            {/*        className="text-center mb-16"*/}
-            {/*    >*/}
-            {/*        <p className="mb-4 text-muted-foreground text-sm font-light tracking-widest uppercase">*/}
-            {/*            {label}*/}
-            {/*        </p>*/}
-            {/*        <h2 className="text-4xl md:text-5xl font-light text-foreground tracking-tight">*/}
-            {/*            {heading}*/}
-            {/*        </h2>*/}
-            {/*    </motion.div>*/}
-            {/*</div>*/}
-
-            {/* ── Scrolling strip ─────────────────────────────────── */}
+        <div className="overflow-hidden bg-transparent py-4" style={{ height: "120px" }}>
             <div className="relative">
                 <div
                     className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to right, #f7f5f0, transparent)",
+                            "linear-gradient(to right, #ffffff, transparent)",
                     }}
                 />
                 <div
                     className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10"
                     style={{
                         background:
-                            "linear-gradient(to left, #f7f5f0, transparent)",
+                            "linear-gradient(to left, #ffffff, transparent)",
                     }}
                 />
 
                 {/* marquee-track + hover-pause defined in globals.css */}
-                <div
-                    className="marquee-track"
-                    style={{ animationDuration: duration }}
-                >
+                <div className="marquee-track" style={{ animationDuration: duration }}>
                     {donors.map((donor) => (
                         <DonorPill key={donor.id} donor={donor} />
                     ))}
@@ -157,6 +123,6 @@ export default function DonorCarousel({
                     ))}
                 </div>
             </div>
-        </section>
+        </div>
     );
 }

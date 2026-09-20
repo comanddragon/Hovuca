@@ -189,31 +189,47 @@
     color: var(--primary);
 }
 
-/* CKEditor authoring surface and published rich-content layout. */
+/* Published article typography and the frontend CKEditor authoring canvas.
+   Keeping both selectors together makes the editor a faithful preview. */
 .rich-content::after {
     display: table;
     clear: both;
     content: "";
 }
 
-.rich-content ul,
-.rich-content ol {
+.rich-content :where(ul, ol),
+.hovuca-ckeditor .ck-content :where(ul, ol),
+.ck-fullscreen__main-wrapper .ck-content :where(ul, ol) {
     margin-block: 1rem;
     padding-inline-start: 1.6rem;
     list-style-position: outside;
 }
 
-.rich-content ul { list-style-type: disc; }
-.rich-content ol { list-style-type: decimal; }
-.rich-content li { padding-inline-start: 0.2rem; }
-.rich-content li + li { margin-top: 0.4rem; }
-.rich-content li::marker { color: #d85c43; }
+.rich-content ul,
+.hovuca-ckeditor .ck-content ul,
+.ck-fullscreen__main-wrapper .ck-content ul { list-style-type: disc; }
+.rich-content ol,
+.hovuca-ckeditor .ck-content ol,
+.ck-fullscreen__main-wrapper .ck-content ol { list-style-type: decimal; }
+.rich-content li,
+.hovuca-ckeditor .ck-content li,
+.ck-fullscreen__main-wrapper .ck-content li { padding-inline-start: 0.2rem; }
+.rich-content li + li,
+.hovuca-ckeditor .ck-content li + li,
+.ck-fullscreen__main-wrapper .ck-content li + li { margin-top: 0.4rem; }
+.rich-content li::marker,
+.hovuca-ckeditor .ck-content li::marker,
+.ck-fullscreen__main-wrapper .ck-content li::marker { color: #b84733; }
 
-.rich-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote) {
+.rich-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote),
+.hovuca-ckeditor .ck-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote),
+.ck-fullscreen__main-wrapper .ck-content > :where(p, ul, ol, blockquote) + :where(p, ul, ol, blockquote) {
     margin-top: 1rem;
 }
 
-.rich-content :where(h2, h3, h4) {
+.rich-content :where(h2, h3, h4),
+.hovuca-ckeditor .ck-content :where(h2, h3, h4),
+.ck-fullscreen__main-wrapper .ck-content :where(h2, h3, h4) {
     margin-block: 2rem 0.75rem;
     color: #183b35;
     font-family: inherit;
@@ -225,11 +241,21 @@
     font-family: inherit !important;
 }
 
-.rich-content h2 { font-size: clamp(1.6rem, 3vw, 2rem); }
-.rich-content h3 { font-size: clamp(1.35rem, 2.4vw, 1.65rem); }
-.rich-content h4 { font-size: 1.25rem; }
-.rich-content :where(h2, h3, h4):first-child { margin-top: 0; }
-.rich-content blockquote {
+.rich-content h2,
+.hovuca-ckeditor .ck-content h2,
+.ck-fullscreen__main-wrapper .ck-content h2 { font-size: clamp(1.6rem, 3vw, 2rem); }
+.rich-content h3,
+.hovuca-ckeditor .ck-content h3,
+.ck-fullscreen__main-wrapper .ck-content h3 { font-size: clamp(1.35rem, 2.4vw, 1.65rem); }
+.rich-content h4,
+.hovuca-ckeditor .ck-content h4,
+.ck-fullscreen__main-wrapper .ck-content h4 { font-size: 1.25rem; }
+.rich-content :where(h2, h3, h4):first-child,
+.hovuca-ckeditor .ck-content > :where(h2, h3, h4):first-child,
+.ck-fullscreen__main-wrapper .ck-content > :where(h2, h3, h4):first-child { margin-top: 0; }
+.rich-content blockquote,
+.hovuca-ckeditor .ck-content blockquote,
+.ck-fullscreen__main-wrapper .ck-content blockquote {
     padding-inline-start: 1rem;
     border-inline-start: 2px solid #d85c43;
 }
@@ -237,6 +263,18 @@
 .hovuca-ckeditor .ck-editor__editable_inline {
     min-height: 24rem;
     padding: 1.25rem 1.5rem;
+    color: #404a47;
+    font-size: 1.0625rem;
+    line-height: 2rem;
+}
+
+/* The Fullscreen plugin relocates the editor beneath <body>, outside the
+   .hovuca-ckeditor wrapper. Keep its content canvas visually identical. */
+.ck-fullscreen__main-wrapper .ck-editor__editable_inline {
+    padding: 1.25rem 1.5rem;
+    color: #404a47;
+    font-size: 1.0625rem;
+    line-height: 2rem;
 }
 
 .hovuca-ckeditor .ck-toolbar__items {
@@ -248,7 +286,8 @@
     border-color: var(--destructive) !important;
 }
 
-.rich-content figure.image {
+.rich-content figure.image,
+.ck-fullscreen__main-wrapper figure.image {
     display: table;
     clear: both;
     max-width: 100%;
@@ -256,13 +295,15 @@
     margin: 1.25rem auto;
 }
 
-.rich-content figure.image img {
+.rich-content figure.image img,
+.ck-fullscreen__main-wrapper figure.image img {
     display: block;
     width: 100%;
     height: auto;
 }
 
-.rich-content figure.image figcaption {
+.rich-content figure.image figcaption,
+.ck-fullscreen__main-wrapper figure.image figcaption {
     display: table-caption;
     caption-side: bottom;
     padding: 0.6rem;
@@ -272,24 +313,30 @@
 }
 
 .rich-content .image-style-align-left,
-.rich-content .image-style-side {
+.rich-content .image-style-side,
+.ck-fullscreen__main-wrapper .image-style-align-left,
+.ck-fullscreen__main-wrapper .image-style-side {
     float: left;
     margin: 0.4rem 1.5rem 1rem 0;
 }
 
-.rich-content .image-style-align-right {
+.rich-content .image-style-align-right,
+.ck-fullscreen__main-wrapper .image-style-align-right {
     float: right;
     margin: 0.4rem 0 1rem 1.5rem;
 }
 
-.rich-content table {
+.rich-content table,
+.ck-fullscreen__main-wrapper table {
     width: 100%;
     margin-block: 1.5rem;
     border-collapse: collapse;
 }
 
 .rich-content th,
-.rich-content td {
+.rich-content td,
+.ck-fullscreen__main-wrapper th,
+.ck-fullscreen__main-wrapper td {
     border: 1px solid #d4d4d4;
     padding: 0.65rem 0.8rem;
     text-align: left;
@@ -298,7 +345,10 @@
 @media (max-width: 640px) {
     .rich-content .image-style-align-left,
     .rich-content .image-style-align-right,
-    .rich-content .image-style-side {
+    .rich-content .image-style-side,
+    .ck-fullscreen__main-wrapper .image-style-align-left,
+    .ck-fullscreen__main-wrapper .image-style-align-right,
+    .ck-fullscreen__main-wrapper .image-style-side {
         float: none;
         width: 100% !important;
         margin-inline: 0;
@@ -344,8 +394,8 @@ html {
    when animation is unavailable or the visitor prefers reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
     @keyframes home-photo-settle {
-        from { transform: scale(1.045); filter: saturate(0.88); }
-        to { transform: scale(1); filter: saturate(1); }
+        from { transform: scale(1.045); }
+        to { transform: scale(1); }
     }
 
     @keyframes home-panel-reveal {
@@ -509,6 +559,13 @@ html {
 
 .home-project-swiper {
     overflow: visible;
+}
+
+/* Skip layout and paint work for homepage regions until they approach the
+   viewport while reserving a stable scroll footprint. */
+.home-deferred-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 880px;
 }
 
 .home-project-stage {

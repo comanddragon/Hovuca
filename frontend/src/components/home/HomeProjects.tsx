@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectCoverflow } from "swiper/modules";
 import type { Swiper as SwiperClass } from "swiper/types";
@@ -49,9 +48,23 @@ const fallbackProjects = [
     },
 ];
 
+function usePrefersReducedMotion() {
+    const [reduceMotion, setReduceMotion] = useState(false);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const updatePreference = () => setReduceMotion(mediaQuery.matches);
+        updatePreference();
+        mediaQuery.addEventListener("change", updatePreference);
+        return () => mediaQuery.removeEventListener("change", updatePreference);
+    }, []);
+
+    return reduceMotion;
+}
+
 export default function HomeProjects() {
     const { data, isLoading, isError, refetch } = useProjects({ page: 1, page_size: 3 });
-    const reduceMotion = useReducedMotion();
+    const reduceMotion = usePrefersReducedMotion();
     const backendProjects = data?.results ?? [];
 
     const projects = backendProjects.length
@@ -114,7 +127,7 @@ export default function HomeProjects() {
 
     if (isLoading) {
         return (
-            <section className="home-projects bg-[#f4f6f3] px-5 py-16 text-[#183b35]" aria-label="Featured projects" aria-busy="true">
+            <section className="home-deferred-section home-projects bg-[#f4f6f3] px-5 py-16 text-[#183b35]" aria-label="Featured projects" aria-busy="true">
                 <div className="mx-auto max-w-[720px] animate-pulse text-center" role="status">
                     <span className="sr-only">Loading featured projects</span>
                     <div className="mx-auto h-3 w-28 rounded bg-[#183b35]/15" />
@@ -127,7 +140,7 @@ export default function HomeProjects() {
 
     if (isError) {
         return (
-            <section className="home-projects bg-[#f4f6f3] px-5 py-16 text-center text-[#183b35]" aria-label="Featured projects">
+            <section className="home-deferred-section home-projects bg-[#f4f6f3] px-5 py-16 text-center text-[#183b35]" aria-label="Featured projects">
                 <div className="mx-auto max-w-lg" role="alert">
                     <h2 className="text-2xl font-bold">Projects could not be loaded.</h2>
                     <p className="mt-3 text-sm leading-6 text-[#53645f]">Check your connection and try again.</p>
@@ -140,7 +153,7 @@ export default function HomeProjects() {
     return (
         <section
             ref={sectionRef}
-            className="home-projects bg-[#f4f6f3] py-8 text-[#183b35] md:py-12"
+            className="home-deferred-section home-projects bg-[#f4f6f3] py-8 text-[#183b35] md:py-12"
             aria-label={showingPreviews ? "Project previews" : "Featured projects"}
             data-home-reveal="projects"
         >
@@ -350,7 +363,7 @@ export default function HomeProjects() {
             <div className="mt-0 text-center">
                 <Link
                     href="/projects"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#d85c43] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(24,59,53,0.12)] transition-colors hover:bg-[#b84733] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#b84733] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(24,59,53,0.12)] transition-colors hover:bg-[#963827] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]"
                 >
                     All projects
                     <ArrowUpRight

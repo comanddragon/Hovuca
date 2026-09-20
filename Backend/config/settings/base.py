@@ -216,12 +216,15 @@ MEDIA_ROOT = BASE_DIR / "media"
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 CKEDITOR_5_MAX_FILE_SIZE = 5
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "webp"]
+# This stylesheet is loaded by django-ckeditor-5 after its own editor CSS.
+# It mirrors the public article's reading hierarchy in Django admin.
+CKEDITOR_5_CUSTOM_CSS = "admin/ckeditor.css"
 CKEDITOR_5_CONFIGS = {
     "hovuca": {
         "toolbar": {
             "items": [
-                "undo", "redo", "findAndReplace", "|", "heading", "fontFamily",
-                "fontSize", "|", "bold", "italic", "underline", "strikethrough",
+                "undo", "redo", "findAndReplace", "|", "heading", "fontSize",
+                "|", "bold", "italic", "underline", "strikethrough",
                 "code", "subscript", "superscript", "removeFormat", "|",
                 "fontColor", "fontBackgroundColor", "highlight", "|", "alignment",
                 "bulletedList", "numberedList", "outdent", "indent", "|", "link",
@@ -231,7 +234,6 @@ CKEDITOR_5_CONFIGS = {
             ],
             "shouldNotGroupWhenFull": True,
         },
-        "fontFamily": {"supportAllValues": True},
         "fontSize": {
             "options": [9, 11, 13, "default", 17, 20, 24, 30, 36],
             "supportAllValues": True,
