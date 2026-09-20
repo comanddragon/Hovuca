@@ -61,7 +61,7 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
     }, [url]);
 
     return (
-        <div className="relative aspect-[8.5/11] w-36 overflow-hidden border border-[#183b35]/25 bg-white">
+        <div className="relative aspect-8.5/11 w-36 overflow-hidden border border-[#183b35]/25 bg-white">
             {!failed && (
                 <canvas
                     ref={canvasRef}

@@ -247,11 +247,11 @@ export function Navbar() {
                             <Link
                                 href="/blog"
                                 aria-label="Search HOVUCA stories"
-                                className="group/search mr-5.5 inline-flex h-7 w-5.25 items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[#f2c14e] focus-visible:text-[#f2c14e]"
+                                className="group/search mr-5.5 inline-flex h-7 w-5.25 items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[#f2c14e]"
                             >
                                 <span className="relative block h-6 w-6" aria-hidden="true">
-                                    <span className="absolute left-px top-px h-[17px] w-[17px] rounded-full border-[2px] border-current" />
-                                    <span className="absolute left-[15px] top-[16px] h-[2px] w-[7px] origin-left rotate-45 rounded-full bg-current" />
+                                    <span className="absolute left-px top-px h-4.25 w-4.25 rounded-full border-2 border-current" />
+                                    <span className="absolute left-3.75 top-4 h-0.5 w-1.75 origin-left rotate-45 rounded-full bg-current" />
                                 </span>
                             </Link>
                         )}
@@ -276,7 +276,7 @@ export function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setMobileOpen(false)}
-                                    className="border-b border-white/12 px-2 py-3 text-sm font-semibold text-white last:border-b-0 hover:text-[#f2c14e]"
+                                    className="border-white/12 px-2 py-3 text-sm font-semibold text-white last:border-b-0 hover:text-[#f2c14e]"
                                 >
                                     {link.label}
                                 </Link>
@@ -292,14 +292,14 @@ export function Navbar() {
                     </div>
                 )}
             </header>
-            {!isHome && scrolled && <div className="h-[72px]" aria-hidden="true" />}
+            {!isHome && scrolled && <div className="h-18" aria-hidden="true" />}
             </>
         );
     }
 
     return (
         <header className="sticky top-0 z-50 border-b border-[#35145f]/10 bg-[#fffaf3]/95 backdrop-blur-xl">
-            <nav className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-4 sm:px-6">
+            <nav className="mx-auto flex h-19 max-w-7xl items-center justify-between px-4 sm:px-6">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3">
                     <Logo />
@@ -360,7 +360,7 @@ export function Navbar() {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
-                                        className="text-destructive focus:text-destructive"
+                                        className="text-destructive"
                                         onClick={async () => {
                                             logout();
                                             router.push("/");
