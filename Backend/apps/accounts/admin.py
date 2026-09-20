@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.urls import reverse
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
 
@@ -21,7 +22,14 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     list_filter = ["role", "is_active", "is_staff", "is_email_verified", "created_at"]
     search_fields = ["email", "first_name", "last_name", "phone_number"]
     ordering = ["-created_at"]
-    readonly_fields = ["id", "created_at", "updated_at", "last_login_ip", "last_login"]
+    readonly_fields = [
+        "id",
+        "password_change_link",
+        "created_at",
+        "updated_at",
+        "last_login_ip",
+        "last_login",
+    ]
 
     fieldsets = (
         (
@@ -35,6 +43,12 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                     "phone_number",
                     "avatar",
                 ),
+            },
+        ),
+        (
+            "Security",
+            {
+                "fields": ("password_change_link",),
             },
         ),
         (
@@ -91,6 +105,11 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         return obj.get_full_name()
 
     full_name.short_description = "Name"
+
+    @admin.display(description="Password")
+    def password_change_link(self, obj):
+        url = reverse("admin:auth_user_password_change", args=[obj.pk])
+        return format_html('<a class="button" href="{}">Change password</a>', url)
 
     def role_badge(self, obj):
         colors = {
