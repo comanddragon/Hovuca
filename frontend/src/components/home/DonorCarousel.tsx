@@ -17,7 +17,7 @@ function SkeletonPill() {
     );
 }
 
-function DonorPill({ donor }: { donor: DonorOrganization }) {
+function DonorPill({ donor, duplicate = false }: { donor: DonorOrganization; duplicate?: boolean }) {
     const abbr =
         donor.abbreviation?.trim() ||
         donor.name
@@ -28,11 +28,12 @@ function DonorPill({ donor }: { donor: DonorOrganization }) {
 
     const Wrapper = donor.website ? "a" : "div";
     const wrapperProps = donor.website
-        ? { href: donor.website, target: "_blank", rel: "noopener noreferrer" }
+        ? { href: donor.website, target: "_blank", rel: "noopener noreferrer", tabIndex: duplicate ? -1 : undefined }
         : {};
 
     return (
         <motion.div
+            aria-hidden={duplicate || undefined}
             whileHover={{ y: -3 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="flex-shrink-0 w-[180px] flex flex-col items-center mx-6 select-none"
@@ -76,11 +77,9 @@ interface DonorCarouselProps {
 export default function DonorCarousel({
                                           duration = "32s",
                                       }: DonorCarouselProps) {
-    const { data: donors, isLoading, isError } = useActiveDonors();
+    const { data: donors, isLoading, isError, refetch } = useActiveDonors();
 
-    if (isError) return null;
-
-    if (isLoading || !donors?.length) {
+    if (isLoading) {
         return (
             <section className="flex h-[120px] items-center overflow-hidden bg-transparent">
                 <div className="flex">
@@ -92,7 +91,20 @@ export default function DonorCarousel({
         );
     }
 
-    const items = [...donors, ...donors];
+    if (isError) {
+        return (
+            <div className="flex h-[120px] items-center justify-center gap-4 px-6 text-center text-sm text-[#53645f]" role="alert">
+                <span>Partners could not be loaded.</span>
+                <button type="button" onClick={() => void refetch()} className="min-h-11 rounded-full border border-[#183b35] px-5 font-semibold text-[#183b35]">
+                    Try again
+                </button>
+            </div>
+        );
+    }
+
+    if (!donors?.length) {
+        return <p className="flex h-[120px] items-center justify-center px-6 text-sm text-[#53645f]">Partner information will be added soon.</p>;
+    }
 
     return (
             <section className="py-4 bg-transparent overflow-hidden" style={{ height: "120px" }}>
@@ -137,8 +149,11 @@ export default function DonorCarousel({
                     className="marquee-track"
                     style={{ animationDuration: duration }}
                 >
-                    {items.map((donor, i) => (
-                        <DonorPill key={`${donor.id}-${i}`} donor={donor} />
+                    {donors.map((donor) => (
+                        <DonorPill key={donor.id} donor={donor} />
+                    ))}
+                    {donors.map((donor) => (
+                        <DonorPill key={`${donor.id}-duplicate`} donor={donor} duplicate />
                     ))}
                 </div>
             </div>

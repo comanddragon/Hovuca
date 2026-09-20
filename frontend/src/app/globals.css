@@ -153,7 +153,8 @@
     animation: marquee 28s linear infinite;
 }
 
-.marquee-track:hover {
+.marquee-track:hover,
+.marquee-track:focus-within {
     animation-play-state: paused;
 }
 
@@ -379,6 +380,74 @@ html {
         transform: translateY(24px);
     }
 
+    [data-home-reveal="programs"],
+    [data-home-reveal="resources"],
+    [data-home-reveal="involved"] {
+        opacity: 1;
+        transform: none;
+    }
+
+    .home-program-heading,
+    .home-program-list > a {
+        transition: opacity 0.62s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.62s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .home-program-list > a:nth-of-type(2) { transition-delay: 70ms; }
+    .home-program-list > a:nth-of-type(3) { transition-delay: 140ms; }
+
+    [data-home-reveal="programs"].home-reveal-pending .home-program-heading,
+    [data-home-reveal="programs"].home-reveal-pending .home-program-list > a {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    .home-resource-intro,
+    .home-resource-list > a {
+        transition: opacity 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s ease;
+    }
+
+    .home-resource-list > a:nth-of-type(2) { transition-delay: 75ms, 75ms, 0ms; }
+    .home-resource-list > a:nth-of-type(3) { transition-delay: 150ms, 150ms, 0ms; }
+
+    [data-home-reveal="resources"].home-reveal-pending .home-resource-intro {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+
+    [data-home-reveal="resources"].home-reveal-pending .home-resource-list > a {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    .home-involved-panel {
+        clip-path: inset(0);
+        transition: clip-path 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-home-reveal="involved"].home-reveal-pending .home-involved-panel-start {
+        clip-path: inset(0 100% 0 0);
+    }
+
+    [data-home-reveal="involved"].home-reveal-pending .home-involved-panel-end {
+        clip-path: inset(0 0 0 100%);
+    }
+
+    [data-home-action] {
+        transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+    }
+
+    [data-home-action]:hover,
+    [data-home-action]:focus-visible {
+        transform: translateY(-2px);
+    }
+
+    [data-home-action]:active {
+        transform: translateY(0) scale(0.98);
+    }
+
     [data-home-reveal="story-feature"].home-reveal-pending,
     [data-home-reveal="story-side"].home-reveal-pending {
         opacity: 1;
@@ -437,7 +506,6 @@ html {
         transform: translateX(28px);
     }
 }
-
 
 .home-project-swiper {
     overflow: visible;

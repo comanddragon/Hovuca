@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
@@ -50,7 +50,7 @@ const fallbackProjects = [
 ];
 
 export default function HomeProjects() {
-    const { data } = useProjects({ page: 1, page_size: 3 });
+    const { data, isLoading, isError, refetch } = useProjects({ page: 1, page_size: 3 });
     const reduceMotion = useReducedMotion();
     const backendProjects = data?.results ?? [];
 
@@ -66,10 +66,11 @@ export default function HomeProjects() {
           }))
         : fallbackProjects;
 
-    const showingPreviews = backendProjects.length === 0;
+    const showingPreviews = !isLoading && !isError && backendProjects.length === 0;
     const canBrowse = projects.length > 1;
 
     const swiperRef = useRef<SwiperClass | null>(null);
+    const sectionRef = useRef<HTMLElement | null>(null);
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [hasPrev, setHasPrev] = useState(false);
@@ -87,8 +88,58 @@ export default function HomeProjects() {
         swiperRef.current?.slideTo(index);
     };
 
+    useEffect(() => {
+        const section = sectionRef.current;
+        if (!section || !canBrowse || reduceMotion) return;
+
+        let isVisible = false;
+        const syncAutoplay = () => {
+            const autoplay = swiperRef.current?.autoplay;
+            if (!autoplay) return;
+            if (isVisible && !document.hidden && !section.matches(":focus-within")) autoplay.start();
+            else autoplay.stop();
+        };
+        const observer = new IntersectionObserver(([entry]) => {
+            isVisible = entry.isIntersecting;
+            syncAutoplay();
+        }, { threshold: 0.25 });
+
+        observer.observe(section);
+        document.addEventListener("visibilitychange", syncAutoplay);
+        return () => {
+            observer.disconnect();
+            document.removeEventListener("visibilitychange", syncAutoplay);
+        };
+    }, [canBrowse, isError, isLoading, reduceMotion]);
+
+    if (isLoading) {
+        return (
+            <section className="home-projects bg-[#f4f6f3] px-5 py-16 text-[#183b35]" aria-label="Featured projects" aria-busy="true">
+                <div className="mx-auto max-w-[720px] animate-pulse text-center" role="status">
+                    <span className="sr-only">Loading featured projects</span>
+                    <div className="mx-auto h-3 w-28 rounded bg-[#183b35]/15" />
+                    <div className="mx-auto mt-5 h-10 max-w-md rounded bg-[#183b35]/15" />
+                    <div className="mt-10 aspect-video rounded-lg bg-[#183b35]/15" />
+                </div>
+            </section>
+        );
+    }
+
+    if (isError) {
+        return (
+            <section className="home-projects bg-[#f4f6f3] px-5 py-16 text-center text-[#183b35]" aria-label="Featured projects">
+                <div className="mx-auto max-w-lg" role="alert">
+                    <h2 className="text-2xl font-bold">Projects could not be loaded.</h2>
+                    <p className="mt-3 text-sm leading-6 text-[#53645f]">Check your connection and try again.</p>
+                    <button type="button" onClick={() => void refetch()} className="mt-6 min-h-11 rounded-full bg-[#183b35] px-6 text-sm font-semibold text-white">Try again</button>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section
+            ref={sectionRef}
             className="home-projects bg-[#f4f6f3] py-8 text-[#183b35] md:py-12"
             aria-label={showingPreviews ? "Project previews" : "Featured projects"}
             data-home-reveal="projects"
@@ -121,8 +172,13 @@ export default function HomeProjects() {
             <div className="home-project-viewport">
                 <div
                     className="home-project-stage relative mx-auto max-w-[1300px] px-5"
+                    role="region"
                     aria-roledescription="carousel"
                     aria-label="Featured projects"
+                    onFocusCapture={() => swiperRef.current?.autoplay?.stop()}
+                    onBlurCapture={(event) => {
+                        if (!event.currentTarget.contains(event.relatedTarget) && !reduceMotion) swiperRef.current?.autoplay?.start();
+                    }}
                 >
                     <Swiper
                         modules={[Autoplay, EffectCoverflow]}
@@ -276,7 +332,7 @@ export default function HomeProjects() {
                                     ? "true"
                                     : undefined
                             }
-                            className="flex h-16 items-center justify-center px-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183b35]"
+                            className="flex h-16 w-11 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#183b35]"
                         >
                             <span
                                 aria-hidden="true"

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ArrowRight, FileText } from "lucide-react";
 import DonorCarousel from "@/components/home/DonorCarousel";
 import HomeProjects from "@/components/home/HomeProjects";
@@ -76,11 +76,9 @@ function SectionKicker({ children, light = false }: { children: React.ReactNode;
 }
 
 export default function HomePage() {
-    const { data: programData } = usePrograms({ page: 1, page_size: 3 });
-    const { data: articleData } = useArticles({ page: 1, page_size: 3 });
-    const { data: resources = [] } = useResources();
-    const [email, setEmail] = useState("");
-    const [subscribed, setSubscribed] = useState(false);
+    const { data: programData, isLoading: programsLoading, isError: programsError, refetch: refetchPrograms } = usePrograms({ page: 1, page_size: 3 });
+    const { data: articleData, isLoading: articlesLoading, isError: articlesError, refetch: refetchArticles } = useArticles({ page: 1, page_size: 3 });
+    const { data: resources = [], isLoading: resourcesLoading, isError: resourcesError, refetch: refetchResources } = useResources();
 
     useEffect(() => {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
@@ -107,11 +105,19 @@ export default function HomePage() {
         };
     }, []);
 
-    const programs = (programData?.results?.length ? programData.results : fallbackPrograms).slice(0, 3);
-    const articles = (articleData?.results?.length ? articleData.results : fallbackStories).slice(0, 3);
+    const programsArePreviews = !programsLoading && !programsError && !programData?.results?.length;
+    const storiesArePreviews = !articlesLoading && !articlesError && !articleData?.results?.length;
+    const resourcesArePreviews = !resourcesLoading && !resourcesError && !resources.length;
+    const programs = (programData?.results?.length ? programData.results : programsArePreviews ? fallbackPrograms : []).slice(0, 3);
+    const articles = (articleData?.results?.length ? articleData.results : storiesArePreviews ? fallbackStories : []).slice(0, 3);
+    const displayedResources = (resources.length ? resources.slice(0, 3) : resourcesArePreviews ? [
+        { id: "policy", title: "Child Protection Policy", category: "Policy" },
+        { id: "rights", title: "Promotion of the Rights of the Child in Cameroon", category: "Publication" },
+        { id: "advocacy", title: "Advocacy Brief", category: "Advocacy" },
+    ] : []);
 
     return (
-        <main className="w-full overflow-hidden bg-white text-[#183b35]">
+        <div className="w-full overflow-hidden bg-white text-[#183b35]">
             <div className="grid h-[100svh] min-h-[640px] w-full grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto]">
                 <section className="relative min-h-0 min-w-0 overflow-hidden" aria-labelledby="home-heading">
                     <Image
@@ -138,6 +144,7 @@ export default function HomePage() {
                         </p>
                         <Link
                             href="/projects"
+                            data-home-action
                             className="group mt-5 inline-flex h-11 w-[210px] items-center justify-between rounded-full bg-[#d85c43] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#b84733] focus-visible:bg-[#b84733]"
                         >
                             Explore our impact <ArrowRight className="h-7 w-7 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1" strokeWidth={1.5} />
@@ -176,10 +183,10 @@ export default function HomePage() {
                 </section>
             </div>
 
-            <section className="bg-white px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading">
+            <section className="home-programs bg-white px-6 py-20 lg:px-12 lg:py-24" aria-labelledby="programs-heading" data-home-reveal="programs">
                 <div className="mx-auto max-w-[1280px]">
-                    <div data-home-reveal="rise" className="grid gap-10 border-b border-[#183b35]/25 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-                        <SectionKicker>Where we work</SectionKicker>
+                    <div className="home-program-heading grid gap-10 border-b border-[#183b35]/25 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                        <SectionKicker>{programsArePreviews ? "Program previews" : "Where we work"}</SectionKicker>
                         <div>
                             <h2 id="programs-heading" className="max-w-3xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl">
                                 Programs shaped around real lives.
@@ -190,11 +197,18 @@ export default function HomePage() {
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-3">
+                    <div className="home-program-list grid lg:grid-cols-3">
+                        {programsLoading && <p className="col-span-full py-16 text-center text-sm text-[#566067]" role="status">Loading programs…</p>}
+                        {programsError && (
+                            <div className="col-span-full py-14 text-center" role="alert">
+                                <p className="font-semibold">Programs could not be loaded.</p>
+                                <button type="button" onClick={() => void refetchPrograms()} className="mt-4 min-h-11 rounded-full border border-[#183b35] px-5 text-sm font-semibold">Try again</button>
+                            </div>
+                        )}
                         {programs.map((program, index) => (
                             <Link
                                 key={program.id}
-                                href={`/programs/${program.slug}`}
+                                href={programsArePreviews ? "/programs" : `/programs/${program.slug}`}
                                 className="group flex min-h-[300px] flex-col border-b border-[#183b35]/25 px-0 py-9 text-[#183b35] lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
                             >
                                 <span className="text-sm text-[#d85c43]">0{index + 1}</span>
@@ -217,20 +231,27 @@ export default function HomePage() {
                 <div className="mx-auto max-w-[1280px]">
                     <div data-home-reveal="rise" className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
                         <div>
-                            <SectionKicker>Field stories</SectionKicker>
+                            <SectionKicker>{storiesArePreviews ? "Story previews" : "Field stories"}</SectionKicker>
                             <h2 id="stories-heading" className="mt-5 text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-[#183b35] md:text-6xl">
                                 Voices from the work.
                             </h2>
                         </div>
-                        <Link href="/blog" className="inline-flex items-center gap-3 text-sm font-semibold text-[#d85c43]">
+                        <Link href="/blog" data-home-action className="inline-flex items-center gap-3 text-sm font-semibold text-[#d85c43]">
                             Read all stories <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
 
                     <div className="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
+                        {articlesLoading && <p className="lg:col-span-2 py-16 text-center text-sm text-[#566067]" role="status">Loading stories…</p>}
+                        {articlesError && (
+                            <div className="lg:col-span-2 py-14 text-center" role="alert">
+                                <p className="font-semibold">Stories could not be loaded.</p>
+                                <button type="button" onClick={() => void refetchArticles()} className="mt-4 min-h-11 rounded-full border border-[#183b35] px-5 text-sm font-semibold">Try again</button>
+                            </div>
+                        )}
                         {articles[0] && (
                             <article data-home-reveal="story-feature" className="home-story-feature group min-w-0">
-                                <Link href={`/blog/${articles[0].slug}`} className="block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d85c43]">
+                                <Link href={storiesArePreviews ? "/blog" : `/blog/${articles[0].slug}`} className="block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d85c43]">
                                     <div className="home-story-feature-image relative aspect-[5/4] overflow-hidden rounded-2xl bg-[#e7e5de] sm:aspect-[4/3]">
                                         <Image
                                             src={articles[0].cover_image || "/assets/plates/program-photo.webp"}
@@ -254,7 +275,7 @@ export default function HomePage() {
                         <div className="flex min-w-0 flex-col gap-8 lg:gap-10">
                             {articles.slice(1).map((article) => (
                                 <article key={article.id} data-home-reveal="story-side" className="home-story-side group min-w-0 border-t border-[#e0aa18] pt-5">
-                                    <Link href={`/blog/${article.slug}`} className="grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d85c43] sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] sm:items-start lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)]">
+                                    <Link href={storiesArePreviews ? "/blog" : `/blog/${article.slug}`} className="grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d85c43] sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] sm:items-start lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)]">
                                         <div className="home-story-side-image relative aspect-[5/3] overflow-hidden rounded-xl bg-[#e7e5de] sm:aspect-[4/5]">
                                             <Image
                                                 src={article.cover_image || "/assets/plates/program-photo.webp"}
@@ -279,9 +300,9 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="grid bg-[#183b35] text-white lg:grid-cols-[0.78fr_1.22fr]" aria-labelledby="resources-heading">
-                <div data-home-reveal="rise" className="flex min-h-[440px] flex-col justify-between border-b border-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
-                    <SectionKicker light>Knowledge for action</SectionKicker>
+            <section className="home-resources grid bg-[#183b35] text-white lg:grid-cols-[0.78fr_1.22fr]" aria-labelledby="resources-heading" data-home-reveal="resources">
+                <div className="home-resource-intro flex min-h-[440px] flex-col justify-between border-b border-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
+                    <SectionKicker light>{resourcesArePreviews ? "Resource previews" : "Knowledge for action"}</SectionKicker>
                     <div>
                         <h2 id="resources-heading" className="max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                             Resources made to be used.
@@ -289,17 +310,20 @@ export default function HomePage() {
                         <p className="mt-6 max-w-lg text-base leading-7 text-white/70">
                             Explore policies, reports, advocacy materials and practical learning from our work in Cameroon.
                         </p>
-                        <Link href="/documents" className="mt-8 inline-flex items-center gap-3 text-sm font-semibold text-[#f2c14e]">
+                        <Link href="/documents" data-home-action className="mt-8 inline-flex items-center gap-3 text-sm font-semibold text-[#f2c14e]">
                             Browse publications <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
                 </div>
-                <div className="divide-y divide-white/20">
-                    {(resources.length ? resources.slice(0, 3) : [
-                        { id: "policy", title: "Child Protection Policy", category: "Policy" },
-                        { id: "rights", title: "Promotion of the Rights of the Child in Cameroon", category: "Publication" },
-                        { id: "advocacy", title: "Advocacy Brief", category: "Advocacy" },
-                    ]).map((resource, index) => (
+                <div className="home-resource-list divide-y divide-white/20">
+                    {resourcesLoading && <p className="flex min-h-[150px] items-center justify-center px-6 text-sm text-white/70" role="status">Loading resources…</p>}
+                    {resourcesError && (
+                        <div className="flex min-h-[150px] flex-col items-center justify-center px-6 text-center" role="alert">
+                            <p className="font-semibold">Resources could not be loaded.</p>
+                            <button type="button" onClick={() => void refetchResources()} className="mt-4 min-h-11 rounded-full border border-white/60 px-5 text-sm font-semibold">Try again</button>
+                        </div>
+                    )}
+                    {displayedResources.map((resource, index) => (
                         <Link key={resource.id} href="/documents" className="group grid min-h-[150px] grid-cols-[auto_1fr_auto] items-center gap-6 px-6 py-7 transition-colors hover:bg-white/5 lg:px-12">
                             <span className="text-sm text-[#f2c14e]">0{index + 1}</span>
                             <span>
@@ -312,8 +336,8 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="bg-white px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading">
-                <div className="mx-auto flex max-w-[1280px] flex-col gap-8 border-y border-[#183b35]/20 py-12 md:flex-row md:items-center md:justify-between md:gap-16 lg:py-14">
+            <section className="bg-white px-6 py-16 lg:px-12 lg:py-20" aria-labelledby="approach-cta-heading" data-home-reveal="approach">
+                <div className="home-approach mx-auto flex max-w-[1280px] flex-col gap-8 border-y border-[#183b35]/20 py-12 md:flex-row md:items-center md:justify-between md:gap-16 lg:py-14">
                     <div className="max-w-2xl">
                         <h2 id="approach-cta-heading" className="text-3xl font-bold leading-[1.08] tracking-[-0.03em] text-[#183b35] md:text-4xl">
                             Explore the thinking behind the work.
@@ -322,28 +346,28 @@ export default function HomePage() {
                             Learn more about HOVUCA’s approach to child protection, opportunity and community-led change.
                         </p>
                     </div>
-                    <Link href="/about" className="group inline-flex min-h-12 w-fit shrink-0 items-center gap-5 rounded-full bg-[#183b35] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#294842] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]">
+                    <Link href="/about" data-home-action className="group inline-flex min-h-12 w-fit shrink-0 items-center gap-5 rounded-full bg-[#183b35] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#294842] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183b35]">
                         About HOVUCA <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-1" />
                     </Link>
                 </div>
             </section>
 
-            <section className="grid lg:grid-cols-2" aria-labelledby="involved-heading">
-                <div className="bg-[#e0aa18] px-6 py-16 text-[#183b35] lg:px-12 lg:py-20">
+            <section className="home-involved grid overflow-hidden lg:grid-cols-2" aria-labelledby="involved-heading" data-home-reveal="involved">
+                <div className="home-involved-panel home-involved-panel-start bg-[#e0aa18] px-6 py-16 text-[#183b35] lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Get involved</p>
                     <h2 id="involved-heading" className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Bring your skills to the work.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-[#294842]">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
-                    <Link href="/volunteers" className="mt-9 inline-flex items-center gap-3 rounded-full border border-[#183b35] px-6 py-3 text-sm font-semibold">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
+                    <Link href="/volunteers" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-[#183b35] px-6 py-3 text-sm font-semibold">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
                 </div>
-                <div className="bg-[#d85c43] px-6 py-16 text-white lg:px-12 lg:py-20">
+                <div className="home-involved-panel home-involved-panel-end bg-[#d85c43] px-6 py-16 text-white lg:px-12 lg:py-20">
                     <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Work together</p>
                     <h2 className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Build a lasting partnership.
                     </h2>
                     <p className="mt-7 max-w-xl text-base leading-7 text-white/80">Partner with HOVUCA to strengthen programs, knowledge and opportunity in Cameroon.</p>
-                    <Link href="/contact" className="mt-9 inline-flex items-center gap-3 rounded-full border border-white px-6 py-3 text-sm font-semibold">Start a conversation <ArrowRight className="h-4 w-4" /></Link>
+                    <Link href="/contact" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-white px-6 py-3 text-sm font-semibold">Start a conversation <ArrowRight className="h-4 w-4" /></Link>
                 </div>
             </section>
 
@@ -356,27 +380,13 @@ export default function HomePage() {
                         </h2>
                     </div>
                     <div>
-                        {subscribed ? (
-                            <p className="rounded-xl border border-[#183b35]/15 bg-[#f2f0ea] p-6 font-semibold text-[#183b35]">Thank you. You’re on the list.</p>
-                        ) : (
-                            <form
-                                onSubmit={(event) => { event.preventDefault(); setSubscribed(true); setEmail(""); }}
-                                className="flex flex-col overflow-hidden rounded-xl border border-[#183b35] sm:flex-row"
-                            >
-                                <label htmlFor="home-email" className="sr-only">Email address</label>
-                                <input
-                                    id="home-email"
-                                    suppressHydrationWarning
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(event) => setEmail(event.target.value)}
-                                    placeholder="Email address"
-                                    className="min-h-14 flex-1 bg-white px-5 text-[#183b35] outline-none placeholder:text-[#183b35]/45"
-                                />
-                                <button suppressHydrationWarning type="submit" className="min-h-14 bg-[#183b35] px-7 text-sm font-semibold text-white">Subscribe</button>
-                            </form>
-                        )}
+                        <div className="rounded-xl border border-[#183b35]/20 bg-[#f4f6f3] p-6">
+                            <p className="font-semibold text-[#183b35]">Newsletter subscriptions are not open yet.</p>
+                            <p className="mt-2 text-sm leading-6 text-[#566067]">For current stories and opportunities, follow HOVUCA or contact the team directly.</p>
+                            <Link href="/contact" data-home-action className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-[#183b35] px-5 py-2.5 text-sm font-semibold text-white">
+                                Contact HOVUCA <ArrowRight aria-hidden="true" className="size-4" />
+                            </Link>
+                        </div>
                     </div>
                     <nav aria-label="Follow HOVUCA on social media" className="text-center lg:col-span-2">
                         <p className="mb-3 text-sm font-semibold text-[#183b35]">Keep up with us on social media</p>
@@ -384,6 +394,6 @@ export default function HomePage() {
                     </nav>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }
