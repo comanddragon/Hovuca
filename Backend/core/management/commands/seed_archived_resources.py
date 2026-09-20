@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = "Idempotently seed resources exported by scrape_archived_resources."
 
     def add_arguments(self, parser):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         parser.add_argument("--csv", type=Path, default=project_root / "Backend" / "data" / "archived_resources.csv")
         parser.add_argument("--archive-root", type=Path, default=project_root / "hovuca.org")
         parser.add_argument("--dry-run", action="store_true")

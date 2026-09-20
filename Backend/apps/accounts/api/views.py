@@ -1,3 +1,7 @@
+import secrets
+
+from django.conf import settings
+from django.core.cache import cache
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,25 +13,33 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.accounts.models import User
 from core.pagination import StandardPagination
 from core.permissions import IsAdmin
+from core.throttles import (
+    LoginBurstThrottle,
+    LoginIPThrottle,
+    LoginSustainedThrottle,
+    PasswordChangeThrottle,
+    PasswordResetConfirmThrottle,
+    PasswordResetRequestThrottle,
+    RegisterThrottle,
+    TokenRefreshThrottle,
+    WebSocketTicketThrottle,
+)
+
 from .serializers import (
     ChangePasswordSerializer,
     CustomTokenObtainPairSerializer,
+    ForgotPasswordSerializer,
     RegisterSerializer,
+    ResetPasswordConfirmSerializer,
     UpdateProfileSerializer,
     UserListSerializer,
     UserProfileSerializer,
-    ForgotPasswordSerializer,
-    ResetPasswordConfirmSerializer,
 )
 
 
 def get_frontend_url(request):
-    """Derive the frontend origin from the request headers."""
-    origin = request.META.get("HTTP_ORIGIN")
-    if origin:
-        return origin
-    scheme = "https" if request.is_secure() else "http"
-    return f"{scheme}://{request.get_host()}"
+    """Return the configured frontend, never a user-controlled Origin header."""
+    return settings.FRONTEND_URL
 
 
 # ---------------------------------------------------------------------------
@@ -40,6 +52,11 @@ class LoginView(TokenObtainPairView):
 
     permission_classes = [AllowAny]
     serializer_class = CustomTokenObtainPairSerializer
+    throttle_classes = [
+        LoginBurstThrottle,
+        LoginSustainedThrottle,
+        LoginIPThrottle,
+    ]
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -60,7 +77,8 @@ class LoginView(TokenObtainPairView):
 
 class RefreshTokenView(TokenRefreshView):
     """POST /api/v1/auth/token/refresh/"""
-    pass
+
+    throttle_classes = [TokenRefreshThrottle]
 
 
 class LogoutView(generics.GenericAPIView):
@@ -88,6 +106,19 @@ class LogoutView(generics.GenericAPIView):
             )
 
 
+class WebSocketTicketView(APIView):
+    """Issue a short-lived, single-use credential for a WebSocket handshake."""
+
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [WebSocketTicketThrottle]
+
+    def post(self, request):
+        ticket = secrets.token_urlsafe(32)
+        lifetime = getattr(settings, "WEBSOCKET_TICKET_LIFETIME", 30)
+        cache.set(f"websocket-ticket:{ticket}", str(request.user.pk), lifetime)
+        return Response({"ticket": ticket, "expires_in": lifetime})
+
+
 # ---------------------------------------------------------------------------
 # Registration
 # ---------------------------------------------------------------------------
@@ -98,6 +129,7 @@ class RegisterView(generics.CreateAPIView):
 
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [RegisterThrottle]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -153,6 +185,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ["post"]
+    throttle_classes = [PasswordChangeThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(
@@ -178,6 +211,7 @@ class ForgotPasswordView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetRequestThrottle]
 
     def post(self, request):
         serializer = ForgotPasswordSerializer(
@@ -199,6 +233,7 @@ class ResetPasswordConfirmView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetConfirmThrottle]
 
     def post(self, request):
         serializer = ResetPasswordConfirmSerializer(data=request.data)

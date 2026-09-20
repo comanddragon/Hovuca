@@ -7,6 +7,9 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 
+from core.models import convert_instance_images_to_webp
+from core.utils.files import parent_named_upload_path
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -46,7 +49,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     phone_number = models.CharField(max_length=20, blank=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+    avatar = models.ImageField(
+        upload_to=parent_named_upload_path("avatars", "avatar"),
+        null=True,
+        blank=True,
+    )
 
     # Role & Access
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.STUDENT)
@@ -72,6 +79,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.get_full_name()} <{self.email}>"
+
+    def save(self, *args, **kwargs):
+        convert_instance_images_to_webp(self)
+        super().save(*args, **kwargs)
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
-import Cookies from "js-cookie";
+import api from "@/lib/api";
 
 const WS_BASE = process.env.NEXT_PUBLIC_WS_URL;
 const WS_ENABLED = process.env.NEXT_PUBLIC_WS_ENABLED === "true";
@@ -46,18 +46,20 @@ export function useWebSocket({
         let retries = 0;
         let delay = RECONNECT_DELAY;
 
-        const connect = () => {
+        const connect = async () => {
             if (!mounted) return;
 
-            const token = Cookies.get("access_token");
-
-            // Don't connect if unauthenticated
-            if (!token) {
-                console.warn("[useWebSocket] No access token — skipping connection.");
+            let ticket: string;
+            try {
+                const response = await api.post<{ ticket: string }>("/auth/ws-ticket/");
+                ticket = response.data.ticket;
+            } catch {
+                console.warn("[useWebSocket] Could not obtain a connection ticket.");
                 return;
             }
+            if (!mounted) return;
 
-            const url = `${WS_BASE}/${path}?token=${token}`;
+            const url = `${WS_BASE}/${path}?ticket=${encodeURIComponent(ticket)}`;
             const ws = new WebSocket(url);
             wsRef.current = ws;
 
@@ -95,7 +97,7 @@ export function useWebSocket({
                     retries++;
                     reconnectTimer = setTimeout(() => {
                         delay = Math.min(delay * 2, MAX_RECONNECT_DELAY);
-                        connect();
+                        void connect();
                     }, delay);
                 }
             };
@@ -106,7 +108,7 @@ export function useWebSocket({
             };
         };
 
-        if (enabled && WS_ENABLED && WS_BASE && Cookies.get("access_token")) connect();
+        if (enabled && WS_ENABLED && WS_BASE) void connect();
 
         return () => {
             mounted = false;

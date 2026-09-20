@@ -2,5 +2,3 @@
 
 # Monitoring & logging
 sentry-sdk[django]
-# Security
-django-axes        # brute-force login protection

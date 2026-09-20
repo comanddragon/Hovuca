@@ -3,11 +3,10 @@
 from decimal import Decimal
 from types import SimpleNamespace
 
-import resend
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.template.loader import render_to_string
 from django.utils import timezone
+
+from core.utils.email import send_templated_email
 
 
 class DisplayValue(SimpleNamespace):
@@ -22,14 +21,14 @@ class DisplayValue(SimpleNamespace):
 
 
 class Command(BaseCommand):
-    help = "Send sample previews of every HOVUCA email template through Resend."
+    help = "Send sample previews through the configured Django email backend."
 
     def add_arguments(self, parser):
         parser.add_argument("--to", default="ntsemancho@gmail.com")
         parser.add_argument(
             "--confirm",
             action="store_true",
-            help="Required acknowledgement that this command sends real email.",
+            help="Required acknowledgement that this command sends email output.",
         )
 
     def handle(self, *args, **options):
@@ -38,9 +37,6 @@ class Command(BaseCommand):
             raise CommandError(
                 f"No email sent. Re-run with --confirm to send all previews to {recipient}."
             )
-        if not settings.RESEND_API_KEY:
-            raise CommandError("RESEND_API_KEY is not configured.")
-
         frontend_url = "https://hovuca.org"
         now = timezone.now()
         user = DisplayValue(
@@ -117,16 +113,12 @@ class Command(BaseCommand):
             ("Course certificate", "accounts/elearning/certificate.html", {**common, "user": user, "course": course, "certificate_url": f"{frontend_url}/preview-certificate.pdf", "completed_at": now}),
         ]
 
-        resend.api_key = settings.RESEND_API_KEY
         for name, template, context in previews:
-            html = render_to_string(template, context)
-            resend.Emails.send(
-                {
-                    "from": settings.RESEND_FROM,
-                    "to": recipient,
-                    "subject": f"[HOVUCA email preview] {name}",
-                    "html": html,
-                }
+            send_templated_email(
+                subject=f"[HOVUCA email preview] {name}",
+                template=template,
+                context=context,
+                recipient_list=[recipient],
             )
             self.stdout.write(self.style.SUCCESS(f"Sent: {name}"))
 

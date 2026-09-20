@@ -1,8 +1,9 @@
 import logging
 
-import resend
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from core.tasking import shared_task
 
@@ -23,16 +24,15 @@ def send_contact_message_email(message_id: str):
         "emails/organization/contact_message.html", {"contact_message": message}
     )
 
-    resend.api_key = settings.RESEND_API_KEY
-    resend.Emails.send(
-        {
-            "from": settings.RESEND_FROM,
-            "to": settings.CONTACT_FORM_RECIPIENT,
-            "reply_to": message.email,
-            "subject": f"Contact form: {message.subject}",
-            "html": html,
-        }
+    email = EmailMultiAlternatives(
+        subject=f"Contact form: {message.subject}",
+        body=strip_tags(html),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[settings.CONTACT_FORM_RECIPIENT],
+        reply_to=[message.email],
     )
+    email.attach_alternative(html, "text/html")
+    email.send(fail_silently=False)
     logger.info(
         "Contact message %s emailed to %s",
         message.id,

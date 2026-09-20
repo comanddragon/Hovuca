@@ -57,11 +57,9 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
     # Django Debug Toolbar
-    try:
+    if getattr(settings, "ENABLE_DEBUG_TOOLBAR", False):
         import debug_toolbar
 
-        urlpatterns = [
+        urlpatterns += [
             path("__debug__/", include(debug_toolbar.urls)),
-        ] + urlpatterns
-    except ImportError:
-        pass
+        ]

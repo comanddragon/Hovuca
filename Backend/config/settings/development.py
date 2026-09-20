@@ -19,7 +19,17 @@ DATABASES = {
 # CORS — allow all origins locally
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Django Debug Toolbar (install separately)
-INSTALLED_APPS += ["debug_toolbar"]
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
-INTERNAL_IPS = ["127.0.0.1"]
+# Never send real email during local development. Django renders each message,
+# including its HTML alternative, to the process console instead.
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ENABLE_DEBUG_TOOLBAR = config(
+    "ENABLE_DEBUG_TOOLBAR",
+    default=False,
+    cast=bool,
+)
+
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+    INTERNAL_IPS = ["127.0.0.1"]

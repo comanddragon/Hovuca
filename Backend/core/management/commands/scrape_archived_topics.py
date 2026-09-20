@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = "Export the old HOVUCA navbar Topics hierarchy to CSV."
 
     def add_arguments(self, parser):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         parser.add_argument("--source", type=Path, default=project_root / "hovuca.org" / "news-post" / "index.htm")
         parser.add_argument("--output", type=Path, default=project_root / "Backend" / "data" / "archived_topics.csv")
 

@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # Build arguments
-ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ARG NEXT_PUBLIC_API_URL=/api
 
 # Build application
 RUN NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
@@ -35,5 +35,6 @@ COPY --from=builder /app/next.config.ts ./
 EXPOSE 3000
 
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=/api
 
 CMD ["npm", "start"]

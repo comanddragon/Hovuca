@@ -6,6 +6,52 @@ import os
 import uuid
 from pathlib import Path
 
+from django.utils.deconstruct import deconstructible
+from django.utils.text import slugify
+
+
+def media_object_stem(instance) -> str:
+    """Return a stable, human-readable filename stem for a model instance."""
+    for attribute in ("slug", "title", "name", "reference_code", "email"):
+        value = getattr(instance, attribute, "")
+        if value:
+            stem = slugify(str(value))
+            if stem:
+                return stem[:100]
+
+    for relation in ("event", "album", "course", "module", "donor_organization"):
+        parent = getattr(instance, relation, None)
+        if parent is not None:
+            stem = media_object_stem(parent)
+            if stem:
+                return stem
+
+    return instance._meta.model_name
+
+
+@deconstructible
+class ParentNamedUploadPath:
+    """Build collision-resistant paths named after the owning object."""
+
+    def __init__(self, subfolder: str, label: str):
+        self.subfolder = subfolder.strip("/")
+        self.label = slugify(label) or "media"
+
+    def __call__(self, instance, filename: str) -> str:
+        extension = Path(filename).suffix.lower()
+        object_id = str(getattr(instance, "pk", "") or uuid.uuid4()).replace("-", "")[:8]
+        suffix = f"-{self.label}-{object_id}{extension}"
+        # FileField defaults to max_length=100. Keep the complete storage key
+        # within that limit while retaining the identifying suffix.
+        stem_limit = max(1, 100 - len(self.subfolder) - 1 - len(suffix))
+        stem = media_object_stem(instance)[:stem_limit].rstrip("-") or "media"
+        filename = f"{stem}{suffix}"
+        return os.path.join(self.subfolder, filename)
+
+
+def parent_named_upload_path(subfolder: str, label: str):
+    return ParentNamedUploadPath(subfolder, label)
+
 
 def unique_upload_path(subfolder: str):
     """

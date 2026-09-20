@@ -1,6 +1,8 @@
-from django.db import models
 from django.core.validators import URLValidator
+from django.db import models
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class DonationPaymentSettings(BaseModel):
@@ -54,7 +56,11 @@ class DonationCampaign(BaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    banner = models.ImageField(upload_to="campaigns/", null=True, blank=True)
+    banner = models.ImageField(
+        upload_to=parent_named_upload_path("campaigns", "banner"),
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         db_table = "donation_campaigns"

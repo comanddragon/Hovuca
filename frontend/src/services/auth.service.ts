@@ -1,45 +1,25 @@
 import api from "@/lib/api";
 import { LoginResponse, RegisterPayload, User, ChangePasswordPayload, UpdateProfilePayload } from "@/types";
-import Cookies from "js-cookie";
 
 export const authService = {
     login: async (email: string, password: string): Promise<LoginResponse> => {
         const { data } = await api.post<LoginResponse>("/auth/login/", { email, password });
-        Cookies.set("access_token", data.access, {
-            expires: 1,
-            path: "/",
-            sameSite: "lax",
-        });
-        Cookies.set("refresh_token", data.refresh, {
-            expires: 7,
-            path: "/",
-            sameSite: "lax",
-        });
         return data;
     },
 
     register: async (payload: RegisterPayload) => {
         const { data } = await api.post("/auth/register/", payload);
-        Cookies.set("access_token", data.tokens.access, {
-            expires: 1,
-            path: "/",
-            sameSite: "lax",
-        });
-        Cookies.set("refresh_token", data.tokens.refresh, {
-            expires: 1,
-            path: "/",
-            sameSite: "lax",
-        });
         return data;
     },
 
     logout: async () => {
-        const refresh = Cookies.get("refresh_token");
+        // The gateway clears local HttpOnly cookies even when the upstream
+        // refresh token has already expired. Logout should therefore always
+        // complete locally instead of leaving stale UI state behind.
         try {
-            await api.post("/auth/logout/", { refresh });
-        } finally {
-            Cookies.remove("access_token");
-            Cookies.remove("refresh_token");
+            await api.post("/auth/logout/");
+        } catch {
+            return;
         }
     },
 

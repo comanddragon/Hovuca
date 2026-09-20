@@ -8,6 +8,10 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = False
 
+# All Django email APIs use Resend in production.
+EMAIL_BACKEND = "core.email_backends.ResendEmailBackend"
+FRONTEND_URL = config("FRONTEND_URL", default="https://hovuca.org").rstrip("/")
+
 configured_hosts = [
     host.strip()
     for host in config(
@@ -72,9 +76,21 @@ SECURE_HSTS_SECONDS            = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD            = True
 SESSION_COOKIE_SECURE          = _env_bool("SESSION_COOKIE_SECURE", True)
+SESSION_COOKIE_HTTPONLY        = True
+SESSION_COOKIE_SAMESITE        = "Lax"
 CSRF_COOKIE_SECURE             = _env_bool("CSRF_COOKIE_SECURE", True)
+CSRF_COOKIE_HTTPONLY           = True
+CSRF_COOKIE_SAMESITE           = "Lax"
 SECURE_CONTENT_TYPE_NOSNIFF    = True
+SECURE_REFERRER_POLICY         = "same-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 X_FRAME_OPTIONS                = "DENY"
+
+# Bound request parsing costs. Larger media uploads should go directly to the
+# object store instead of being buffered in the web process.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 # ---------------------------------------------------------------------------
 # CORS
@@ -85,6 +101,14 @@ CORS_ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in config(
+        "CSRF_TRUSTED_ORIGINS",
+        default=config("CORS_ALLOWED_ORIGINS", default=""),
+    ).split(",")
+    if origin.strip()
+]
 
 # ---------------------------------------------------------------------------
 # Static files — WhiteNoise serves them efficiently

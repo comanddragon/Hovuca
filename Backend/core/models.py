@@ -1,6 +1,24 @@
 import uuid
+
 from django.db import models
 from django.utils import timezone
+
+
+def convert_instance_images_to_webp(instance):
+    """Convert newly assigned JPG/PNG ImageFields before storage saves them."""
+    from core.utils.images import to_webp
+
+    for field in instance._meta.get_fields():
+        if not isinstance(field, models.ImageField):
+            continue
+        field_file = getattr(instance, field.name)
+        if not field_file or field_file._committed:
+            continue
+        converted = to_webp(field_file.file)
+        if converted is None:
+            continue
+        content, new_name = converted
+        field_file.save(new_name, content, save=False)
 
 
 class BaseManager(models.Manager):
@@ -30,19 +48,7 @@ class BaseModel(models.Model):
         super().save(*args, **kwargs)
 
     def _convert_images_to_webp(self):
-        from core.utils.images import to_webp
-
-        for field in self._meta.get_fields():
-            if not isinstance(field, models.ImageField):
-                continue
-            field_file = getattr(self, field.name)
-            if not field_file or field_file._committed:
-                continue
-            converted = to_webp(field_file.file)
-            if converted is None:
-                continue
-            content, new_name = converted
-            field_file.save(new_name, content, save=False)
+        convert_instance_images_to_webp(self)
 
     def soft_delete(self):
         """Mark record as deleted without removing from DB."""

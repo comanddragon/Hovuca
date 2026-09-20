@@ -23,7 +23,6 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
-    "js-cookie": "^3.0.5",
     "lucide-react": "^0.577.0",
     "next": "^16.2.2",
     "next-themes": "^0.4.6",
@@ -45,7 +44,6 @@
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.20.6",
     "@tailwindcss/postcss": "^4",
-    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -59,7 +57,7 @@
     "msw@2.12.13": true,
     "sharp@0.34.5": true,
     "unrs-resolver@1.12.2": true,
-    "esbuild@0.28.1": true,
-    "workerd@1.20260911.1": true
+    "workerd@1.20260911.1": true,
+    "esbuild@0.25.4 || 0.28.1": true
   }
 }

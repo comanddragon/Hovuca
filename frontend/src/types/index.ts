@@ -40,8 +40,6 @@ export interface AuthTokens {
 }
 
 export interface LoginResponse {
-    access: string;
-    refresh: string;
     user: UserPublic;
 }
 

@@ -12,12 +12,12 @@ class Command(BaseCommand):
     help = "Export donor metadata from the curated donor-logo directory."
 
     def add_arguments(self, parser):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         parser.add_argument("--logos", type=Path, default=project_root / "frontend" / "public" / "donors")
         parser.add_argument("--output", type=Path, default=project_root / "Backend" / "data" / "archived_donors.csv")
 
     def handle(self, *args, **options):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         logo_directory = options["logos"].resolve()
         output = options["output"].resolve()
         if not logo_directory.is_dir():

@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = "Scrape the locally archived HOVUCA news pages into a UTF-8 CSV file."
 
     def add_arguments(self, parser):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         parser.add_argument(
             "--source",
             type=Path,

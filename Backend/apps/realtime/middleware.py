@@ -1,8 +1,8 @@
 """
 JWT Authentication Middleware for Django Channels WebSocket connections.
 
-Clients authenticate by passing the JWT access token as a query parameter:
-    ws://host/ws/notifications/?token=<access_token>
+Clients authenticate with a short-lived, single-use handshake ticket:
+    ws://host/ws/notifications/?ticket=<opaque-ticket>
 
 On successful validation the authenticated User is attached to scope["user"].
 On failure scope["user"] is set to AnonymousUser and the connection is closed
@@ -15,36 +15,43 @@ from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
 from django.contrib.auth.models import AnonymousUser
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def get_user_from_token(token_key: str):
+def get_user_from_ticket(ticket: str):
     """
-    Validate a JWT access token and return the corresponding User.
+    Consume a one-time ticket and return the corresponding User.
     Returns AnonymousUser if the token is invalid or expired.
     """
-    from rest_framework_simplejwt.tokens import AccessToken
-    from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
     from apps.accounts.models import User
 
+    cache_key = f"websocket-ticket:{ticket}"
+    user_id = cache.get(cache_key)
+    if not user_id:
+        return AnonymousUser()
+
+    # Atomically claim the ticket before deleting it. This closes the narrow
+    # race where two simultaneous handshakes could both read the cache entry.
+    if not cache.add(f"websocket-ticket-used:{ticket}", True, 30):
+        return AnonymousUser()
+    cache.delete(cache_key)
     try:
-        token = AccessToken(token_key)
-        user_id = token["user_id"]
         return User.objects.get(id=user_id, is_active=True)
-    except (InvalidToken, TokenError, User.DoesNotExist, KeyError) as exc:
+    except (User.DoesNotExist, ValueError) as exc:
         logger.debug("WS auth failed: %s", exc)
         return AnonymousUser()
 
 
 class JWTAuthMiddleware(BaseMiddleware):
     """
-    Channels middleware that authenticates WebSocket connections via JWT.
+    Channels middleware that authenticates WebSockets with one-time tickets.
 
     Token is read from:
-        1. Query string  ?token=<jwt>    (primary — easy for browser clients)
-        2. Falls back to AnonymousUser if absent or invalid
+        Query string ?ticket=<opaque-ticket>. The credential expires quickly
+        and is deleted as soon as it is used.
     """
 
     async def __call__(self, scope, receive, send):
@@ -54,10 +61,10 @@ class JWTAuthMiddleware(BaseMiddleware):
 
         query_string = scope.get("query_string", b"").decode()
         params = parse_qs(query_string)
-        token_list = params.get("token", [])
+        ticket_list = params.get("ticket", [])
 
-        if token_list:
-            scope["user"] = await get_user_from_token(token_list[0])
+        if ticket_list:
+            scope["user"] = await get_user_from_ticket(ticket_list[0])
         else:
             scope["user"] = AnonymousUser()
 

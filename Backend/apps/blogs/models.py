@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 ARTICLE_BODY_ALLOWED_TAGS = [
     "p", "br", "hr",
@@ -116,7 +117,11 @@ class Article(BaseModel):
         config_name="hovuca",
         help_text="Full article body with rich-text formatting.",
     )
-    cover_image = models.ImageField(upload_to="blog/covers/", null=True, blank=True)
+    cover_image = models.ImageField(
+        upload_to=parent_named_upload_path("blog/covers", "cover"),
+        null=True,
+        blank=True,
+    )
     cover_image_alt = models.CharField(max_length=255, blank=True)
 
     # Publishing
@@ -196,7 +201,9 @@ class Resource(BaseModel):
     slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     category = models.CharField(max_length=80, default="Document")
-    file = models.FileField(upload_to="resources/documents/")
+    file = models.FileField(
+        upload_to=parent_named_upload_path("resources/documents", "document")
+    )
     published_at = models.DateTimeField(null=True, blank=True, db_index=True)
     is_active = models.BooleanField(default=True)
 

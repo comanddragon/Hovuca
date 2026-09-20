@@ -1,6 +1,8 @@
-from django.db import models
 from django.core.validators import MinValueValidator
+from django.db import models
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class DonorOrganization(BaseModel):
@@ -36,7 +38,11 @@ class DonorOrganization(BaseModel):
     slug = models.SlugField(unique=True, max_length=280)
     abbreviation = models.CharField(max_length=30, blank=True)
     type = models.CharField(max_length=20, choices=Type.choices, default=Type.FOUNDATION)
-    logo = models.ImageField(upload_to="donors/logos/", null=True, blank=True)
+    logo = models.ImageField(
+        upload_to=parent_named_upload_path("donors/logos", "logo"),
+        null=True,
+        blank=True,
+    )
     description = models.TextField(blank=True)
 
     # Contact
@@ -104,7 +110,7 @@ class DonorOrganization(BaseModel):
 
     def recalculate_totals(self):
         """Recompute total_funded, first_funded_at, last_funded_at from grants."""
-        from django.db.models import Sum, Min, Max
+        from django.db.models import Max, Min, Sum
         grants = self.grants.filter(deleted_at__isnull=True, status=Grant.Status.COMPLETED)
         agg = grants.aggregate(
             total=Sum("amount"),
@@ -224,7 +230,9 @@ class Grant(BaseModel):
 
     # Documents / reporting
     agreement_document = models.FileField(
-        upload_to="donors/agreements/", null=True, blank=True
+        upload_to=parent_named_upload_path("donors/agreements", "agreement"),
+        null=True,
+        blank=True,
     )
     report_submitted = models.BooleanField(default=False)
     report_submitted_at = models.DateTimeField(null=True, blank=True)

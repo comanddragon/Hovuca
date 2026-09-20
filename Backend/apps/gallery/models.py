@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class GalleryAlbum(BaseModel):
@@ -42,7 +44,8 @@ class GalleryAlbum(BaseModel):
     slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
     cover_image = models.ImageField(
-        upload_to="gallery/covers/", null=True, blank=True,
+        upload_to=parent_named_upload_path("gallery/covers", "cover"),
+        null=True, blank=True,
         help_text="If blank, the first image in the album is used as cover.",
     )
 
@@ -98,9 +101,11 @@ class GalleryImage(BaseModel):
     )
 
     # Media
-    image = models.ImageField(upload_to="gallery/images/%Y/%m/")
+    image = models.ImageField(
+        upload_to=parent_named_upload_path("gallery/images", "image")
+    )
     thumbnail = models.ImageField(
-        upload_to="gallery/thumbnails/%Y/%m/",
+        upload_to=parent_named_upload_path("gallery/thumbnails", "thumbnail"),
         null=True,
         blank=True,
         help_text="Auto-generated smaller version.",

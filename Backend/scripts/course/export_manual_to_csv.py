@@ -17,15 +17,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Backend/input/
 SOURCE_DIR = BASE_DIR / "course" / "input"
 
-# Backend/output/
-OUTPUT_DIR = BASE_DIR / "course" / "output"
+# Backend/data/
+OUTPUT_DIR = BASE_DIR.parent / "data"
 
 # Create output directory if it doesn't exist
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SOURCE_FILE = SOURCE_DIR / "CSE Manual.docx"
 OUTPUT_FILE = OUTPUT_DIR / "cse_manual.csv"
-IMAGES_DIR = OUTPUT_DIR / "images"
+IMAGES_DIR = BASE_DIR / "course" / "output" / "images"
 
 # Welcome message, peer education overview, "what is CSE" intro - not part of
 # any module, folded into course_description instead.

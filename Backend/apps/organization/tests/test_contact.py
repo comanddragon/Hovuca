@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.core import mail
 from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -66,21 +67,19 @@ class ContactMessageTests(APITestCase):
         self.assertEqual(self.client.get(self.url).status_code, 405)
 
     @override_settings(
-        RESEND_API_KEY="test-key",
-        RESEND_FROM="HOVUCA <noreply@hovuca.org>",
+        DEFAULT_FROM_EMAIL="HOVUCA <noreply@hovuca.org>",
         CONTACT_FORM_RECIPIENT="contact@hovuca.org",
     )
-    @patch("apps.organization.tasks.resend.Emails.send")
-    def test_email_is_sent_to_contact_address_with_enquirer_as_reply_to(
-        self, resend_send
-    ):
+    def test_email_is_sent_to_contact_address_with_enquirer_as_reply_to(self):
         message = ContactMessage.objects.create(**self.payload)
 
         send_contact_message_email.call(str(message.id))
 
-        email = resend_send.call_args.args[0]
-        self.assertEqual(email["to"], "contact@hovuca.org")
-        self.assertEqual(email["reply_to"], self.payload["email"])
-        self.assertEqual(email["subject"], "Contact form: Partnership enquiry")
-        self.assertIn("Test Enquirer", email["html"])
-        self.assertIn(self.payload["message"], email["html"])
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, ["contact@hovuca.org"])
+        self.assertEqual(email.reply_to, [self.payload["email"]])
+        self.assertEqual(email.subject, "Contact form: Partnership enquiry")
+        html = email.alternatives[0].content
+        self.assertIn("Test Enquirer", html)
+        self.assertIn(self.payload["message"], html)

@@ -1,5 +1,6 @@
 # Core
 django
+django-axes        # brute-force login protection
 djangorestframework
 # Admin
 django-unfold

@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class Topic(BaseModel):
@@ -43,7 +45,11 @@ class Program(BaseModel):
         max_length=500, blank=True, help_text="Short summary shown in listing cards."
     )
     description = models.TextField(blank=True)
-    banner = models.ImageField(upload_to="programs/banners/", null=True, blank=True)
+    banner = models.ImageField(
+        upload_to=parent_named_upload_path("programs/banners", "banner"),
+        null=True,
+        blank=True,
+    )
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.DRAFT
     )
@@ -77,7 +83,11 @@ class Project(BaseModel):
         max_length=500, blank=True, help_text="Short summary shown in listing cards."
     )
     description = models.TextField(blank=True)
-    cover_image = models.ImageField(upload_to="projects/covers/", null=True, blank=True)
+    cover_image = models.ImageField(
+        upload_to=parent_named_upload_path("projects/covers", "cover"),
+        null=True,
+        blank=True,
+    )
     cover_image_alt = models.CharField(max_length=255, blank=True)
     lead = models.ForeignKey(
         "accounts.User",

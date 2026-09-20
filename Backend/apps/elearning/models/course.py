@@ -2,6 +2,7 @@ from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class Subject(BaseModel):
@@ -51,7 +52,9 @@ class Course(BaseModel):
     slug = models.SlugField(unique=True, max_length=280)
     description = CKEditor5Field(config_name="hovuca", blank=True)
     thumbnail = models.ImageField(
-        upload_to="courses/thumbnails/", null=True, blank=True
+        upload_to=parent_named_upload_path("courses/thumbnails", "thumbnail"),
+        null=True,
+        blank=True,
     )
     difficulty = models.CharField(
         max_length=15, choices=Difficulty.choices, default=Difficulty.BEGINNER

@@ -7,7 +7,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from apps.accounts.models import User
 
-
 # ---------------------------------------------------------------------------
 # JWT
 # ---------------------------------------------------------------------------
@@ -71,6 +70,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password",
             "password_confirm",
         ]
+        read_only_fields = ["role"]
 
     def validate(self, attrs):
         if attrs["password"] != attrs.pop("password_confirm"):
@@ -221,7 +221,10 @@ class ForgotPasswordSerializer(serializers.Serializer):
 class ResetPasswordConfirmSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
-    password = serializers.CharField(min_length=8)
+    password = serializers.CharField(
+        write_only=True,
+        validators=[validate_password],
+    )
 
     def validate(self, attrs):
         try:

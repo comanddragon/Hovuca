@@ -2,29 +2,31 @@
 Django tasks for the accounts app.
 Queue: accounts
 
-Email delivery via Resend (HTTP API — fast, no SMTP).
-Non-email tasks (IP logging etc.) use the configured Django task backend.
+Email delivery uses Django's environment-specific email backend.
 """
 
 import logging
 
-import resend
-from core.tasking import shared_task
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+from core.tasking import shared_task
 
 logger = logging.getLogger(__name__)
 
 
 def _send(*, to: str, subject: str, html: str):
-    """Thin wrapper around the Resend API."""
-    resend.api_key = settings.RESEND_API_KEY
-    resend.Emails.send({
-        "from": settings.RESEND_FROM,
-        "to": to,
-        "subject": subject,
-        "html": html,
-    })
+    """Send HTML email through the configured Django email backend."""
+    message = EmailMultiAlternatives(
+        subject=subject,
+        body=strip_tags(html),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[to],
+    )
+    message.attach_alternative(html, "text/html")
+    message.send(fail_silently=False)
 
 
 # ---------------------------------------------------------------------------

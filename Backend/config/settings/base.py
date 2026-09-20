@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "axes",
     "django_ckeditor_5",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.middleware.SecurityResponseHeadersMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -61,6 +63,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -68,6 +76,31 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "accounts.User"
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
+    },
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation.MinimumLengthValidator"
+        ),
+        "OPTIONS": {"min_length": 12},
+    },
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation.CommonPasswordValidator"
+        ),
+    },
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation.NumericPasswordValidator"
+        ),
+    },
+]
 
 TEMPLATES = [
     {
@@ -103,20 +136,47 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "120/min",
+        "user": "600/min",
+    },
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=config("JWT_ACCESS_MINUTES", default=60, cast=int),),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=config("JWT_ACCESS_MINUTES", default=15, cast=int),),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=config("JWT_REFRESH_DAYS", default=7, cast=int),),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "CHECK_REVOKE_TOKEN": True,
 }
+
+# Database-backed authentication lockout protects both the Django admin and
+# API login. A username/IP pair is locked temporarily after repeated failures.
+AXES_FAILURE_LIMIT = config("AXES_FAILURE_LIMIT", default=5, cast=int)
+AXES_COOLOFF_TIME = timedelta(
+    minutes=config("AXES_COOLOFF_MINUTES", default=30, cast=int)
+)
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_RESET_ON_SUCCESS = True
+AXES_HTTP_RESPONSE_CODE = 429
+AXES_ENABLE_RETRY_AFTER_HEADER = True
+AXES_CLIENT_IP_CALLABLE = "core.security.get_client_ip"
+AXES_LOCKOUT_CALLABLE = "core.security.lockout_response"
+TRUSTED_PROXY_COUNT = config("TRUSTED_PROXY_COUNT", default=1, cast=int)
 
 # ---------------------------------------------------------------------------
 # Channels (WebSockets)
 # ---------------------------------------------------------------------------
+WEBSOCKET_TICKET_LIFETIME = config(
+    "WEBSOCKET_TICKET_LIFETIME", default=30, cast=int
+)
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -240,6 +300,7 @@ SPECTACULAR_SETTINGS = {
     ),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "COMPONENT_SPLIT_REQUEST": True,
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
     "SWAGGER_UI_SETTINGS": {
@@ -253,6 +314,11 @@ SPECTACULAR_SETTINGS = {
 # ---------------------------------------------------------------------------
 RESEND_API_KEY = config("RESEND_API_KEY", default="")
 RESEND_FROM = config("RESEND_FROM", default="")
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL",
+    default=RESEND_FROM or "HOVUCA <noreply@localhost>",
+)
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
 CONTACT_FORM_RECIPIENT = config(
     "CONTACT_FORM_RECIPIENT", default="contact@hovuca.org"
 )
@@ -271,12 +337,3 @@ TASKS = {
 # provider-account model later; these defaults preserve the existing gateways.
 
 # Branding vars injected into every templates/emails/*.html render.
-
-def get_frontend_url(request):
-    origin = request.META.get("HTTP_ORIGIN")
-
-    if origin:
-        return origin
-
-    scheme = "https" if request.is_secure() else "http"
-    return f"{scheme}://{request.get_host()}"

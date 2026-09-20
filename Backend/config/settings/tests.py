@@ -5,7 +5,9 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = False
 
-SECRET_KEY = "django-testing-only-secret-key"
+AXES_ENABLED = False
+
+SECRET_KEY = "django-testing-only-secret-key-not-for-production-2026"
 
 
 DATABASES = {

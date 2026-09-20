@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 class ContactMessage(BaseModel):
@@ -25,7 +27,11 @@ class Organization(BaseModel):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=280)
     description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to="org/logos/", null=True, blank=True)
+    logo = models.ImageField(
+        upload_to=parent_named_upload_path("org/logos", "logo"),
+        null=True,
+        blank=True,
+    )
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)

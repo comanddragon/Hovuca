@@ -1,6 +1,36 @@
+import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
 from django.utils.text import slugify
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
+
+EVENT_DESCRIPTION_TAGS = [
+    "p", "br", "hr", "h1", "h2", "h3", "h4", "strong", "em", "u", "s",
+    "ul", "ol", "li", "blockquote", "a", "code", "pre", "figure",
+    "figcaption", "table", "thead", "tbody", "tfoot", "tr", "th", "td",
+]
+EVENT_DESCRIPTION_ATTRIBUTES = {
+    "a": ["href", "title", "rel"],
+    "td": ["colspan", "rowspan", "style"],
+    "th": ["colspan", "rowspan", "style"],
+    "*": ["class", "style"],
+}
+EVENT_DESCRIPTION_STYLES = [
+    "width", "height", "margin-left", "margin-right", "float",
+    "background-color", "border-color", "text-align",
+]
+
+
+def sanitize_event_description(value: str) -> str:
+    return bleach.clean(
+        value,
+        tags=EVENT_DESCRIPTION_TAGS,
+        attributes=EVENT_DESCRIPTION_ATTRIBUTES,
+        css_sanitizer=CSSSanitizer(allowed_css_properties=EVENT_DESCRIPTION_STYLES),
+        strip=True,
+    )
 
 
 class EventCategory(BaseModel):
@@ -75,7 +105,9 @@ class Event(BaseModel):
         blank=True, help_text="Full event description. Supports Markdown / HTML."
     )
     cover_image = models.ImageField(
-        upload_to="events/covers/", null=True, blank=True
+        upload_to=parent_named_upload_path("events/covers", "cover"),
+        null=True,
+        blank=True,
     )
     cover_image_alt = models.CharField(max_length=255, blank=True)
 
@@ -131,6 +163,8 @@ class Event(BaseModel):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        if self.description:
+            self.description = sanitize_event_description(self.description)
         super().save(*args, **kwargs)
 
     @property
@@ -162,7 +196,9 @@ class EventImage(BaseModel):
         on_delete=models.CASCADE,
         related_name="images",
     )
-    image = models.ImageField(upload_to="events/images/")
+    image = models.ImageField(
+        upload_to=parent_named_upload_path("events/images", "image")
+    )
     alt_text = models.CharField(max_length=255, blank=True)
     order = models.PositiveSmallIntegerField(
         default=0,

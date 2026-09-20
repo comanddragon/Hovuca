@@ -2,7 +2,9 @@ import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
+
 from core.models import BaseModel
+from core.utils.files import parent_named_upload_path
 
 
 def sanitize_chapter_body(value: str) -> str:
@@ -44,7 +46,11 @@ class Chapter(BaseModel):
     content_body = CKEditor5Field(config_name="hovuca", blank=True)
 
     # For PDF/file
-    content_file = models.FileField(upload_to="chapters/files/", null=True, blank=True)
+    content_file = models.FileField(
+        upload_to=parent_named_upload_path("chapters/files", "content"),
+        null=True,
+        blank=True,
+    )
 
     duration_minutes = models.PositiveSmallIntegerField(default=0)
     is_preview = models.BooleanField(default=False)  # Free preview without enrollment

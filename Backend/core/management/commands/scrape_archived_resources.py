@@ -13,13 +13,13 @@ class Command(BaseCommand):
     help = "Export downloadable resources from the archived HOVUCA resources page."
 
     def add_arguments(self, parser):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         parser.add_argument("source", nargs="?", type=Path, default=project_root / "hovuca.org" / "home" / "documents" / "index.htm")
         parser.add_argument("--additional-source", type=Path, default=project_root / "hovuca.org" / "resources" / "index.htm")
         parser.add_argument("--output", type=Path, default=project_root / "Backend" / "data" / "archived_resources.csv")
 
     def handle(self, *args, **options):
-        project_root = Path(__file__).resolve().parents[5]
+        project_root = Path(__file__).resolve().parents[4]
         source = options["source"].resolve()
         output = options["output"].resolve()
         if not source.is_file():
