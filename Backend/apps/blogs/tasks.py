@@ -105,7 +105,7 @@ def send_article_published_newsletter(article_id: str):
     is published. Sends a lightweight newsletter-style email.
     Triggered by: Article post_save signal when status transitions to PUBLISHED.
     """
-    from .models import Article
+    from .models import Article, NewsletterSubscriber
     from apps.accounts.models import User
 
     try:
@@ -119,12 +119,14 @@ def send_article_published_newsletter(article_id: str):
         return
 
     # Only send to active students and volunteers (keep it relevant)
-    recipients = list(
+    account_emails = list(
         User.objects.filter(
             role__in=("student", "volunteer"),
             is_active=True,
-        ).values_list("id", "email")
+        ).values_list("email", flat=True)
     )
+    subscriber_emails = NewsletterSubscriber.objects.filter(is_active=True).values_list("email", flat=True)
+    recipients = sorted({*account_emails, *subscriber_emails})
 
     if not recipients:
         return
@@ -137,20 +139,18 @@ def send_article_published_newsletter(article_id: str):
         html_message = render_to_string("accounts/blog/new_article.html", context)
         plain_message = strip_tags(html_message)
 
-        emails = [email for _, email in recipients]
-
         send_mail(
             subject=f"📰 New article: {article.title}",
             message=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=emails,
+            recipient_list=recipients,
             html_message=html_message,
             fail_silently=True,
         )
         logger.info(
             "Article newsletter sent for '%s' to %d recipient(s).",
             article.title,
-            len(emails),
+            len(recipients),
         )
     except Exception as exc:
         logger.error(

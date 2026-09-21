@@ -15,14 +15,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { authPath } from "@/lib/auth-return";
-import { resolveArticleMedia } from "@/lib/article-media";
+import { renderArticleMedia } from "@/lib/article-media";
 
 function ArticleBody({ content }: { content: string }) {
     const isHtml = /<\s*[a-z][\s\S]*?>/i.test(content.trim());
     const proseClass = "rich-content";
 
     if (isHtml) {
-        return <div className={proseClass} dangerouslySetInnerHTML={{ __html: resolveArticleMedia(content) }} />;
+        return <div className={proseClass} dangerouslySetInnerHTML={{ __html: renderArticleMedia(content) }} />;
     }
 
     const blocks: ReactNode[] = [];

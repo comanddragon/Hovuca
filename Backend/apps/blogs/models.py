@@ -220,6 +220,25 @@ class Resource(BaseModel):
         super().save(*args, **kwargs)
 
 
+class NewsletterSubscriber(BaseModel):
+    """A public email subscriber who opted in to HOVUCA updates."""
+
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    source = models.CharField(max_length=80, default="website")
+
+    class Meta:
+        db_table = "newsletter_subscribers"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
+
 class Comment(BaseModel):
     """A threaded comment on an Article. Supports one level of replies."""
 

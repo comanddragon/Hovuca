@@ -1,7 +1,7 @@
 "use client";
 
-import { useMyDonations } from "@/hooks/index";
-import { SectionHeader, PageLoader, EmptyState, StatusBadge } from "@/components/shared/index";
+import { useMyDonations } from "@/hooks";
+import { SectionHeader, PageLoader, EmptyState, StatusBadge } from "@/components/shared";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

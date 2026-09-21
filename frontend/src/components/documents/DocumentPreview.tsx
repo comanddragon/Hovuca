@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FileText } from "lucide-react";
+import { FileText, Video } from "lucide-react";
 import type { PDFDocumentLoadingTask, RenderTask } from "pdfjs-dist";
 
 export function DocumentPreview({ url, title }: { url: string; title: string }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [failed, setFailed] = useState(false);
     const [ready, setReady] = useState(false);
+    const isVideo = /\.(?:mp4|m4v|mov|webm|ogv)(?:$|[?#])/i.test(url);
+    const previewUrl = `/resource-preview?url=${encodeURIComponent(url)}`;
 
     useEffect(() => {
+        if (isVideo) return;
         let cancelled = false;
         let loadingTask: PDFDocumentLoadingTask | undefined;
         let renderTask: RenderTask | undefined;
@@ -25,7 +28,7 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
                     import.meta.url,
                 ).toString();
 
-                loadingTask = pdfjs.getDocument({ url });
+                loadingTask = pdfjs.getDocument({ url: previewUrl });
                 const pdf = await loadingTask.promise;
                 if (cancelled) return;
 
@@ -38,7 +41,10 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
                 if (!canvas || cancelled) return;
 
                 const context = canvas.getContext("2d", { alpha: false });
-                if (!context) throw new Error("Canvas is unavailable");
+                if (!context) {
+                    if (!cancelled) setFailed(true);
+                    return;
+                }
                 canvas.width = Math.ceil(viewport.width);
                 canvas.height = Math.ceil(viewport.height);
                 const currentRenderTask = page.render({ canvas, canvasContext: context, viewport });
@@ -58,7 +64,21 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
             renderTask?.cancel();
             void loadingTask?.destroy();
         };
-    }, [url]);
+    }, [isVideo, previewUrl]);
+
+    if (isVideo) {
+        return (
+            <div className="relative aspect-video w-full max-w-sm overflow-hidden border border-[var(--brand-forest)]/25 bg-[var(--brand-forest-deep)]">
+                <video className="h-full w-full object-cover" controls preload="metadata" aria-label={`Video preview: ${title}`}>
+                    <source src={url} />
+                    Your browser does not support video playback.
+                </video>
+                <span className="pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center gap-1 bg-[var(--brand-forest-deep)]/85 px-1.5 py-1 text-[10px] font-bold text-white">
+                    <Video className="h-3 w-3" aria-hidden="true" /> Video
+                </span>
+            </div>
+        );
+    }
 
     return (
         <div className="relative aspect-8.5/11 w-36 overflow-hidden border border-[var(--brand-forest)]/25 bg-white">
