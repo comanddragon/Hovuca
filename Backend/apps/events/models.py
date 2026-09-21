@@ -180,9 +180,7 @@ class Event(BaseModel):
 
     @property
     def is_full(self):
-        if self.max_attendees is None:
-            return False
-        return self.attendee_count >= self.max_attendees
+        return self.max_attendees is not None and self.attendee_count >= self.max_attendees
 
 
 class EventImage(BaseModel):

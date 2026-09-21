@@ -1,4 +1,5 @@
 import sentry_sdk
+# noinspection PyUnusedImports
 from decouple import config
 from sentry_sdk.integrations.django import DjangoIntegration
 from urllib.parse import parse_qsl, urlparse

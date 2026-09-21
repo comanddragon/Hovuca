@@ -215,7 +215,7 @@ class DonationAdmin(ModelAdmin):
 
     def donor_display(self, obj):
         if obj.is_anonymous:
-            return format_html('<em style="color:#6B7280;">Anonymous</em>')
+            return format_html('<em style="color:#6B7280;">{}</em>', "Anonymous")
         return str(obj.donor) if obj.donor else "—"
 
     donor_display.short_description = "Donor"

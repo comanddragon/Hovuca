@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+"""The realtime app persists no models of its own."""

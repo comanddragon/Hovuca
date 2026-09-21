@@ -1,4 +1,3 @@
-from django.utils import timezone
 from rest_framework import serializers
 
 from apps.events.models import Event, EventCategory, EventImage, EventRegistration
@@ -186,11 +185,11 @@ class EventWriteSerializer(serializers.ModelSerializer):
             "meta_description",
         ]
 
-    def validate(self, data):
-        start = data.get("start_date")
-        end = data.get("end_date")
+    def validate(self, attrs):
+        start = attrs.get("start_date")
+        end = attrs.get("end_date")
         if start and end and end <= start:
             raise serializers.ValidationError(
                 {"end_date": "End date must be after start date."}
             )
-        return data
+        return attrs

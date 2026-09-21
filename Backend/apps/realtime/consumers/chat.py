@@ -71,7 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "ChatConsumer connected: user=%s room=%s", self.user_id, self.room_id
         )
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, code):
         if hasattr(self, "group_name"):
             # Announce departure
             await self.channel_layer.group_send(
@@ -84,7 +84,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "ChatConsumer disconnected: user=%s room=%s code=%s",
             getattr(self, "user_id", "?"),
             getattr(self, "room_id", "?"),
-            close_code,
+            code,
         )
 
     # ------------------------------------------------------------------

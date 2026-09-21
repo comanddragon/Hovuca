@@ -67,13 +67,13 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         logger.debug("NotificationConsumer connected: user=%s", self.user_id)
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, code):
         if hasattr(self, "group_name"):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
         logger.debug(
             "NotificationConsumer disconnected: user=%s code=%s",
             getattr(self, "user_id", "?"),
-            close_code,
+            code,
         )
 
     # ------------------------------------------------------------------

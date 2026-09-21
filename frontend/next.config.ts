@@ -33,7 +33,9 @@ const nextConfig: NextConfig = {
             "img-src 'self' data: blob: https://images.unsplash.com https://media.hovuca.org" +
             (isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000"),
             "font-src 'self' data:",
-            `connect-src 'self' https://api.hovuca.org wss://api.hovuca.org https://*.ingest.de.sentry.io${isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000 ws://127.0.0.1:8000 ws://localhost:8000" }`,
+            // PDF.js fetches document bytes, which is governed by connect-src
+            // rather than media-src. Keep the CDN allowlist explicit.
+            `connect-src 'self' https://api.hovuca.org wss://api.hovuca.org https://media.hovuca.org https://*.ingest.de.sentry.io${isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000 ws://127.0.0.1:8000 ws://localhost:8000" }`,
             "media-src 'self' https://media.hovuca.org" + (isProduction ? "" : " http://127.0.0.1:8000 http://localhost:8000"),
             "object-src 'none'",
             "base-uri 'self'",

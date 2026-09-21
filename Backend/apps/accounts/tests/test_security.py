@@ -106,10 +106,15 @@ class AdminLockoutTests(APITestCase):
             last_name="Admin",
         )
 
-        for _ in range(3):
-            response = self.client.post(
+        for _ in range(2):
+            self.client.post(
                 reverse("admin:login"),
                 {"username": "admin@example.com", "password": "incorrect"},
             )
+
+        response = self.client.post(
+            reverse("admin:login"),
+            {"username": "admin@example.com", "password": "incorrect"},
+        )
 
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)

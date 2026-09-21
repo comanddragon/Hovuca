@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+"""E-learning models are organized in domain-specific submodules."""

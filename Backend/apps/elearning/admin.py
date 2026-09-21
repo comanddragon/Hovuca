@@ -433,9 +433,10 @@ class EnrollmentAdmin(ModelAdmin):
     def is_completed_badge(self, obj):
         if obj.is_completed:
             return format_html(
-                '<span style="color:#10B981;font-weight:bold;">✓ Completed</span>'
+                '<span style="color:#10B981;font-weight:bold;">{}</span>',
+                "✓ Completed",
             )
-        return format_html('<span style="color:#6B7280;">In Progress</span>')
+        return format_html('<span style="color:#6B7280;">{}</span>', "In Progress")
 
     is_completed_badge.short_description = "Status"
 
@@ -474,8 +475,9 @@ class QuizAttemptAdmin(ModelAdmin):
     def passed_badge(self, obj):
         if obj.passed:
             return format_html(
-                '<span style="color:#10B981;font-weight:bold;">✓ Passed</span>'
+                '<span style="color:#10B981;font-weight:bold;">{}</span>',
+                "✓ Passed",
             )
-        return format_html('<span style="color:#EF4444;">✗ Failed</span>')
+        return format_html('<span style="color:#EF4444;">{}</span>', "✗ Failed")
 
     passed_badge.short_description = "Result"

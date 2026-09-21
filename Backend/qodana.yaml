@@ -1,0 +1,22 @@
+version: "1.0"
+
+# The CI workflow selects qodana-python-community explicitly. This profile is
+# also used by PyCharm when Qodana runs locally from the Backend directory.
+profile:
+  name: qodana.recommended
+
+# Dependencies, generated static assets, and migration history are not useful
+# targets for application-quality inspections.
+exclude:
+  - name: All
+    paths:
+      - .venv
+      - staticfiles
+      - media
+      - "**/migrations/**"
+  # Django REST Framework and Channels intentionally use callback methods,
+  # framework-provided protected state, and connection-time attributes.
+  - name: PyUnusedParameterInspection
+  - name: PyMethodMayBeStaticInspection
+  - name: PyProtectedMemberInspection
+  - name: PyAttributeOutsideInitInspection

@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 
-from apps.donors.models import DonorOrganization, DonorContact, Grant, DonorEngagement
+from apps.donors.models import DonorOrganization, Grant, DonorEngagement
 
 
 # ---------------------------------------------------------------------------

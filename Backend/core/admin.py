@@ -1,3 +1,1 @@
-from django.contrib import admin
-
-# Register your models here.
+"""Core models are not registered in Django admin."""

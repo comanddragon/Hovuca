@@ -155,7 +155,7 @@ class ChangePasswordSerializer(serializers.Serializer):
             )
         return attrs
 
-    def save(self, **kwargs):
+    def save(self):
         user = self.context["request"].user
         user.set_password(self.validated_data["new_password"])
         user.save(update_fields=["password"])
@@ -195,7 +195,7 @@ class UserListSerializer(serializers.ModelSerializer):
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    def save(self):
+    def save(self, **_kwargs):
         email = self.validated_data["email"]
 
         try:
@@ -239,7 +239,7 @@ class ResetPasswordConfirmSerializer(serializers.Serializer):
         attrs["user"] = user
         return attrs
 
-    def save(self):
+    def save(self, **_kwargs):
         user = self.validated_data["user"]
         user.set_password(self.validated_data["password"])
         user.save(update_fields=["password"])

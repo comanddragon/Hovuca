@@ -88,7 +88,7 @@ class QuizConsumer(AsyncWebsocketConsumer):
             "QuizConsumer connected: user=%s quiz=%s", self.user_id, self.quiz_id
         )
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, code):
         if hasattr(self, "group_name"):
             _participant_counts[self.group_name] = max(
                 0, _participant_counts.get(self.group_name, 1) - 1
@@ -100,7 +100,7 @@ class QuizConsumer(AsyncWebsocketConsumer):
             "QuizConsumer disconnected: user=%s quiz=%s code=%s",
             getattr(self, "user_id", "?"),
             getattr(self, "quiz_id", "?"),
-            close_code,
+            code,
         )
 
     # ------------------------------------------------------------------
