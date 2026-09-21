@@ -12,7 +12,7 @@ const RichTextEditorClient = dynamic(
 
 export function RichTextEditor(props: {
     value: string;
-    onChange: (html: string) => void;
+    onChangeAction: (html: string) => void;
     error?: string;
 }) {
     return <RichTextEditorClient {...props} />;

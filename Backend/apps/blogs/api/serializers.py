@@ -31,6 +31,10 @@ class ResourceSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(url) if request and url.startswith("/") else url
 
 
+class NewsletterSubscriptionSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
 # ---------------------------------------------------------------------------
 # Category
 # ---------------------------------------------------------------------------

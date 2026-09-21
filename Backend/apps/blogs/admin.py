@@ -7,7 +7,7 @@ from unfold.admin import ModelAdmin, TabularInline
 
 from core.widgets import AdminCKEditor5Widget
 
-from .models import Article, Bookmark, Category, Comment, Like, Resource, Tag
+from .models import Article, Bookmark, Category, Comment, Like, NewsletterSubscriber, Resource, Tag
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -23,6 +23,14 @@ class ResourceAdmin(ModelAdmin):
     list_filter = ["category", "is_active"]
     search_fields = ["title", "description"]
     prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(ModelAdmin):
+    list_display = ["email", "is_active", "source", "created_at"]
+    list_filter = ["is_active", "source"]
+    search_fields = ["email"]
+    readonly_fields = ["created_at", "updated_at"]
 
 
 @admin.register(Category)

@@ -31,7 +31,7 @@ export function useNotificationSocket() {
                     pushNotification(notification);
                     incrementUnread();
 
-                    qc.invalidateQueries({ queryKey: keys.notifications });
+                    void qc.invalidateQueries({ queryKey: keys.notifications });
 
                     toast(notification.title ?? "New notification", {
                         description: notification.body,

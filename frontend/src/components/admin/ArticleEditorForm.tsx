@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -144,7 +144,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                             placeholder="Article title"
                             {...titleField}
                             onChange={(e) => {
-                                titleField.onChange(e);
+                                void titleField.onChange(e);
                                 if (!slugTouched) setValue("slug", slugify(e.target.value));
                             }}
                         />
@@ -157,7 +157,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                             placeholder="article-slug"
                             {...slugField}
                             onChange={(e) => {
-                                slugField.onChange(e);
+                                void slugField.onChange(e);
                                 setSlugTouched(true);
                             }}
                         />
@@ -326,7 +326,7 @@ export function ArticleEditorForm({ article }: { article?: Article }) {
                 <Label>Body</Label>
                 <RichTextEditor
                     value={values.body ?? ""}
-                    onChange={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
+                    onChangeAction={(html) => setValue("body", html, { shouldDirty: true, shouldValidate: true })}
                     error={errors.body?.message}
                 />
                 {errors.body && <p className="text-xs text-destructive">{errors.body.message}</p>}

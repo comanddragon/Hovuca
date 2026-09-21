@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Search } from "lucide-react";
+import { NewsletterSignup } from "@/components/shared/NewsletterSignup";
 import { useArticles, useCategories, useFeaturedArticles } from "@/hooks";
 import type { Article } from "@/types";
 
@@ -206,7 +207,7 @@ export default function StoriesDirectory() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Stay connected</p>
                 <h3 className="mt-4 max-w-xs text-3xl font-bold leading-[1.1] tracking-[-0.02em] sm:text-4xl">Get new field stories in your inbox.</h3>
                 <p className="mt-5 max-w-sm text-sm leading-6 text-[var(--brand-teal-muted)]">One dispatch a month. No noise, just what&rsquo;s happening in the communities we work alongside.</p>
-                <Link href="/contact" className="mt-7 inline-flex items-center gap-3 rounded-full border border-[var(--brand-forest)] px-6 py-3 text-sm font-semibold">Subscribe <ArrowRight className="h-4 w-4" /></Link>
+                <NewsletterSignup />
             </div>
             <div className="bg-[var(--brand-coral)] px-6 py-16 text-white md:px-12 md:py-20">
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/75">Get involved</p>

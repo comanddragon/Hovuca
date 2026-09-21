@@ -1,7 +1,7 @@
 "use client";
 
-import { useMyTasks } from "@/hooks/index";
-import { SectionHeader, PageLoader, EmptyState, StatusBadge } from "@/components/shared/index";
+import { useMyTasks } from "@/hooks";
+import { SectionHeader, PageLoader, EmptyState, StatusBadge } from "@/components/shared";
 import { formatDate } from "@/lib/utils";
 import { ClipboardList, Calendar, Clock } from "lucide-react";
 import { useState } from "react";

@@ -88,9 +88,9 @@ const editorConfig = {
     placeholder: "Write the article or lesson content…",
 };
 
-export function RichTextEditorClient({ value, onChange, error }: {
+export function RichTextEditorClient({ value, onChangeAction, error }: {
     value: string;
-    onChange: (html: string) => void;
+    onChangeAction: (html: string) => void;
     error?: string;
 }) {
     return (
@@ -99,7 +99,7 @@ export function RichTextEditorClient({ value, onChange, error }: {
                 editor={ClassicEditor}
                 config={editorConfig}
                 data={value}
-                onChange={(_, editor) => onChange(editor.getData())}
+                onChange={(_, editor) => onChangeAction(editor.getData())}
                 onError={(_, details) => {
                     if (!details.willEditorRestart) {
                         toast.error("The rich-text editor stopped unexpectedly. Reload the page and try again.");

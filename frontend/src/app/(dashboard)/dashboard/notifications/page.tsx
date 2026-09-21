@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn, timeAgo } from "@/lib/utils";
 import { Bell, BookOpen, Heart, MessageSquare, Settings, Users } from "lucide-react";
 import { NotificationType } from "@/types";
+import React from 'react';
 
 const typeIcon: Record<NotificationType, React.ElementType> = {
   system: Settings,

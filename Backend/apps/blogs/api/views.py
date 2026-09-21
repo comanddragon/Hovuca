@@ -6,7 +6,7 @@ from django.db.models import BooleanField, Count, Exists, OuterRef, Prefetch, Q,
 from django.utils import timezone
 from PIL import Image, UnidentifiedImageError
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from core.pagination import StandardPagination
 from core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
 
-from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, Resource
+from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, NewsletterSubscriber, Resource
 from .serializers import (
     ArticleListSerializer,
     ArticleDetailSerializer,
@@ -24,11 +24,32 @@ from .serializers import (
     TagSerializer,
     CommentSerializer,
     CommentWriteSerializer,
+    NewsletterSubscriptionSerializer,
     ResourceSerializer,
 )
 
 MAX_INLINE_IMAGE_BYTES = 5 * 1024 * 1024  # 5MB
 ALLOWED_INLINE_IMAGE_FORMATS = {"JPEG": "jpg", "PNG": "png", "GIF": "gif", "WEBP": "webp"}
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def subscribe_newsletter(request):
+    serializer = NewsletterSubscriptionSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.validated_data["email"].strip().lower()
+    subscriber, created = NewsletterSubscriber.all_objects.get_or_create(
+        email=email,
+        defaults={"is_active": True, "source": "website"},
+    )
+    if not created and not subscriber.is_active:
+        subscriber.is_active = True
+        subscriber.deleted_at = None
+        subscriber.save(update_fields=["is_active", "deleted_at", "updated_at"])
+    return Response(
+        {"detail": "You are subscribed to HOVUCA updates."},
+        status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+    )
 
 
 class ResourceViewSet(viewsets.ReadOnlyModelViewSet):

@@ -16,7 +16,10 @@ const atkinson = Atkinson_Hyperlegible_Next({
 
 export const metadata: Metadata = {
     icons: {
-        icon: "./favicon.ico",
+        // This must be root-relative: a relative URL turns into
+        // `/admin/favicon.ico` on the frontend admin routes, which has no
+        // metadata asset handler in the Cloudflare worker.
+        icon: "/favicon.ico",
     },
     title: { default: "Hovuca", template: "%s | HOVUCA" },
     description: "Empowering communities through research, advocacy, education and community partnerships.",

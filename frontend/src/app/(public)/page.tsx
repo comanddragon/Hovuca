@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import React from 'react';
 import Link from "next/link";
 import { useEffect } from "react";
 import { ArrowRight, FileText } from "lucide-react";
 import DonorCarousel from "@/components/home/DonorCarousel";
 import HomeProjects from "@/components/home/HomeProjects";
 import { SocialLinks } from "@/components/layout/SocialLinks";
+import { NewsletterSignup } from "@/components/shared/NewsletterSignup";
 import { useArticles, usePrograms, useResources } from "@/hooks";
 
 const evidenceLinks = [
@@ -377,11 +379,9 @@ export default function HomePage() {
                     </div>
                     <div>
                         <div className="rounded-xl border border-[var(--brand-forest)]/20 bg-[var(--brand-surface)] p-6">
-                            <p className="font-semibold text-[var(--brand-forest)]">Newsletter subscriptions are not open yet.</p>
-                            <p className="mt-2 text-sm leading-6 text-[var(--brand-copy-muted)]">For current stories and opportunities, follow HOVUCA or contact the team directly.</p>
-                            <Link href="/contact" data-home-action className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-[var(--brand-forest)] px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-gold)]">
-                                Contact HOVUCA <ArrowRight aria-hidden="true" className="size-4" />
-                            </Link>
+                            <p className="font-semibold text-[var(--brand-forest)]">Get HOVUCA updates in your inbox.</p>
+                            <p className="mt-2 text-sm leading-6 text-[var(--brand-copy-muted)]">Field stories, resources, and opportunities from our work with communities.</p>
+                            <NewsletterSignup />
                         </div>
                     </div>
                     <nav aria-label="Follow HOVUCA on social media" className="text-center lg:col-span-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEnrollments } from "@/hooks";
-import { SectionHeader, PageLoader, EmptyState, StatusBadge, ProgressBar } from "@/components/shared/index";
+import { SectionHeader, PageLoader, EmptyState, StatusBadge, ProgressBar } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
@@ -73,7 +73,7 @@ export default function MyCoursesPage() {
           {filtered.map((enrollment) => (
             <div key={enrollment.id} className="rounded-xl border border-border bg-card p-5">
               {/* Thumbnail strip */}
-              <div className="mb-4 h-32 overflow-hidden rounded-lg bg-gradient-to-br from-primary/10 to-primary/5">
+              <div className="mb-4 h-32 overflow-hidden rounded-lg bg-linear-to-br from-primary/10 to-primary/5">
                 {enrollment.course.thumbnail && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
