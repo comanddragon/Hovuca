@@ -24,3 +24,17 @@ class EventContentSecurityTests(TestCase):
         self.assertNotIn("onclick", event.description)
         self.assertNotIn("javascript:", event.description)
         self.assertIn("<p>Welcome</p>", event.description)
+
+
+class EventCategoryAPITests(TestCase):
+    def test_list_event_categories(self):
+        from rest_framework.test import APIClient
+        from apps.events.models import EventCategory
+
+        EventCategory.objects.create(name="Workshops", slug="workshops", is_active=True)
+        client = APIClient()
+        response = client.get("/api/v1/events/categories/")
+        self.assertEqual(response.status_code, 200)
+        results = response.data.get("results", response.data)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["name"], "Workshops")

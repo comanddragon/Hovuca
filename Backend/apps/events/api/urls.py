@@ -4,7 +4,7 @@ from django.urls import path, include
 
 
 router = DefaultRouter()
-router.register("categories", EventCategoryViewSet, basename="event-category")
+router.register("events/categories", EventCategoryViewSet, basename="event-category")
 router.register("events", EventViewSet, basename="event")
 
 urlpatterns = [
