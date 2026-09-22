@@ -85,14 +85,14 @@ function HeroSlideshow({ slides }: { slides: { src: string; alt: string }[] }) {
                 <>
                     <button
                         onClick={prev}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-brand-black/40 p-2 text-brand-white hover:bg-brand-black/60 transition-colors"
                         aria-label="Previous image"
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                         onClick={next}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-brand-black/40 p-2 text-brand-white hover:bg-brand-black/60 transition-colors"
                         aria-label="Next image"
                     >
                         <ChevronRight className="h-5 w-5" />
@@ -106,8 +106,8 @@ function HeroSlideshow({ slides }: { slides: { src: string; alt: string }[] }) {
                                 onClick={() => setCurrent(i)}
                                 className={`h-1.5 rounded-full transition-all duration-300 ${
                                     i === current
-                                        ? "w-6 bg-white"
-                                        : "w-1.5 bg-white/40 hover:bg-white/60"
+                                        ? "w-6 bg-brand-white"
+                                        : "w-1.5 bg-brand-white/40 hover:bg-brand-white/60"
                                 }`}
                                 aria-label={`Go to image ${i + 1}`}
                             />
@@ -123,9 +123,9 @@ function HeroSlideshow({ slides }: { slides: { src: string; alt: string }[] }) {
 
 function EventTypeBadge({ type }: { type: EventDetail["event_type"] }) {
     const map = {
-        in_person: { label: "In Person", icon: MapPin, color: "bg-green-500/10 text-green-600 border-green-500/20" },
-        online:    { label: "Online",    icon: Wifi,   color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-        hybrid:    { label: "Hybrid",    icon: Globe,  color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+        in_person: { label: "In Person", icon: MapPin, color: "bg-primary/10 text-primary border-primary/20" },
+        online:    { label: "Online",    icon: Wifi,   color: "bg-primary/10 text-primary border-primary/20" },
+        hybrid:    { label: "Hybrid",    icon: Globe,  color: "bg-primary/10 text-primary border-primary/20" },
     };
     const { label, icon: Icon, color } = map[type];
     return (
@@ -175,7 +175,7 @@ function RegistrationStatus({ event }: { event: EventDetail }) {
 
     if (!event.is_registration_required) {
         return (
-            <div className="flex items-center gap-2 rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-700 dark:text-green-400">
+            <div className="flex items-center gap-2 rounded-xl bg-primary/10 border border-primary/20 px-4 py-3 text-sm text-primary dark:text-primary">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 No registration required — just show up!
             </div>
@@ -200,8 +200,8 @@ function RegistrationStatus({ event }: { event: EventDetail }) {
             <div className="space-y-3">
                 <div className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm ${
                     isWaitlisted
-                        ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400"
-                        : "bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400"
+                        ? "bg-brand-gold/10 border-brand-gold/20 text-brand-gold-dark dark:text-brand-gold"
+                        : "bg-primary/10 border-primary/20 text-primary dark:text-primary"
                 }`}>
                     {isWaitlisted
                         ? <><Timer className="h-4 w-4 shrink-0" />{`You're on the waitlist.`}</>
@@ -233,7 +233,7 @@ function RegistrationStatus({ event }: { event: EventDetail }) {
     return (
         <div className="space-y-3">
             {event.is_full && (
-                <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+                <div className="flex items-center gap-2 rounded-xl bg-brand-gold/10 border border-brand-gold/20 px-4 py-3 text-sm text-brand-gold-dark dark:text-brand-gold">
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     {`Event is full — you'll be added to the waitlist.`}
                 </div>
@@ -316,15 +316,15 @@ export function EventDetailView() {
         <div className="min-h-screen bg-background pb-24">
 
             {/* ── HERO ────────────────────────────────────────────────── */}
-            <div className="relative h-[45vh] min-h-[320px] max-h-[520px] bg-neutral-950 overflow-hidden">
+            <div className="relative h-[45vh] min-h-[320px] max-h-[520px] bg-brand-black overflow-hidden">
 
                 {slides.length > 0 ? (
                     <HeroSlideshow slides={slides} />
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-neutral-950" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-brand-black" />
                 )}
 
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/40 to-transparent pointer-events-none" />
 
                 {/* Back button */}
                 <motion.div
@@ -337,7 +337,7 @@ export function EventDetailView() {
                         variant="ghost"
                         size="sm"
                         onClick={() => router.back()}
-                        className="text-white/70 hover:text-white hover:bg-white/10 gap-1.5"
+                        className="text-brand-white/70 hover:text-brand-white hover:bg-brand-white/10 gap-1.5"
                     >
                         <ArrowLeft className="h-4 w-4" /> Events
                     </Button>
@@ -355,14 +355,14 @@ export function EventDetailView() {
                             <EventTypeBadge type={event.event_type} />
                             {event.category && (
                                 <span
-                                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white"
+                                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-brand-white"
                                     style={{ backgroundColor: event.category.color }}
                                 >
                                     {event.category.name}
                                 </span>
                             )}
                             {event.is_featured && (
-                                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold text-white uppercase tracking-wide">
+                                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold text-brand-white uppercase tracking-wide">
                                     Featured
                                 </span>
                             )}
@@ -373,7 +373,7 @@ export function EventDetailView() {
                             )}
                         </div>
 
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-white leading-snug mb-2 max-w-3xl">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-brand-white leading-snug mb-2 max-w-3xl">
                             {event.title}
                         </h1>
 
@@ -385,7 +385,7 @@ export function EventDetailView() {
 
                         {/* Slide counter when multiple images */}
                         {slides.length > 1 && (
-                            <p className="mt-1 text-xs text-white/30">
+                            <p className="mt-1 text-xs text-brand-white/30">
                                 {slides.length} photos
                             </p>
                         )}

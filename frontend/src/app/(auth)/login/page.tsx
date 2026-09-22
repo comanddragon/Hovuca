@@ -13,6 +13,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import Logo from "@/components/layout/Logo";
 import { authPath, getBrowserReturnPath } from "@/lib/auth-return";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 const schema = z.object({
   email: z.email("Enter a valid email"),
@@ -37,38 +38,38 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
+    <AuthPageShell title="Welcome back." description="Continue your work with children, young people, and communities across Cameroon.">
+      <div>
         {/* Logo */}
-        <div className="mb-8 text-center">
+        <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <Logo />
-            <span className="font-display text-2xl font-bold text-white">Hovuca.</span>
+            <span className="font-display text-xl font-bold text-primary">HOVUCA</span>
           </Link>
-          <h1 className="mt-6 font-display text-2xl font-bold text-white">Welcome back</h1>
-          <p className="mt-1 text-sm text-purple-200/70">Sign in to your account to continue</p>
+          <h2 className="mt-8 font-display text-4xl font-bold tracking-[-0.03em] text-foreground">Welcome back</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">Sign in to your account to continue.</p>
         </div>
 
         {/* Form card */}
-        <div className="rounded-2xl border border-purple-500/30 bg-slate-900/60 backdrop-blur-md p-8 shadow-2xl">
+        <div className="border-t border-primary/20 pt-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="bg-white/10 border-purple-400/30 text-white placeholder:text-white/40 focus:border-purple-400/60 focus:ring-purple-500/50"
+                className="border-input bg-card text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
                 {...register("email")}
               />
-              {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-white">Password</Label>
-                <Link href="/forgot-password" className="text-xs text-purple-300 hover:text-purple-200 transition-colors">
+                <Label htmlFor="password">Password</Label>
+                <Link href="/forgot-password" className="text-xs font-semibold text-primary hover:text-brand-coral-dark transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -78,30 +79,30 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  className="bg-white/10 border-purple-400/30 text-white placeholder:text-white/40 focus:border-purple-400/60 focus:ring-purple-500/50"
+                  className="border-input bg-card text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
                   {...register("password")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-red-400">{errors.password.message}</p>}
+              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+              className="w-full bg-brand-coral text-brand-white font-semibold hover:bg-brand-coral-dark"
               disabled={isPending}
             >
               {isPending ? "Signing in…" : "Sign in"}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-purple-200/70">
+          <p className="mt-7 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
               href="/register"
@@ -109,13 +110,13 @@ export default function LoginPage() {
                 event.preventDefault();
                 router.push(authPath("/register", getBrowserReturnPath()));
               }}
-              className="font-medium text-purple-300 hover:text-purple-200 transition-colors"
+              className="font-semibold text-primary hover:text-brand-coral-dark transition-colors"
             >
               Create one
             </Link>
           </p>
         </div>
       </div>
-    </div>
+    </AuthPageShell>
   );
 }

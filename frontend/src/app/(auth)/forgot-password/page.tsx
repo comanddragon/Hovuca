@@ -12,6 +12,7 @@ import { ArrowLeft, CheckCircle2, Mail } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 import { toast } from "sonner";
 import { useForgotPassword } from "@/hooks"; // adjust path if needed
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 const schema = z.object({
   email: z.email("Enter a valid email address"),
@@ -46,18 +47,18 @@ export default function ForgotPasswordPage() {
     };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
+    <AuthPageShell title="We’ll help you return." description="Request a secure password reset link and continue where you left off.">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/login" className="inline-flex items-center gap-1 text-purple-300 hover:text-purple-200 transition-colors mb-6">
+          <Link href="/login" className="inline-flex items-center gap-1 text-primary hover:text-primary transition-colors mb-6">
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm">Back to login</span>
           </Link>
           <div className="text-center">
             <Link href="/" className="inline-flex items-center gap-2 justify-center w-full mb-6">
               <Logo />
-              <span className="font-display text-2xl font-bold text-white">Hovuca.</span>
+              <span className="font-display text-2xl font-bold text-foreground">Hovuca.</span>
             </Link>
           </div>
         </div>
@@ -66,41 +67,41 @@ export default function ForgotPasswordPage() {
           <>
             {/* Title and Description */}
             <div className="mb-8 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 border border-purple-400/30 mb-4">
-                <Mail className="h-6 w-6 text-purple-300" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/30 mb-4">
+                <Mail className="h-6 w-6 text-primary" />
               </div>
-              <h1 className="font-display text-2xl font-bold text-white">Reset your password</h1>
-              <p className="mt-2 text-sm text-purple-200/70">Enter your email address and we&apos;ll send you a link to reset your password</p>
+              <h1 className="font-display text-2xl font-bold text-foreground">Reset your password</h1>
+              <p className="mt-2 text-sm text-muted-foreground">Enter your email address and we&apos;ll send you a link to reset your password</p>
             </div>
 
             {/* Form card */}
-            <div className="rounded-2xl border border-purple-500/30 bg-slate-900/60 backdrop-blur-md p-8 shadow-2xl">
+            <div className="rounded-2xl border border-primary/20 bg-card backdrop-blur-md p-8 shadow-2xl">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-white">Email address</Label>
+                  <Label htmlFor="email" className="text-foreground">Email address</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     autoComplete="email"
-                    className="bg-white/10 border-purple-400/30 text-white placeholder:text-white/40 focus:border-purple-400/60 focus:ring-purple-500/50"
+                    className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
                     {...register("email")}
                   />
-                  {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+                  {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+                  className="w-full bg-brand-coral hover:bg-brand-coral-dark text-foreground font-semibold   transition-all duration-300"
                   disabled={isLoading}
                 >
                   {isLoading ? "Sending reset link…" : "Send reset link"}
                 </Button>
               </form>
 
-              <p className="mt-6 text-center text-sm text-purple-200/70">
+              <p className="mt-6 text-center text-sm text-muted-foreground">
                 Remember your password?{" "}
-                <Link href="/login" className="font-medium text-purple-300 hover:text-purple-200 transition-colors">
+                <Link href="/login" className="font-medium text-primary hover:text-primary transition-colors">
                   Sign in here
                 </Link>
               </p>
@@ -110,19 +111,19 @@ export default function ForgotPasswordPage() {
           <>
             {/* Success State */}
             <div className="mb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-emerald-500/20 border border-purple-400/30 mb-4">
-                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 mb-4">
+                <CheckCircle2 className="h-8 w-8 text-primary" />
               </div>
-              <h1 className="font-display text-2xl font-bold text-white">Check your email</h1>
-              <p className="mt-3 text-sm text-purple-200/70">
+              <h1 className="font-display text-2xl font-bold text-foreground">Check your email</h1>
+              <p className="mt-3 text-sm text-muted-foreground">
                 We&apos;ve sent a password reset link to<br />
-                <span className="font-medium text-white">{submittedEmail}</span>
+                <span className="font-medium text-foreground">{submittedEmail}</span>
               </p>
             </div>
 
             {/* Success Card */}
-            <div className="rounded-2xl border border-purple-500/30 bg-slate-900/60 backdrop-blur-md p-8 shadow-2xl space-y-6">
-              <div className="space-y-3 text-sm text-purple-200/70">
+            <div className="rounded-2xl border border-primary/20 bg-card backdrop-blur-md p-8 shadow-2xl space-y-6">
+              <div className="space-y-3 text-sm text-muted-foreground">
                 <p>👉 Check your email (including spam folder) for the reset link</p>
                 <p>👉 Click the link to create a new password</p>
                 <p>👉 You&apos;ll be able to sign in with your new password</p>
@@ -130,7 +131,7 @@ export default function ForgotPasswordPage() {
 
               <Button
                 onClick={() => setIsSubmitted(false)}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+                className="w-full bg-brand-coral hover:bg-brand-coral-dark text-foreground font-semibold   transition-all duration-300"
               >
                 Didn&apos;t receive email? Try again
               </Button>
@@ -138,7 +139,7 @@ export default function ForgotPasswordPage() {
               <Link href="/login" className="block">
                 <Button
                   variant="outline"
-                  className="w-full border-purple-400/30 text-white hover:bg-white/5"
+                  className="w-full border-primary/30 text-foreground hover:bg-muted"
                 >
                   Return to login
                 </Button>
@@ -147,6 +148,6 @@ export default function ForgotPasswordPage() {
           </>
         )}
       </div>
-    </div>
+    </AuthPageShell>
   );
 }

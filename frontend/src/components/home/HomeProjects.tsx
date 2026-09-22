@@ -127,12 +127,12 @@ export default function HomeProjects() {
 
     if (isLoading) {
         return (
-            <section className="home-deferred-section home-projects bg-[var(--brand-surface)] px-5 py-16 text-[var(--brand-forest)]" aria-label="Featured projects" aria-busy="true">
+            <section className="home-deferred-section home-projects bg-brand-surface px-5 py-16 text-primary" aria-label="Featured projects" aria-busy="true">
                 <div className="mx-auto max-w-[720px] animate-pulse text-center" role="status">
                     <span className="sr-only">Loading featured projects</span>
-                    <div className="mx-auto h-3 w-28 rounded bg-[var(--brand-forest)]/15" />
-                    <div className="mx-auto mt-5 h-10 max-w-md rounded bg-[var(--brand-forest)]/15" />
-                    <div className="mt-10 aspect-video rounded-lg bg-[var(--brand-forest)]/15" />
+                    <div className="mx-auto h-3 w-28 rounded bg-primary/15" />
+                    <div className="mx-auto mt-5 h-10 max-w-md rounded bg-primary/15" />
+                    <div className="mt-10 aspect-video rounded-lg bg-primary/15" />
                 </div>
             </section>
         );
@@ -140,11 +140,11 @@ export default function HomeProjects() {
 
     if (isError) {
         return (
-            <section className="home-deferred-section home-projects bg-[var(--brand-surface)] px-5 py-16 text-center text-[var(--brand-forest)]" aria-label="Featured projects">
+            <section className="home-deferred-section home-projects bg-brand-surface px-5 py-16 text-center text-primary" aria-label="Featured projects">
                 <div className="mx-auto max-w-lg" role="alert">
                     <h2 className="text-2xl font-bold">Projects could not be loaded.</h2>
-                    <p className="mt-3 text-sm leading-6 text-[var(--brand-body-muted)]">Check your connection and try again.</p>
-                    <button type="button" onClick={() => void refetch()} className="mt-6 min-h-11 rounded-full bg-[var(--brand-forest)] px-6 text-sm font-semibold text-white">Try again</button>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">Check your connection and try again.</p>
+                    <button type="button" onClick={() => void refetch()} className="mt-6 min-h-11 rounded-full bg-primary px-6 text-sm font-semibold text-brand-white">Try again</button>
                 </div>
             </section>
         );
@@ -153,7 +153,7 @@ export default function HomeProjects() {
     return (
         <section
             ref={sectionRef}
-            className="home-deferred-section home-projects bg-[var(--brand-surface)] py-8 text-[var(--brand-forest)] md:py-12"
+            className="home-deferred-section home-projects bg-brand-surface py-8 text-primary md:py-12"
             aria-label={showingPreviews ? "Project previews" : "Featured projects"}
             data-home-reveal="projects"
         >
@@ -164,7 +164,7 @@ export default function HomeProjects() {
                         className={`home-project-copy-panel ${index === activeIndex ? "is-active" : ""}`}
                         aria-hidden={index !== activeIndex}
                     >
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-body-muted)]">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                             {showingPreviews ? "Project previews" : "Featured projects"}
                         </p>
                         <h2
@@ -172,7 +172,7 @@ export default function HomeProjects() {
                         >
                             {project.title}
                         </h2>
-                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[var(--brand-body-muted)] sm:text-base">
+                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
                             {project.excerpt || "Explore the project details."}
                         </p>
                     </div>
@@ -242,7 +242,7 @@ export default function HomeProjects() {
                                     tabIndex={
                                         index === activeIndex ? 0 : -1
                                     }
-                                    className="home-project-card group relative block aspect-video w-full overflow-hidden rounded-lg bg-[var(--brand-forest)] focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-[var(--brand-gold)]"
+                                    className="home-project-card group relative block aspect-video w-full overflow-hidden rounded-lg bg-primary focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-brand-gold"
                                     aria-label={
                                         project.preview
                                             ? `Explore projects: ${project.title} preview`
@@ -261,18 +261,18 @@ export default function HomeProjects() {
                                             className="object-cover transition-transform duration-700 motion-safe:group-hover:scale-[1.025]"
                                         />
                                     ) : (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-[var(--brand-teal-strong)] px-10 text-center font-display text-3xl font-bold text-white sm:text-5xl">
+                                        <div className="absolute inset-0 flex items-center justify-center bg-brand-teal-strong px-10 text-center font-display text-3xl font-bold text-brand-white sm:text-5xl">
                                             {project.title}
                                         </div>
                                     )}
 
                                     <div
-                                        className="home-project-card-copy absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/70 to-transparent px-6 pb-8 pt-24 text-center text-white sm:px-8"
+                                        className="home-project-card-copy absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-brand-black/70 to-transparent px-6 pb-8 pt-24 text-center text-brand-white sm:px-8"
                                     >
                                         <span className="font-display text-lg font-bold leading-tight sm:text-2xl">
                                             {project.title}
                                         </span>
-                                        <span className="mx-auto mt-4 flex w-fit items-center gap-2 border-b border-white pb-1 text-sm font-semibold">
+                                        <span className="mx-auto mt-4 flex w-fit items-center gap-2 border-b border-brand-white pb-1 text-sm font-semibold">
                                             Read more <ArrowUpRight aria-hidden="true" className="size-4" />
                                         </span>
                                     </div>
@@ -290,10 +290,10 @@ export default function HomeProjects() {
                                 disabled={!hasPrev}
                                 aria-label="Previous project"
                                 aria-disabled={!hasPrev}
-                                className={`home-project-arrow home-project-arrow-prev absolute left-5 top-1/2 z-30 hidden -translate-y-1/2 items-center justify-center text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-forest)] sm:flex lg:-left-5 ${
+                                className={`home-project-arrow home-project-arrow-prev absolute left-5 top-1/2 z-30 hidden -translate-y-1/2 items-center justify-center text-brand-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:flex lg:-left-5 ${
                                     hasPrev
-                                        ? "bg-[var(--brand-coral)] hover:bg-[var(--brand-coral-dark)]"
-                                        : "cursor-not-allowed bg-[var(--brand-coral)]/35"
+                                        ? "bg-brand-coral hover:bg-brand-coral-dark"
+                                        : "cursor-not-allowed bg-brand-coral/35"
                                 }`}
                             >
                                 <ArrowLeft
@@ -311,10 +311,10 @@ export default function HomeProjects() {
                                 disabled={!hasNext}
                                 aria-label="Next project"
                                 aria-disabled={!hasNext}
-                                className={`home-project-arrow home-project-arrow-next absolute right-5 top-1/2 z-30 hidden -translate-y-1/2 items-center justify-center text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-forest)] sm:flex lg:-right-5 ${
+                                className={`home-project-arrow home-project-arrow-next absolute right-5 top-1/2 z-30 hidden -translate-y-1/2 items-center justify-center text-brand-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:flex lg:-right-5 ${
                                     hasNext
-                                        ? "bg-[var(--brand-coral)] hover:bg-[var(--brand-coral-dark)]"
-                                        : "cursor-not-allowed bg-[var(--brand-coral)]/35"
+                                        ? "bg-brand-coral hover:bg-brand-coral-dark"
+                                        : "cursor-not-allowed bg-brand-coral/35"
                                 }`}
                             >
                                 <ArrowRight
@@ -345,14 +345,14 @@ export default function HomeProjects() {
                                     ? "true"
                                     : undefined
                             }
-                            className="flex h-16 w-11 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-forest)]"
+                            className="flex h-16 w-11 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             <span
                                 aria-hidden="true"
                                 className={`h-2 rounded-full transition-[width,background-color] duration-500 ease-in-out ${
                                     index === activeIndex
-                                        ? "w-10 bg-[var(--brand-coral)]"
-                                        : "w-2 bg-[var(--brand-gray)]"
+                                        ? "w-10 bg-brand-coral"
+                                        : "w-2 bg-brand-gray"
                                 }`}
                             />
                         </button>
@@ -363,7 +363,7 @@ export default function HomeProjects() {
             <div className="mt-0 text-center">
                 <Link
                     href="/projects"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--brand-coral-dark)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_var(--brand-forest-12)] transition-colors hover:bg-[var(--brand-coral-deep)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-forest)]"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-coral-dark px-6 py-2.5 text-sm font-semibold text-brand-white shadow-[0_8px_24px_var(--brand-forest-12)] transition-colors hover:bg-brand-coral-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
                 >
                     All projects
                     <ArrowUpRight

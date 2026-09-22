@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Logo() {
     return (
-        <div className="flex h-11 w-11 items-center justify-center overflow-hidden bg-white shadow-sm">
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden bg-brand-white shadow-sm">
             <Image
                 src="/Hovuca.png"
                 alt="HOVUCA logo"

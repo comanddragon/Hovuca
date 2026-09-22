@@ -43,7 +43,7 @@ function Lightbox({
     return (
         <AnimatePresence>
             <motion.div
-                className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+                className="fixed inset-0 z-[200] flex items-center justify-center bg-brand-black/95 backdrop-blur-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -51,20 +51,20 @@ function Lightbox({
             >
                 {/* Close */}
                 <button
-                    className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                    className="absolute top-4 right-4 z-10 rounded-full bg-brand-white/10 p-2 text-brand-white hover:bg-brand-white/20 transition-colors"
                     onClick={onClose}
                 >
                     <X className="h-5 w-5" />
                 </button>
 
                 {/* Counter */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-white/50 tracking-widest uppercase">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-brand-white/50 tracking-widest uppercase">
                     {index + 1} / {images.length}
                 </div>
 
                 {/* Prev */}
                 <button
-                    className="absolute left-4 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-colors z-10"
+                    className="absolute left-4 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/20 transition-colors z-10"
                     onClick={(e) => { e.stopPropagation(); onPrev(); }}
                 >
                     <ChevronLeft className="h-5 w-5" />
@@ -91,16 +91,16 @@ function Lightbox({
 
                     {/* Caption */}
                     {(image.title || image.caption) && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-6 py-4 rounded-b-xl">
-                            {image.title && <p className="text-white font-medium text-sm">{image.title}</p>}
-                            {image.caption && <p className="text-white/60 text-xs mt-0.5">{image.caption}</p>}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black/80 to-transparent px-6 py-4 rounded-b-xl">
+                            {image.title && <p className="text-brand-white font-medium text-sm">{image.title}</p>}
+                            {image.caption && <p className="text-brand-white/60 text-xs mt-0.5">{image.caption}</p>}
                         </div>
                     )}
                 </motion.div>
 
                 {/* Next */}
                 <button
-                    className="absolute right-4 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-colors z-10"
+                    className="absolute right-4 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/20 transition-colors z-10"
                     onClick={(e) => { e.stopPropagation(); onNext(); }}
                 >
                     <ChevronRight className="h-5 w-5" />
@@ -139,16 +139,16 @@ function AlbumCard({ album, index }: { album: GalleryAlbumList; index: number })
                             <Images className="h-12 w-12 text-primary/20" />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-black/60 to-transparent" />
 
                     {/* Image count chip */}
-                    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-black/50 backdrop-blur-sm px-2.5 py-1 text-white text-xs">
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-brand-black/50 backdrop-blur-sm px-2.5 py-1 text-brand-white text-xs">
                         <ImageIcon className="h-3 w-3" />
                         {album.image_count} photos
                     </div>
 
                     {album.is_featured && (
-                        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-0.5 text-white text-[10px] font-bold uppercase tracking-wide">
+                        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-0.5 text-brand-white text-[10px] font-bold uppercase tracking-wide">
                             <Star className="h-2.5 w-2.5" />
                             Featured
                         </div>
@@ -229,7 +229,7 @@ export function GalleryView() {
             )}
 
             {/* ── HERO ──────────────────────────────────────────────────── */}
-            <section suppressHydrationWarning className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-neutral-950">
+            <section suppressHydrationWarning className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-brand-black">
                 <motion.div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
@@ -239,15 +239,15 @@ export function GalleryView() {
                     }}
                 />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--brand-overlay-purple-75)_100%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/50 via-transparent to-neutral-950/80" />
+                <div className="absolute inset-0 bg-gradient-to-b from-brand-black/50 via-transparent to-brand-black/80" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
                 <motion.div
-                    className="relative z-10 mx-auto max-w-4xl px-6 text-center text-white"
+                    className="relative z-10 mx-auto max-w-4xl px-6 text-center text-brand-white"
                     style={{ opacity: heroOpacity }}
                 >
                     <motion.p
-                        className="mb-6 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-white/40"
+                        className="mb-6 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-brand-white/40"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.6 }}
@@ -266,7 +266,7 @@ export function GalleryView() {
                     >
                         Photo{" "}
                         <motion.span
-                            className="block italic text-amber-200 font-extralight"
+                            className="block italic text-brand-gold-light font-extralight"
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.55, duration: 0.9 }}
@@ -276,7 +276,7 @@ export function GalleryView() {
                     </motion.h1>
 
                     <motion.p
-                        className="mx-auto max-w-lg text-base text-white/50 font-light leading-relaxed mb-10"
+                        className="mx-auto max-w-lg text-base text-brand-white/50 font-light leading-relaxed mb-10"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.65, duration: 0.7 }}
@@ -291,12 +291,12 @@ export function GalleryView() {
                         transition={{ delay: 0.8, duration: 0.6 }}
                     >
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-white/40" />
                             <input
                                 placeholder="Search albums…"
                                 value={search}
                                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                className="w-full rounded-sm border border-white/15 bg-white/8 backdrop-blur-sm pl-11 pr-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-primary/60 transition-colors"
+                                className="w-full rounded-sm border border-brand-white/15 bg-brand-white/8 backdrop-blur-sm pl-11 pr-4 py-3.5 text-sm text-brand-white placeholder:text-brand-white/30 focus:outline-none focus:border-primary/60 transition-colors"
                             />
                         </div>
                     </motion.div>
@@ -308,9 +308,9 @@ export function GalleryView() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 }}
                 >
-                    <span className="text-[9px] tracking-[0.35em] text-white/25 uppercase">Scroll</span>
+                    <span className="text-[9px] tracking-[0.35em] text-brand-white/25 uppercase">Scroll</span>
                     <motion.div
-                        className="w-px h-8 bg-gradient-to-b from-white/25 to-transparent"
+                        className="w-px h-8 bg-gradient-to-b from-brand-white/25 to-transparent"
                         style={{ originY: 0 }}
                         animate={{ scaleY: [0, 1, 0] }}
                         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
@@ -343,8 +343,8 @@ export function GalleryView() {
                                                 {cover && (
                                                     <Image src={cover} alt={album.title} fill sizes="208px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                                                 )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                                <p className="absolute bottom-2 left-3 right-3 text-white text-xs font-medium line-clamp-1">{album.title}</p>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-brand-black/60 to-transparent" />
+                                                <p className="absolute bottom-2 left-3 right-3 text-brand-white text-xs font-medium line-clamp-1">{album.title}</p>
                                             </div>
                                         </Link>
                                     );

@@ -1,5 +1,6 @@
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import serializers
@@ -65,6 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "date_of_birth",
             "phone_number",
             "role",
             "password",
@@ -78,6 +80,11 @@ class RegisterSerializer(serializers.ModelSerializer):
                 {"password_confirm": "Passwords do not match."}
             )
         return attrs
+
+    def validate_date_of_birth(self, value):
+        if value and value > timezone.localdate():
+            raise serializers.ValidationError("Birthday cannot be in the future.")
+        return value
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -98,6 +105,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "date_of_birth",
             "full_name",
             "phone_number",
             "avatar",
@@ -127,7 +135,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "phone_number", "avatar"]
+        fields = ["first_name", "last_name", "date_of_birth", "phone_number", "avatar"]
 
 
 # ---------------------------------------------------------------------------

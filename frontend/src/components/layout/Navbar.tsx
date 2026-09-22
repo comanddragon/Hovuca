@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useNotificationStore } from "@/store";
 import Logo from "@/components/layout/Logo";
+import { BrandIcon, socialLinks } from "@/components/layout/SocialLinks";
 import { authPath } from "@/lib/auth-return";
 
 type NavChild = { href: string; label: string };
@@ -54,7 +55,7 @@ const navLinks: NavLink[] = [
         href: "", label: "Resources",
         children: [
             { href: "/blog", label: "Stories & news" },
-            { href: "/documents", label: "Documents" },
+            { href: "/resources", label: "Documents" },
             { href: "/gallery", label: "Gallery" },
 
         ],
@@ -86,7 +87,7 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
                             "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition-colors outline-none",
                             isActive
                                 ? "bg-primary/10 text-primary"
-                                : "text-[var(--brand-plum-deep)] hover:bg-[var(--brand-plum-light)]"
+                                : "text-primary hover:bg-muted"
                         )}
                     >
                         {link.label}
@@ -125,10 +126,10 @@ function DesktopNavItem({ link, pathname }: { link: NavLink; pathname: string })
             href={link.href}
             className={cn(
                 "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition-all",
-                link.cta && "ml-1 bg-[var(--brand-plum-deep)] px-5 text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--brand-plum)]",
+                link.cta && "ml-1 bg-brand-plum-deep px-5 text-brand-white shadow-sm hover:-translate-y-0.5 hover:bg-brand-plum",
                 isActive
-                    ? link.cta ? "bg-[var(--brand-plum-deep)] text-white" : "bg-[var(--brand-plum-light)] text-[var(--brand-plum-deep)]"
-                    : link.cta ? "" : "text-[var(--brand-plum-deep)] hover:bg-[var(--brand-plum-light)]"
+                    ? link.cta ? "bg-brand-plum-deep text-brand-white" : "bg-brand-plum-light text-primary"
+                    : link.cta ? "" : "text-primary hover:bg-muted"
             )}
         >
             {link.label}
@@ -161,7 +162,7 @@ export function Navbar() {
             { href: "/about", label: "About" },
             { href: "/projects", label: "Our impact" },
             { href: "/blog", label: "Field stories" },
-            { href: "/documents", label: "Publications" },
+            { href: "/resources", label: "Resources" },
             { href: "/courses", label: "Courses" },
             { href: "/volunteers", label: "Get involved" },
             { href: "/contact", label: "Contact" },
@@ -173,35 +174,54 @@ export function Navbar() {
             <>
             <header
                 className={cn(
-                    "z-50 text-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
+                    "z-50 text-brand-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
                     scrolled
-                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-full border border-white/25 bg-[var(--brand-forest)]/78 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl xl:w-220"
+                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-full border border-brand-white/25 bg-primary/78 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl xl:w-[940px] 2xl:w-[980px]"
                         : isHome
                             ? "absolute inset-x-0 top-0 bg-[linear-gradient(to_bottom,var(--brand-nav-overlay-top)_0%,var(--brand-nav-overlay-mid)_58%,transparent_100%)] pb-6"
-                            : "relative inset-x-0 top-0 bg-[var(--brand-forest)]"
+                            : "relative inset-x-0 top-0 bg-primary"
                 )}
             >
                 <nav className={cn("relative mx-auto flex w-full items-center transition-[height,padding] duration-500", scrolled ? "h-16 px-4" : "h-18 px-[clamp(1.5rem,3.8vw,3.75rem)]")} aria-label="Primary navigation">
-                    <Link href="/" className={cn("flex shrink-0 items-center text-white drop-shadow-[0_1px_5px_var(--brand-black-45)]", scrolled ? "gap-2" : "gap-3 lg:w-[24.5%] lg:min-w-90")}>
+                    <Link href="/" className={cn("flex shrink-0 items-center text-brand-white drop-shadow-[0_1px_5px_var(--brand-black-45)]", scrolled ? "gap-2" : "gap-3 lg:w-[24.5%] lg:min-w-90")}>
                         <span className={cn("font-extrabold leading-none tracking-[-0.035em] transition-[font-size] duration-500", scrolled ? "text-xl" : "text-[clamp(1.55rem,2.3vw,2.35rem)]")}>HOVUCA</span>
-                        <span className={cn("hidden w-px bg-[var(--brand-gold-light)] lg:block", scrolled ? "h-8" : "h-12")} aria-hidden="true" />
-                        <Image src="/Hovuca-croped.webp" alt="" width={40} height={40} className={cn("aspect-square shrink-0 bg-white object-contain", scrolled ? "size-8" : "size-10")} />
+                        <span className={cn("block w-px bg-brand-gold-light shrink-0", scrolled ? "h-6 sm:h-8" : "h-8 sm:h-12")} aria-hidden="true" />
+                        <Image src="/Hovuca-croped.webp" alt="" width={40} height={40} className={cn("aspect-square shrink-0 bg-brand-white object-contain", scrolled ? "size-8" : "size-10")} />
                         {!scrolled && <span className="hidden text-[9.5px] font-bold uppercase leading-[1.45] tracking-[0.14em] lg:block">Hope for<br />Vulnerable Children<br />Association</span>}
                     </Link>
+
+                    {scrolled && (
+                        <div className="flex items-center gap-1.5 sm:gap-2 max-[350px]:hidden animate-in fade-in zoom-in-95 duration-300">
+                            <span className="h-5 sm:h-6 w-px bg-brand-white/20 mx-1 sm:mx-1.5 shrink-0" aria-hidden="true" />
+                            {socialLinks.map(({ label, href, platform }) => (
+                                <a
+                                    key={label}
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title={label}
+                                    aria-label={`HOVUCA on ${label} (opens in a new tab)`}
+                                    className="group relative inline-flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full border border-brand-white/25 bg-brand-white/10 text-brand-white/90 shadow-[inset_0_1px_1px_var(--brand-white-40),0_2px_8px_var(--brand-black-18)] backdrop-blur-md transition-all duration-200 hover:scale-110 hover:border-brand-white/50 hover:bg-brand-white/20 hover:text-brand-gold-light hover:shadow-[inset_0_1px_1px_var(--brand-white-60),0_4px_14px_var(--brand-black-25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-light/70 active:scale-95"
+                                >
+                                    <BrandIcon platform={platform} className="size-3.5 sm:size-4 transition-transform duration-200 group-hover:scale-110" />
+                                </a>
+                            ))}
+                        </div>
+                    )}
 
                     <div className={cn("ml-auto hidden items-center xl:flex", scrolled ? "gap-5" : "gap-[clamp(1.1rem,2vw,2.2rem)]")}>
                         {visibleLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={cn("text-[13px] font-semibold text-white drop-shadow-[0_1px_4px_var(--brand-black-62)] transition-colors hover:text-[var(--brand-gold-light)]", pathname.startsWith(link.href) && "text-[var(--brand-gold-light)]")}
+                                className={cn("text-[13px] font-semibold text-brand-white drop-shadow-[0_1px_4px_var(--brand-black-62)] transition-colors hover:text-brand-gold-light", pathname.startsWith(link.href) && "text-brand-gold-light")}
                             >
                                 {link.label}
                             </Link>
                         ))}
                         <Link
                             href="/donate"
-                            className={cn("inline-flex items-center gap-2 rounded-full bg-[var(--brand-coral)] text-sm font-semibold text-white transition-[height,padding,background-color] hover:bg-[var(--brand-coral-hover)]", scrolled ? "h-10 px-5" : "h-11 px-7")}
+                            className={cn("inline-flex items-center gap-2 rounded-full bg-brand-coral text-sm font-semibold text-brand-white transition-[height,padding,background-color] hover:bg-brand-coral-dark", scrolled ? "h-10 px-5" : "h-11 px-7")}
                         >
                             Donate
                            <Image src="/hands-holding-heart.svg" alt="" width={16} height={16} className="size-4 shrink-0" />
@@ -213,7 +233,7 @@ export function Navbar() {
                                     <button
                                         type="button"
                                         aria-label="More navigation"
-                                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[var(--brand-gold-light)]/60 hover:bg-white/10 hover:text-[var(--brand-gold-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-gold-light)]/70"
+                                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-white/30 text-brand-white transition-colors hover:border-brand-gold-light/60 hover:bg-brand-white/10 hover:text-brand-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-light/70"
                                     >
                                         <Menu className="h-5 w-5" />
                                     </button>
@@ -222,7 +242,7 @@ export function Navbar() {
                                 <DropdownMenuContent
                                     align="end"
                                     sideOffset={12}
-                                    className="w-52 rounded-2xl border border-white/25 bg-[var(--brand-forest)]/78 p-2 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl"
+                                    className="w-52 rounded-2xl border border-brand-white/25 bg-primary/78 p-2 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl"
                                 >
                                     {overflowLinks.map((link) => (
                                         <DropdownMenuItem key={link.href} asChild>
@@ -231,8 +251,8 @@ export function Navbar() {
                                                 className={cn(
                                                     "cursor-pointer rounded-md px-3 py-2.5 font-semibold",
                                                     pathname.startsWith(link.href)
-                                                        ? "text-[var(--brand-gold-light)]"
-                                                        : "text-white"
+                                                        ? "text-brand-gold-light"
+                                                        : "text-brand-white"
                                                 )}
                                             >
                                                 {link.label}
@@ -247,7 +267,7 @@ export function Navbar() {
                             <Link
                                 href="/blog"
                                 aria-label="Search HOVUCA stories"
-                                className="group/search mr-5.5 inline-flex h-7 w-5.25 items-center justify-center text-white backdrop-blur-[3px] transition-colors hover:text-[var(--brand-gold-light)]"
+                                className="group/search mr-5.5 inline-flex h-7 w-5.25 items-center justify-center text-brand-white backdrop-blur-[3px] transition-colors hover:text-brand-gold-light"
                             >
                                 <span className="relative block h-6 w-6" aria-hidden="true">
                                     <span className="absolute left-px top-px h-4.25 w-4.25 rounded-full border-2 border-current" />
@@ -262,21 +282,21 @@ export function Navbar() {
                         aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
                         aria-expanded={mobileOpen}
                         onClick={() => setMobileOpen((open) => !open)}
-                        className="ml-auto inline-flex h-11 w-11 items-center justify-center border border-white/50 bg-[var(--brand-forest)]/45 text-white backdrop-blur-sm xl:hidden"
+                        className="ml-auto inline-flex h-11 w-11 items-center justify-center border border-brand-white/50 bg-primary/45 text-brand-white backdrop-blur-sm xl:hidden"
                     >
                         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
                 </nav>
 
                 {mobileOpen && (
-                    <div className="mx-4 border-t border-white/20 bg-[var(--brand-forest)] px-5 py-5 shadow-[0_18px_40px_var(--brand-black-28)] sm:mx-6 xl:hidden">
+                    <div className="mx-4 border-t border-brand-white/20 bg-primary px-5 py-5 shadow-[0_18px_40px_var(--brand-black-28)] sm:mx-6 xl:hidden">
                         <div className="grid gap-1">
                             {homeLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setMobileOpen(false)}
-                                    className="border-white/12 px-2 py-3 text-sm font-semibold text-white last:border-b-0 hover:text-[var(--brand-gold-light)]"
+                                    className="border-brand-white/12 px-2 py-3 text-sm font-semibold text-brand-white last:border-b-0 hover:text-brand-gold-light"
                                 >
                                     {link.label}
                                 </Link>
@@ -284,7 +304,7 @@ export function Navbar() {
                             <Link
                                 href="/donate"
                                 onClick={() => setMobileOpen(false)}
-                                className="mt-4 bg-[var(--brand-coral)] px-5 py-3.5 text-center text-sm font-semibold text-white"
+                                className="mt-4 bg-brand-coral px-5 py-3.5 text-center text-sm font-semibold text-brand-white"
                             >
                                 Donate
                             </Link>
@@ -298,14 +318,15 @@ export function Navbar() {
     }
 
     return (
-        <header className="sticky top-0 z-50 border-b border-[var(--brand-plum-deep)]/10 bg-[var(--brand-cream)]/95 backdrop-blur-xl">
+        <header className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur-xl">
             <nav className="mx-auto flex h-19 max-w-7xl items-center justify-between px-4 sm:px-6">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3">
                     <Logo />
+                    <span className="h-8 w-px bg-brand-gold-light shrink-0" aria-hidden="true" />
                     <span className="hidden sm:block">
-                        <span className="block font-display text-xl font-extrabold leading-none tracking-[-0.03em] text-[var(--brand-plum-deep)]">HOVUCA</span>
-                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--brand-plum-muted)]">Hope for vulnerable children</span>
+                        <span className="block font-display text-xl font-extrabold leading-none tracking-[-0.03em] text-primary">HOVUCA</span>
+                        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Hope for vulnerable children</span>
                     </span>
                 </Link>
 
@@ -325,7 +346,7 @@ export function Navbar() {
                                 <Button variant="ghost" size="icon" className="text-foreground relative">
                                     <Bell className="h-4 w-4" />
                                     {unreadCount > 0 && (
-                                        <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-red-600">
+                                        <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-brand-error">
                                             {unreadCount > 9 ? "9+" : unreadCount}
                                         </span>
                                     )}
@@ -390,7 +411,7 @@ export function Navbar() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="xl:hidden text-[var(--brand-plum-deep)]"
+                        className="xl:hidden text-primary"
                         onClick={() => setMobileOpen((v) => !v)}
                     >
                         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -400,7 +421,7 @@ export function Navbar() {
 
             {/* Mobile menu */}
             {mobileOpen && (
-                <div className="border-t border-[var(--brand-plum-deep)]/10 bg-[var(--brand-cream)] px-4 pb-5 xl:hidden">
+                <div className="border-t border-primary/10 bg-background px-4 pb-5 xl:hidden">
                     <div className="flex flex-col gap-1 pt-2">
                         {navLinks.map(({ href, label, children }) => {
                             const isActive = href !== "" && pathname.startsWith(href);

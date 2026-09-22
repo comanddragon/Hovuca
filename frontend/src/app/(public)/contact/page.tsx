@@ -45,21 +45,21 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="bg-background text-[var(--brand-forest)]">
+        <div className="bg-background text-primary">
             <JsonLd data={breadcrumbs} />
             <JsonLd data={contactPageSchema} />
-            <section className="border-b border-[var(--brand-forest)]/20">
+            <section className="border-b border-primary/20">
                 <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
                     <h1 className="max-w-4xl font-display text-5xl font-bold leading-[1.06] tracking-tight sm:text-7xl lg:text-8xl">
                         Good work starts with a conversation.
                     </h1>
                     <div className="mt-8 grid gap-8 md:grid-cols-2">
-                        <p className="max-w-xl text-lg leading-8 text-[var(--brand-body-muted)]">
+                        <p className="max-w-xl text-lg leading-8 text-muted-foreground">
                             Have a question, a partnership idea, or a way to contribute? We would like to hear from you.
                         </p>
                         <a
                             href="#contact-form"
-                            className="flex min-h-12 w-fit items-center gap-5 border-b border-[var(--brand-forest)] font-semibold"
+                            className="flex min-h-12 w-fit items-center gap-5 border-b border-primary font-semibold"
                         >
                             Get in touch <ArrowUpRight aria-hidden="true" className="size-5" />
                         </a>
@@ -68,47 +68,47 @@ export default function ContactPage() {
             </section>
             <section id="contact-form" className="mx-auto grid max-w-7xl scroll-mt-28 gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.3fr_1fr] lg:gap-24">
                 <ContactForm />
-                <aside className="self-start bg-[var(--brand-forest)] p-8 text-[var(--brand-paper)] sm:p-10">
+                <aside className="self-start bg-primary p-8 text-primary-foreground sm:p-10">
                     <h2 className="font-display text-3xl font-bold">Reach us directly</h2>
                     <dl className="mt-8 space-y-7">
                         <div>
-                            <dt className="text-sm text-[var(--brand-paper)]/70">Email</dt>
+                            <dt className="text-sm text-primary-foreground/70">Email</dt>
                             <dd className="mt-2 break-all text-xl">
                                 <a className="underline underline-offset-4" href="mailto:contact@hovuca.org">contact@hovuca.org</a>
                             </dd>
                         </div>
                         <div>
-                            <dt className="text-sm text-[var(--brand-paper)]/70">Phone</dt>
+                            <dt className="text-sm text-primary-foreground/70">Phone</dt>
                             <dd className="mt-2 text-xl">
                                 <a className="underline underline-offset-4" href="tel:+237696230391">+237 696 230 391</a>
                             </dd>
                         </div>
                         <div>
-                            <dt className="text-sm text-[var(--brand-paper)]/70">Head office</dt>
+                            <dt className="text-sm text-primary-foreground/70">Head office</dt>
                             <dd className="mt-2 text-xl leading-8">Grande Chefferie Simbock<br />Yaoundé, Cameroon</dd>
                         </div>
                     </dl>
-                    <p className="mt-6 text-sm leading-6 text-[var(--brand-paper)]/75">Please contact us before visiting so we can arrange your visit.</p>
+                    <p className="mt-6 text-sm leading-6 text-primary-foreground/75">Please contact us before visiting so we can arrange your visit.</p>
                     <a
                         href="https://www.google.com/maps/search/?api=1&query=Grande+Chefferie+Simbock+Yaound%C3%A9+Cameroon"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-6 inline-flex min-h-12 items-center gap-4 border-b border-[var(--brand-paper)]/50 font-semibold"
+                        className="mt-6 inline-flex min-h-12 items-center gap-4 border-b border-primary-foreground/50 font-semibold"
                     >
                         Find directions <ArrowUpRight aria-hidden="true" className="size-5" />
                     </a>
                 </aside>
             </section>
             <section className="mx-auto max-w-7xl px-6 pb-20">
-                <div className="grid gap-8 border-t border-[var(--brand-forest)]/20 pt-10 md:grid-cols-2">
+                <div className="grid gap-8 border-t border-primary/20 pt-10 md:grid-cols-2">
                     <div>
                         <h2 className="font-display text-2xl font-bold">Ready to volunteer?</h2>
-                        <p className="mt-3 leading-7 text-[var(--brand-body-muted)]">Tell us about your skills and availability through our volunteer application.</p>
+                        <p className="mt-3 leading-7 text-muted-foreground">Tell us about your skills and availability through our volunteer application.</p>
                         <Link className="mt-4 inline-flex min-h-12 items-center font-semibold underline underline-offset-4" href="/volunteers">Apply to volunteer</Link>
                     </div>
                     <div>
                         <h2 className="font-display text-2xl font-bold">Looking to make a donation?</h2>
-                        <p className="mt-3 leading-7 text-[var(--brand-body-muted)]">Explore bank transfer, PayPal, MTN Mobile Money, and Orange Money options.</p>
+                        <p className="mt-3 leading-7 text-muted-foreground">Explore bank transfer, PayPal, MTN Mobile Money, and Orange Money options.</p>
                         <Link className="mt-4 inline-flex min-h-12 items-center font-semibold underline underline-offset-4" href="/donate">View donation methods</Link>
                     </div>
                 </div>

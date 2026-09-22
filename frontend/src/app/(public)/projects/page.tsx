@@ -26,19 +26,19 @@ export default function ProjectsPage() {
     ]);
 
     return (
-        <div className="bg-[var(--brand-paper)] text-[var(--brand-forest)]">
+        <div className="bg-background text-primary">
             <JsonLd data={breadcrumbs} />
             <section className="grid lg:grid-cols-2">
                 <div className="flex flex-col justify-center px-6 py-16 sm:px-12 lg:pl-[max(3rem,calc((100vw-1280px)/2+1.5rem))]">
                     <h1 className="font-display text-5xl font-bold leading-[1.06] tracking-tight sm:text-6xl">
                         Our work,<br />in action.
                     </h1>
-                    <p className="mt-7 max-w-lg text-base leading-7 text-[var(--brand-body-muted)]">
+                    <p className="mt-7 max-w-lg text-base leading-7 text-muted-foreground">
                         Explore the projects that put child protection, learning, and community participation into practice.
                     </p>
                     <a
                         href="#project-directory"
-                        className="mt-7 flex min-h-11 w-fit items-center gap-3 rounded-full border border-[var(--brand-forest)] px-5 text-sm font-semibold"
+                        className="mt-7 flex min-h-11 w-fit items-center gap-3 rounded-full border border-primary px-5 text-sm font-semibold"
                     >
                         Explore projects <ArrowDown aria-hidden="true" className="size-4" />
                     </a>

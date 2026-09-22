@@ -16,6 +16,7 @@ export interface User {
     email: string;
     first_name: string;
     last_name: string;
+    date_of_birth: string | null;
     full_name: string;
     phone_number: string;
     avatar: string | null;
@@ -47,6 +48,7 @@ export interface RegisterPayload {
     email: string;
     first_name: string;
     last_name: string;
+    date_of_birth?: string;
     phone_number?: string;
     role?: UserRole;
     password: string;
@@ -56,6 +58,7 @@ export interface RegisterPayload {
 export interface UpdateProfilePayload {
     first_name?: string;
     last_name?: string;
+    date_of_birth?: string;
     phone_number?: string;
     avatar?: File;
 }

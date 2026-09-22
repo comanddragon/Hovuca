@@ -13,6 +13,7 @@ import { Eye, EyeOff, CheckCircle2, KeyRound } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 import { toast } from "sonner";
 import { useResetPassword } from "@/hooks";
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
 
 const schema = z
   .object({
@@ -56,13 +57,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
+    <AuthPageShell title="Set a secure new password." description="Choose a password you’ll remember, then get back to your HOVUCA account.">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2 justify-center w-full mb-6">
             <Logo />
-            <span className="font-display text-2xl font-bold text-white">Hovuca.</span>
+            <span className="font-display text-2xl font-bold text-foreground">Hovuca.</span>
           </Link>
         </div>
 
@@ -70,82 +71,82 @@ export default function ResetPasswordPage() {
           <>
             {/* Title */}
             <div className="mb-8 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 border border-purple-400/30 mb-4">
-                <KeyRound className="h-6 w-6 text-purple-300" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/30 mb-4">
+                <KeyRound className="h-6 w-6 text-primary" />
               </div>
-              <h1 className="font-display text-2xl font-bold text-white">Set new password</h1>
-              <p className="mt-2 text-sm text-purple-200/70">
+              <h1 className="font-display text-2xl font-bold text-foreground">Set new password</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Your new password must be at least 8 characters long
               </p>
             </div>
 
             {/* Form card */}
-            <div className="rounded-2xl border border-purple-500/30 bg-slate-900/60 backdrop-blur-md p-8 shadow-2xl">
+            <div className="rounded-2xl border border-primary/20 bg-card backdrop-blur-md p-8 shadow-2xl">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {/* New password */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="password" className="text-white">New password</Label>
+                  <Label htmlFor="password" className="text-foreground">New password</Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Min. 8 characters"
                       autoComplete="new-password"
-                      className="bg-white/10 border-purple-400/30 text-white placeholder:text-white/40 focus:border-purple-400/60 focus:ring-purple-500/50"
+                      className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
                       {...register("password")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-400">{errors.password.message}</p>
+                    <p className="text-xs text-destructive">{errors.password.message}</p>
                   )}
                 </div>
 
                 {/* Confirm password */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="password_confirm" className="text-white">Confirm new password</Label>
+                  <Label htmlFor="password_confirm" className="text-foreground">Confirm new password</Label>
                   <div className="relative">
                     <Input
                       id="password_confirm"
                       type={showConfirm ? "text" : "password"}
                       placeholder="Repeat password"
                       autoComplete="new-password"
-                      className="bg-white/10 border-purple-400/30 text-white placeholder:text-white/40 focus:border-purple-400/60 focus:ring-purple-500/50"
+                      className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
                       {...register("password_confirm")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                   {errors.password_confirm && (
-                    <p className="text-xs text-red-400">{errors.password_confirm.message}</p>
+                    <p className="text-xs text-destructive">{errors.password_confirm.message}</p>
                   )}
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+                  className="w-full bg-brand-coral hover:bg-brand-coral-dark text-foreground font-semibold   transition-all duration-300"
                   disabled={isPending}
                 >
                   {isPending ? "Resetting password…" : "Reset password"}
                 </Button>
               </form>
 
-              <p className="mt-6 text-center text-sm text-purple-200/70">
+              <p className="mt-6 text-center text-sm text-muted-foreground">
                 Remember your password?{" "}
                 <Link
                   href="/login"
-                  className="font-medium text-purple-300 hover:text-purple-200 transition-colors"
+                  className="font-medium text-primary hover:text-primary transition-colors"
                 >
                   Sign in
                 </Link>
@@ -156,22 +157,22 @@ export default function ResetPasswordPage() {
           <>
             {/* Success state */}
             <div className="mb-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-emerald-500/20 border border-purple-400/30 mb-4">
-                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 mb-4">
+                <CheckCircle2 className="h-8 w-8 text-primary" />
               </div>
-              <h1 className="font-display text-2xl font-bold text-white">Password reset!</h1>
-              <p className="mt-2 text-sm text-purple-200/70">
+              <h1 className="font-display text-2xl font-bold text-foreground">Password reset!</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Your password has been updated successfully
               </p>
             </div>
 
-            <div className="rounded-2xl border border-purple-500/30 bg-slate-900/60 backdrop-blur-md p-8 shadow-2xl space-y-4">
-              <p className="text-sm text-purple-200/70 text-center">
+            <div className="rounded-2xl border border-primary/20 bg-card backdrop-blur-md p-8 shadow-2xl space-y-4">
+              <p className="text-sm text-muted-foreground text-center">
                 You can now sign in with your new password.
               </p>
               <Button
                 onClick={() => router.push("/login")}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+                className="w-full bg-brand-coral hover:bg-brand-coral-dark text-foreground font-semibold   transition-all duration-300"
               >
                 Go to login
               </Button>
@@ -179,6 +180,6 @@ export default function ResetPasswordPage() {
           </>
         )}
       </div>
-    </div>
+    </AuthPageShell>
   );
 }

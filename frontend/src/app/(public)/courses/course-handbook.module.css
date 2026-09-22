@@ -6,11 +6,12 @@
   --gold: var(--brand-gold);
   --paper: var(--brand-paper);
   --paper-light: var(--brand-paper-light);
+  --white: var(--brand-white);
   --ink: var(--brand-ink);
   --muted: var(--brand-body-muted);
   min-height: 100vh;
   overflow: clip;
-  background: var(--paper);
+  background: var(--white);
   color: var(--ink);
 }
 
@@ -688,7 +689,7 @@
   min-width: min(22rem, 72%);
   padding: 1.3rem 1.6rem;
   border-top-left-radius: 1rem;
-  background: var(--paper);
+  background: var(--white);
   color: var(--forest);
   font-size: 0.82rem;
   font-weight: 800;

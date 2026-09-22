@@ -68,12 +68,12 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
 
     if (isVideo) {
         return (
-            <div className="relative aspect-video w-full max-w-sm overflow-hidden border border-[var(--brand-forest)]/25 bg-[var(--brand-forest-deep)]">
+            <div className="relative aspect-video w-full max-w-sm overflow-hidden border border-primary/25 bg-brand-forest-deep">
                 <video className="h-full w-full object-cover" controls preload="metadata" aria-label={`Video preview: ${title}`}>
                     <source src={url} />
                     Your browser does not support video playback.
                 </video>
-                <span className="pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center gap-1 bg-[var(--brand-forest-deep)]/85 px-1.5 py-1 text-[10px] font-bold text-white">
+                <span className="pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center gap-1 bg-brand-forest-deep/85 px-1.5 py-1 text-[10px] font-bold text-brand-white">
                     <Video className="h-3 w-3" aria-hidden="true" /> Video
                 </span>
             </div>
@@ -81,7 +81,7 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
     }
 
     return (
-        <div className="relative aspect-8.5/11 w-36 overflow-hidden border border-[var(--brand-forest)]/25 bg-white">
+        <div className="relative aspect-8.5/11 w-36 overflow-hidden border border-primary/25 bg-brand-white">
             {!failed && (
                 <canvas
                     ref={canvasRef}
@@ -92,13 +92,13 @@ export function DocumentPreview({ url, title }: { url: string; title: string }) 
                 />
             )}
             {failed && (
-                <div className="flex h-full flex-col items-center justify-center gap-2 bg-[var(--brand-sage-light)] px-3 text-center text-xs font-semibold text-[var(--brand-body-muted)]">
-                    <FileText className="h-9 w-9 text-[var(--brand-forest)]" aria-hidden="true" />
+                <div className="flex h-full flex-col items-center justify-center gap-2 bg-brand-sage-light px-3 text-center text-xs font-semibold text-muted-foreground">
+                    <FileText className="h-9 w-9 text-primary" aria-hidden="true" />
                     Preview unavailable
                 </div>
             )}
-            {!failed && !ready && <p className="absolute inset-0 flex items-center justify-center px-3 text-center text-xs text-[var(--brand-body-muted)]">Loading preview…</p>}
-            {ready && <div className="pointer-events-none absolute bottom-1.5 left-1.5 flex items-center gap-1 bg-white/90 px-1.5 py-1 text-[10px] font-bold text-[var(--brand-forest)]">
+            {!failed && !ready && <p className="absolute inset-0 flex items-center justify-center px-3 text-center text-xs text-muted-foreground">Loading preview…</p>}
+            {ready && <div className="pointer-events-none absolute bottom-1.5 left-1.5 flex items-center gap-1 bg-brand-white/90 px-1.5 py-1 text-[10px] font-bold text-primary">
                 <FileText className="h-3 w-3" aria-hidden="true" /> Page 1
             </div>}
         </div>

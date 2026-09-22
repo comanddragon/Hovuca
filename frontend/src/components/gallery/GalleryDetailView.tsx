@@ -48,15 +48,15 @@ function Lightbox({
     return (
         <AnimatePresence>
             <motion.div
-                className="fixed inset-0 z-[200] flex items-center justify-center bg-black/97 backdrop-blur-sm"
+                className="fixed inset-0 z-[200] flex items-center justify-center bg-brand-black/97 backdrop-blur-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={onClose}
             >
                 {/* Top bar */}
-                <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 py-4 z-20 bg-gradient-to-b from-black/60 to-transparent">
-                    <span className="text-xs text-white/40 tracking-widest uppercase">
+                <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 py-4 z-20 bg-gradient-to-b from-brand-black/60 to-transparent">
+                    <span className="text-xs text-brand-white/40 tracking-widest uppercase">
                         {index + 1} / {images.length}
                     </span>
                     <div className="flex items-center gap-2">
@@ -66,12 +66,12 @@ function Lightbox({
                             target="_blank"
                             rel="noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                            className="rounded-full bg-brand-white/10 p-2 text-brand-white hover:bg-brand-white/20 transition-colors"
                         >
                             <Download className="h-4 w-4" />
                         </a>
                         <button
-                            className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                            className="rounded-full bg-brand-white/10 p-2 text-brand-white hover:bg-brand-white/20 transition-colors"
                             onClick={onClose}
                         >
                             <X className="h-4 w-4" />
@@ -81,7 +81,7 @@ function Lightbox({
 
                 {/* Prev */}
                 <button
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/25 transition-colors z-10"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/25 transition-colors z-10"
                     onClick={(e) => { e.stopPropagation(); onPrev(); }}
                 >
                     <ChevronLeft className="h-5 w-5" />
@@ -112,7 +112,7 @@ function Lightbox({
 
                 {/* Next */}
                 <button
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/25 transition-colors z-10"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/25 transition-colors z-10"
                     onClick={(e) => { e.stopPropagation(); onNext(); }}
                 >
                     <ChevronRight className="h-5 w-5" />
@@ -120,17 +120,17 @@ function Lightbox({
 
                 {/* Bottom caption */}
                 {(image.title || image.caption || image.tags?.length > 0) && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-8 py-6 z-20">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black/80 to-transparent px-8 py-6 z-20">
                         {image.title && (
-                            <p className="text-white font-medium text-sm mb-1">{image.title}</p>
+                            <p className="text-brand-white font-medium text-sm mb-1">{image.title}</p>
                         )}
                         {image.caption && (
-                            <p className="text-white/50 text-xs font-light mb-2">{image.caption}</p>
+                            <p className="text-brand-white/50 text-xs font-light mb-2">{image.caption}</p>
                         )}
                         {image.tags?.length > 0 && (
                             <div className="flex gap-1.5 flex-wrap">
                                 {image.tags.map((tag) => (
-                                    <span key={tag} className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/50">
+                                    <span key={tag} className="rounded-full bg-brand-white/10 px-2 py-0.5 text-[10px] text-brand-white/50">
                                         #{tag}
                                     </span>
                                 ))}
@@ -146,7 +146,7 @@ function Lightbox({
                             key={img.id}
                             onClick={(e) => { e.stopPropagation(); /* handled by parent state */ }}
                             className={`relative shrink-0 h-10 w-14 rounded overflow-hidden transition-all ${
-                                i === index ? "ring-2 ring-white opacity-100" : "opacity-40 hover:opacity-70"
+                                i === index ? "ring-2 ring-brand-white opacity-100" : "opacity-40 hover:opacity-70"
                             }`}
                         >
                             <Image src={img.thumbnail || img.image} alt="" fill sizes="56px" className="object-cover" />
@@ -199,7 +199,7 @@ export function GalleryDetailView() {
             )}
 
             {/* ── HERO ──────────────────────────────────────────────────── */}
-            <div className="relative w-full h-[50vh] min-h-[380px] overflow-hidden bg-neutral-950">
+            <div className="relative w-full h-[50vh] min-h-[380px] overflow-hidden bg-brand-black">
                 {cover ? (
                     <Image
                         src={cover}
@@ -211,7 +211,7 @@ export function GalleryDetailView() {
                         className="object-cover opacity-45"
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-neutral-900 to-neutral-950" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-brand-black to-brand-black" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,var(--brand-black-50)_100%)]" />
@@ -224,7 +224,7 @@ export function GalleryDetailView() {
                     transition={{ duration: 0.4 }}
                 >
                     <Link href="/gallery">
-                        <Button variant="ghost" size="sm" className="gap-2 text-white/70 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/10">
+                        <Button variant="ghost" size="sm" className="gap-2 text-brand-white/70 hover:text-brand-white hover:bg-brand-white/10 backdrop-blur-sm border border-brand-white/10">
                             <ArrowLeft className="h-3.5 w-3.5" />
                             Back to Gallery
                         </Button>
@@ -240,16 +240,16 @@ export function GalleryDetailView() {
                     >
                         <div className="flex flex-wrap items-center gap-2 mb-3">
                             {album.is_featured && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wide">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-0.5 text-[10px] font-bold text-brand-white uppercase tracking-wide">
                                     <Star className="h-2.5 w-2.5" /> Featured
                                 </span>
                             )}
-                            <span className="inline-flex items-center gap-1 rounded-full bg-black/40 backdrop-blur-sm px-2.5 py-0.5 text-[11px] text-white/70">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-brand-black/40 backdrop-blur-sm px-2.5 py-0.5 text-[11px] text-brand-white/70">
                                 <ImageIcon className="h-3 w-3" />
                                 {album.image_count} photos
                             </span>
                             {album.taken_at && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-black/40 backdrop-blur-sm px-2.5 py-0.5 text-[11px] text-white/70">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-brand-black/40 backdrop-blur-sm px-2.5 py-0.5 text-[11px] text-brand-white/70">
                                     <Calendar className="h-3 w-3" />
                                     {format(new Date(album.taken_at), "MMMM d, yyyy")}
                                 </span>
@@ -257,14 +257,14 @@ export function GalleryDetailView() {
                         </div>
 
                         <h1
-                            className="font-display font-light text-white leading-tight tracking-tight"
+                            className="font-display font-light text-brand-white leading-tight tracking-tight"
                             style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
                         >
                             {album.title}
                         </h1>
 
                         {album.description && (
-                            <p className="mt-2 text-white/50 font-light text-sm max-w-xl leading-relaxed">
+                            <p className="mt-2 text-brand-white/50 font-light text-sm max-w-xl leading-relaxed">
                                 {album.description}
                             </p>
                         )}
@@ -325,21 +325,21 @@ export function GalleryDetailView() {
                                 />
 
                                 {/* Hover overlay */}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-                                    <Eye className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                                <div className="absolute inset-0 bg-brand-black/0 group-hover:bg-brand-black/40 transition-colors duration-300 flex items-center justify-center">
+                                    <Eye className="h-6 w-6 text-brand-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                                 </div>
 
                                 {/* Featured star */}
                                 {image.is_featured && (
                                     <div className="absolute top-2 right-2 rounded-full bg-accent/80 p-1">
-                                        <Star className="h-2.5 w-2.5 text-white" />
+                                        <Star className="h-2.5 w-2.5 text-brand-white" />
                                     </div>
                                 )}
 
                                 {/* Caption on hover */}
                                 {image.title && (
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <p className="text-white text-xs font-medium line-clamp-1">{image.title}</p>
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black/70 to-transparent px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                        <p className="text-brand-white text-xs font-medium line-clamp-1">{image.title}</p>
                                     </div>
                                 )}
                             </motion.button>
@@ -366,12 +366,12 @@ export function GalleryDetailView() {
                                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300 flex items-center justify-center">
-                                    <Eye className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-brand-black/0 group-hover:bg-brand-black/35 transition-colors duration-300 flex items-center justify-center">
+                                    <Eye className="h-5 w-5 text-brand-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 {image.title && (
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <p className="text-white text-xs font-medium line-clamp-1">{image.title}</p>
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black/70 to-transparent px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                        <p className="text-brand-white text-xs font-medium line-clamp-1">{image.title}</p>
                                     </div>
                                 )}
                             </motion.button>

@@ -26,10 +26,10 @@ export function ProgramDetailView() {
         ) : (
           <div className="h-56 bg-gradient-to-br from-primary/20 to-primary/5" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 p-6">
           <div className="mb-2"><StatusBadge status={program.status} /></div>
-          <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">{program.title}</h1>
+          <h1 className="font-display text-3xl font-bold text-brand-white sm:text-4xl">{program.title}</h1>
         </div>
       </div>
 

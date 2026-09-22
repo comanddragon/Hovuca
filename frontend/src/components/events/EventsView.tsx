@@ -18,9 +18,9 @@ const PAGE_SIZE = 9;
 
 function EventTypeBadge({ type }: { type: EventList["event_type"] }) {
     const map = {
-        in_person: { label: "In Person", icon: MapPin, color: "bg-green-500/10 text-green-600 border-green-500/20" },
-        online: { label: "Online", icon: Wifi, color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-        hybrid: { label: "Hybrid", icon: Globe, color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+        in_person: { label: "In Person", icon: MapPin, color: "bg-primary/10 text-primary border-primary/20" },
+        online: { label: "Online", icon: Wifi, color: "bg-primary/10 text-primary border-primary/20" },
+        hybrid: { label: "Hybrid", icon: Globe, color: "bg-primary/10 text-primary border-primary/20" },
     };
     const { label, icon: Icon, color } = map[type];
     return (
@@ -73,10 +73,10 @@ function EventCard({ event, index }: { event: EventList; index: number }) {
                             <CalendarDays className="h-12 w-12 text-primary/20" />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     {/* Date chip */}
-                    <div className="absolute top-3 left-3 flex flex-col items-center justify-center rounded-xl bg-white/95 dark:bg-card/95 backdrop-blur-sm shadow-sm px-3 py-2 min-w-[52px] text-center">
+                    <div className="absolute top-3 left-3 flex flex-col items-center justify-center rounded-xl bg-brand-white/95 dark:bg-card/95 backdrop-blur-sm shadow-sm px-3 py-2 min-w-[52px] text-center">
                         <span className="text-[10px] font-semibold uppercase tracking-wide text-primary leading-none">
                             {format(startDate, "MMM")}
                         </span>
@@ -88,12 +88,12 @@ function EventCard({ event, index }: { event: EventList; index: number }) {
                     {/* Badges */}
                     <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
                         {event.is_featured && (
-                            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wide">
+                            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold text-brand-white uppercase tracking-wide">
                                 Featured
                             </span>
                         )}
                         {event.is_full && (
-                            <span className="rounded-full bg-destructive px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wide">
+                            <span className="rounded-full bg-destructive px-2.5 py-0.5 text-[10px] font-bold text-brand-white uppercase tracking-wide">
                                 Full
                             </span>
                         )}
@@ -106,7 +106,7 @@ function EventCard({ event, index }: { event: EventList; index: number }) {
                         <EventTypeBadge type={event.event_type} />
                         {event.category && (
                             <span
-                                className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white"
+                                className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-brand-white"
                                 style={{ backgroundColor: event.category.color }}
                             >
                                 {event.category.name}
@@ -184,7 +184,7 @@ export function EventsView() {
     return (
         <div className="min-h-screen pb-28 bg-background">
             {/* ── HERO ──────────────────────────────────────────────────── */}
-            <section suppressHydrationWarning className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-neutral-950">
+            <section suppressHydrationWarning className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-brand-black">
                 <motion.div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
@@ -194,15 +194,15 @@ export function EventsView() {
                     }}
                 />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--brand-overlay-purple-75)_100%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/50 via-transparent to-neutral-950/80" />
+                <div className="absolute inset-0 bg-gradient-to-b from-brand-black/50 via-transparent to-brand-black/80" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
                 <motion.div
-                    className="relative z-10 mx-auto max-w-4xl px-6 text-center text-white"
+                    className="relative z-10 mx-auto max-w-4xl px-6 text-center text-brand-white"
                     style={{ opacity: heroOpacity }}
                 >
                     <motion.p
-                        className="mb-6 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-white/40"
+                        className="mb-6 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-brand-white/40"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.6 }}
@@ -221,7 +221,7 @@ export function EventsView() {
                     >
                         Events &{" "}
                         <motion.span
-                            className="block italic text-amber-200 font-extralight"
+                            className="block italic text-brand-gold-light font-extralight"
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.55, duration: 0.9 }}
@@ -231,7 +231,7 @@ export function EventsView() {
                     </motion.h1>
 
                     <motion.p
-                        className="mx-auto max-w-lg text-base text-white/50 font-light leading-relaxed mb-10"
+                        className="mx-auto max-w-lg text-base text-brand-white/50 font-light leading-relaxed mb-10"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.65, duration: 0.7 }}
@@ -246,12 +246,12 @@ export function EventsView() {
                         transition={{ delay: 0.8, duration: 0.6 }}
                     >
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-white/40" />
                             <input
                                 placeholder="Search events…"
                                 value={search}
                                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                className="w-full rounded-sm border border-white/15 bg-white/8 backdrop-blur-sm pl-11 pr-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-primary/60 transition-colors"
+                                className="w-full rounded-sm border border-brand-white/15 bg-brand-white/8 backdrop-blur-sm pl-11 pr-4 py-3.5 text-sm text-brand-white placeholder:text-brand-white/30 focus:outline-none focus:border-primary/60 transition-colors"
                             />
                         </div>
                     </motion.div>
@@ -263,9 +263,9 @@ export function EventsView() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 }}
                 >
-                    <span className="text-[9px] tracking-[0.35em] text-white/25 uppercase">Scroll</span>
+                    <span className="text-[9px] tracking-[0.35em] text-brand-white/25 uppercase">Scroll</span>
                     <motion.div
-                        className="w-px h-8 bg-gradient-to-b from-white/25 to-transparent"
+                        className="w-px h-8 bg-gradient-to-b from-brand-white/25 to-transparent"
                         style={{ originY: 0 }}
                         animate={{ scaleY: [0, 1, 0] }}
                         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
