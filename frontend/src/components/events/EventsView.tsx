@@ -1,345 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { EventList, EventCategory } from "@/types";
-import { useEvents, useEventCategories } from "@/hooks";
-import { PageLoader, EmptyState, Pagination } from "@/components/shared";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import {
-    MapPin, Globe, Users, Clock,
-    Search, ArrowRight, CalendarDays, Wifi
-} from "lucide-react";
 import { format, isPast } from "date-fns";
+import { ArrowRight, CalendarDays, Clock, Globe2, MapPin, Search, Users, Wifi } from "lucide-react";
+import type { EventCategory, EventList } from "@/types";
+import { useEventCategories, useEvents } from "@/hooks";
+import { EmptyState, PageLoader, Pagination } from "@/components/shared";
 
 const PAGE_SIZE = 9;
 
-function EventTypeBadge({ type }: { type: EventList["event_type"] }) {
-    const map = {
-        in_person: { label: "In Person", icon: MapPin, color: "bg-primary/10 text-primary border-primary/20" },
-        online: { label: "Online", icon: Wifi, color: "bg-primary/10 text-primary border-primary/20" },
-        hybrid: { label: "Hybrid", icon: Globe, color: "bg-primary/10 text-primary border-primary/20" },
-    };
-    const { label, icon: Icon, color } = map[type];
-    return (
-        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${color}`}>
-            <Icon className="h-3 w-3" />{label}
-        </span>
-    );
+function Format({ type }: { type: EventList["event_type"] }) {
+  const item = { in_person: ["In person", MapPin], online: ["Online", Wifi], hybrid: ["Hybrid", Globe2] }[type];
+  const Icon = item[1];
+  return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary"><Icon aria-hidden="true" className="size-3.5" />{item[0]}</span>;
 }
 
-function StatusBadge({ status }: { status: EventList["status"] }) {
-    const map = {
-        draft: "bg-muted text-muted-foreground",
-        published: "bg-primary/10 text-primary",
-        cancelled: "bg-destructive/10 text-destructive",
-        completed: "bg-muted text-muted-foreground",
-    };
-    return (
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[status]}`}>
-            {status}
-        </span>
-    );
+function DateBlock({ value }: { value: string }) {
+  const date = new Date(value);
+  return <time dateTime={value} className="grid size-[4.6rem] shrink-0 place-content-center border border-primary/25 text-center"><span className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-coral-dark">{format(date, "MMM")}</span><span className="font-display text-2xl font-bold leading-none text-primary">{format(date, "d")}</span></time>;
 }
 
-function EventCard({ event, index }: { event: EventList; index: number }) {
-    const startDate = new Date(event.start_date);
-    const ended = isPast(new Date(event.end_date));
+function EventRow({ event }: { event: EventList }) {
+  const start = new Date(event.start_date);
+  return <li><Link href={`/events/${event.slug}`} className="group grid gap-5 border-b border-primary/15 py-6 sm:grid-cols-[4.6rem_minmax(0,1fr)_auto] sm:items-center"><DateBlock value={event.start_date} /><div className="min-w-0"><div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2"><Format type={event.event_type} />{event.category && <span className="text-xs font-semibold text-muted-foreground">{event.category.name}</span>}{isPast(new Date(event.end_date)) && <span className="text-xs font-semibold text-muted-foreground">Completed</span>}{event.is_full && <span className="text-xs font-semibold text-brand-coral-dark">At capacity</span>}</div><h2 className="font-display text-xl font-bold leading-tight text-primary transition-colors group-hover:text-brand-coral-dark sm:text-2xl">{event.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{event.excerpt}</p><div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1.5"><Clock aria-hidden="true" className="size-3.5" />{format(start, "EEEE, MMMM d · h:mm a")}</span>{event.location_name && <span className="inline-flex items-center gap-1.5"><MapPin aria-hidden="true" className="size-3.5" />{event.location_name}</span>}<span className="inline-flex items-center gap-1.5"><Users aria-hidden="true" className="size-3.5" />{event.attendee_count} attending</span></div></div><span className="inline-flex size-11 items-center justify-center border border-primary/25 text-primary transition-all group-hover:border-brand-coral group-hover:bg-brand-coral group-hover:text-brand-white"><ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" /></span></Link></li>;
+}
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-            viewport={{ once: false, margin: "-50px" }}
-            className="group"
-        >
-            <Link href={`/events/${event.slug}`} className="flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
-                {/* Cover */}
-                <div className="relative h-48 bg-gradient-to-br from-muted to-muted/50 shrink-0">
-                    {event.cover_image ? (
-                        <Image
-                            src={event.cover_image}
-                            alt={event.cover_image_alt || event.title}
-                            fill
-                            loading={index === 0 ? "eager" : "lazy"}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                    ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center">
-                            <CalendarDays className="h-12 w-12 text-primary/20" />
-                        </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {/* Date chip */}
-                    <div className="absolute top-3 left-3 flex flex-col items-center justify-center rounded-xl bg-brand-white/95 dark:bg-card/95 backdrop-blur-sm shadow-sm px-3 py-2 min-w-[52px] text-center">
-                        <span className="text-[10px] font-semibold uppercase tracking-wide text-primary leading-none">
-                            {format(startDate, "MMM")}
-                        </span>
-                        <span className="text-xl font-bold text-foreground leading-tight">
-                            {format(startDate, "d")}
-                        </span>
-                    </div>
-
-                    {/* Badges */}
-                    <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
-                        {event.is_featured && (
-                            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold text-brand-white uppercase tracking-wide">
-                                Featured
-                            </span>
-                        )}
-                        {event.is_full && (
-                            <span className="rounded-full bg-destructive px-2.5 py-0.5 text-[10px] font-bold text-brand-white uppercase tracking-wide">
-                                Full
-                            </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-1 flex-col p-5">
-                    <div className="flex items-center gap-2 mb-3 flex-wrap">
-                        <EventTypeBadge type={event.event_type} />
-                        {event.category && (
-                            <span
-                                className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-brand-white"
-                                style={{ backgroundColor: event.category.color }}
-                            >
-                                {event.category.name}
-                            </span>
-                        )}
-                        {ended && <StatusBadge status="completed" />}
-                    </div>
-
-                    <h3 className="mb-2 font-display text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2 leading-snug">
-                        {event.title}
-                    </h3>
-                    <p className="mb-4 flex-1 text-sm text-muted-foreground line-clamp-2 font-light leading-relaxed">
-                        {event.excerpt}
-                    </p>
-
-                    <div className="space-y-1.5 text-xs text-muted-foreground mb-4">
-                        <div className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 shrink-0" />
-                            <span>{format(startDate, "EEE, MMM d · h:mm a")}</span>
-                        </div>
-                        {event.location_name && (
-                            <div className="flex items-center gap-1.5">
-                                <MapPin className="h-3.5 w-3.5 shrink-0" />
-                                <span className="truncate">{event.location_name}</span>
-                            </div>
-                        )}
-                        <div className="flex items-center gap-1.5">
-                            <Users className="h-3.5 w-3.5 shrink-0" />
-                            <span>{event.attendee_count} attending</span>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-border">
-                        <span className="text-xs text-muted-foreground font-light">
-                            {event.organizer_name ?? "HOVUCA"}
-                        </span>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
-                    </div>
-                </div>
-            </Link>
-        </motion.div>
-    );
+function Feature({ event }: { event: EventList }) {
+  const start = new Date(event.start_date);
+  return <Link href={`/events/${event.slug}`} className="group grid overflow-hidden bg-primary text-brand-white lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)]"><div className="p-7 sm:p-10"><p className="text-xs font-bold uppercase tracking-[0.15em] text-brand-gold-light">Next on the calendar</p><h2 className="mt-5 max-w-xl font-display text-3xl font-bold leading-[1.02] sm:text-4xl">{event.title}</h2><p className="mt-5 max-w-xl text-sm leading-7 text-brand-white/80">{event.excerpt}</p><div className="mt-7 flex flex-wrap gap-x-5 gap-y-3 text-sm text-brand-white/85"><span className="inline-flex items-center gap-2"><CalendarDays aria-hidden="true" className="size-4 text-brand-gold-light" />{format(start, "EEEE, MMMM d")}</span>{event.location_name && <span className="inline-flex items-center gap-2"><MapPin aria-hidden="true" className="size-4 text-brand-gold-light" />{event.location_name}</span>}</div><span className="mt-8 inline-flex items-center gap-3 border-b border-brand-gold-light pb-2 text-sm font-bold">View event details <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" /></span></div><div className="relative min-h-64 bg-brand-forest-deep">{event.cover_image ? <Image src={event.cover_image} alt={event.cover_image_alt || event.title} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover transition-transform duration-500 group-hover:scale-105" /> : <Image src="/heros/hero1.webp" alt="" fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover opacity-65" />}</div></Link>;
 }
 
 export function EventsView() {
-    const [search, setSearch] = useState("");
-    const [categorySlug, setCategorySlug] = useState("");
-    const [eventType, setEventType] = useState("");
-    const [page, setPage] = useState(1);
-    const scrollY = useMotionValue(0);
-    const heroY = useTransform(scrollY, [0, 600], ["0%", "25%"]);
-    const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-
-    useEffect(() => {
-        const update = () => scrollY.set(window.scrollY);
-        window.addEventListener("scroll", update, { passive: true });
-        return () => window.removeEventListener("scroll", update);
-    }, [scrollY]);
-
-    const { data, isLoading, isFetching } = useEvents({
-        search,
-        category: categorySlug,
-        event_type: eventType || undefined,
-        page,
-        page_size: PAGE_SIZE,
-    });
-    const { data: categoriesData } = useEventCategories();
-    const categories = categoriesData?.results ?? [];
-
-    const totalPages = data?.count ? Math.ceil(data.count / PAGE_SIZE) : page;
-    const events = data?.results ?? [];
-
-    if (isLoading) return <PageLoader />;
-
-    return (
-        <div className="min-h-screen pb-28 bg-background">
-            {/* ── HERO ──────────────────────────────────────────────────── */}
-            <section suppressHydrationWarning className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-brand-black">
-                <motion.div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage: "url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80')",
-                        y: heroY,
-                        opacity: 0.2,
-                    }}
-                />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--brand-overlay-purple-75)_100%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-brand-black/50 via-transparent to-brand-black/80" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-
-                <motion.div
-                    className="relative z-10 mx-auto max-w-4xl px-6 text-center text-brand-white"
-                    style={{ opacity: heroOpacity }}
-                >
-                    <motion.p
-                        className="mb-6 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-brand-white/40"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.6 }}
-                    >
-                        <span className="block w-6 h-px bg-primary/60" />
-                        Hovuca Events
-                        <span className="block w-6 h-px bg-primary/60" />
-                    </motion.p>
-
-                    <motion.h1
-                        className="font-display font-extralight leading-[1.06] tracking-tight mb-6"
-                        style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.35, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                    >
-                        Events &{" "}
-                        <motion.span
-                            className="block italic text-brand-gold-light font-extralight"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.55, duration: 0.9 }}
-                        >
-                            Gatherings
-                        </motion.span>
-                    </motion.h1>
-
-                    <motion.p
-                        className="mx-auto max-w-lg text-base text-brand-white/50 font-light leading-relaxed mb-10"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.65, duration: 0.7 }}
-                    >
-                        Connect, learn, and grow with our community. Join workshops, forums, and impact events across Cameroon.
-                    </motion.p>
-
-                    <motion.div
-                        className="mx-auto max-w-md"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8, duration: 0.6 }}
-                    >
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-white/40" />
-                            <input
-                                placeholder="Search events…"
-                                value={search}
-                                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                className="w-full rounded-sm border border-brand-white/15 bg-brand-white/8 backdrop-blur-sm pl-11 pr-4 py-3.5 text-sm text-brand-white placeholder:text-brand-white/30 focus:outline-none focus:border-primary/60 transition-colors"
-                            />
-                        </div>
-                    </motion.div>
-                </motion.div>
-
-                <motion.div
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 }}
-                >
-                    <span className="text-[9px] tracking-[0.35em] text-brand-white/25 uppercase">Scroll</span>
-                    <motion.div
-                        className="w-px h-8 bg-gradient-to-b from-brand-white/25 to-transparent"
-                        style={{ originY: 0 }}
-                        animate={{ scaleY: [0, 1, 0] }}
-                        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                </motion.div>
-            </section>
-
-            {/* ── CONTENT ───────────────────────────────────────────────── */}
-            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-                {/* Filters */}
-                <motion.div
-                    className="mb-10 flex flex-wrap gap-2 items-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    viewport={{ once: false }}
-                >
-                    <Button
-                        size="sm" variant={categorySlug === "" ? "default" : "outline"}
-                        onClick={() => { setCategorySlug(""); setPage(1); }}
-                        className="rounded-full text-xs px-4"
-                    >All</Button>
-                    {categories.map((cat: EventCategory) => (
-                        <Button
-                            key={cat.slug} size="sm"
-                            variant={categorySlug === cat.slug ? "default" : "outline"}
-                            onClick={() => { setCategorySlug(cat.slug); setPage(1); }}
-                            className="rounded-full text-xs px-4"
-                            style={categorySlug === cat.slug ? {} : { borderColor: cat.color, color: cat.color }}
-                        >
-                            {cat.name}
-                        </Button>
-                    ))}
-
-                    <span className="w-px h-5 bg-border mx-1" />
-
-                    {["in_person", "online", "hybrid"].map((t) => (
-                        <Button
-                            key={t} size="sm"
-                            variant={eventType === t ? "default" : "ghost"}
-                            onClick={() => { setEventType(eventType === t ? "" : t); setPage(1); }}
-                            className="rounded-full text-xs px-4 capitalize"
-                        >
-                            {t.replace("_", " ")}
-                        </Button>
-                    ))}
-                </motion.div>
-
-                {/* Grid */}
-                {events.length === 0 && !isFetching ? (
-                    <EmptyState
-                        icon={<CalendarDays className="h-12 w-12" />}
-                        title="No events found"
-                        description="Try different filters or check back later."
-                    />
-                ) : (
-                    <>
-                        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${isFetching ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
-                            {events.map((event, i) => (
-                                <EventCard key={event.id} event={event} index={i} />
-                            ))}
-                        </div>
-
-                        <Pagination
-                            page={page}
-                            totalPages={totalPages}
-                            onPageChange={setPage}
-                            className="mt-12"
-                        />
-                    </>
-                )}
-            </div>
-        </div>
-    );
+  const [search, setSearch] = useState(""); const [category, setCategory] = useState(""); const [type, setType] = useState(""); const [page, setPage] = useState(1);
+  const { data, isLoading, isFetching } = useEvents({ search, category, event_type: type || undefined, page, page_size: PAGE_SIZE });
+  const { data: categoryData } = useEventCategories(); const events = data?.results ?? []; const categories = categoryData?.results ?? [];
+  const browsing = !search && !category && !type && page === 1; const featured = browsing ? events.find((event) => !isPast(new Date(event.end_date))) : undefined; const list = featured ? events.filter((event) => event.id !== featured.id) : events; const totalPages = data?.count ? Math.ceil(data.count / PAGE_SIZE) : 1;
+  if (isLoading) return <PageLoader />;
+  return <main className="min-h-screen bg-background text-primary"><section className="bg-primary text-brand-white"><div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.72fr)] lg:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-gold-light">HOVUCA events</p><h1 className="mt-5 max-w-3xl font-display text-[clamp(3rem,6.5vw,5.7rem)] font-bold leading-[0.94] tracking-[-0.04em]">Meet, learn, and move change forward.</h1><p className="mt-6 max-w-xl text-base leading-7 text-brand-white/80">Find workshops, forums, and community gatherings that turn shared knowledge into practical action.</p></div><div className="border-t border-brand-white/25 pt-6"><p className="text-sm leading-6 text-brand-white/80">Explore events across Cameroon and online.</p><p className="mt-5 font-display text-4xl font-bold text-brand-gold-light">{data?.count ?? 0}</p><p className="mt-1 text-xs font-bold uppercase tracking-[0.15em] text-brand-white/70">Events to explore</p></div></div></section><section className="mx-auto max-w-7xl px-6 py-14 md:py-20"><div className="grid gap-5 border-y border-primary/15 py-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"><label className="relative block max-w-xl"><Search aria-hidden="true" className="absolute left-0 top-1/2 size-4 -translate-y-1/2 text-brand-coral-dark" /><input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search events" className="w-full border-0 border-b border-primary/25 bg-transparent py-3 pl-7 text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></label><div className="flex flex-wrap gap-2">{["in_person", "online", "hybrid"].map((value) => <button key={value} type="button" aria-pressed={type === value} onClick={() => { setType(type === value ? "" : value); setPage(1); }} className={`border px-3 py-2 text-xs font-bold capitalize ${type === value ? "border-primary bg-primary text-brand-white" : "border-primary/25 text-primary hover:bg-muted"}`}>{value.replace("_", " ")}</button>)}</div></div>{categories.length > 0 && <nav className="mt-5 flex flex-wrap gap-x-5 gap-y-3" aria-label="Event categories"><button type="button" onClick={() => { setCategory(""); setPage(1); }} className={`text-sm font-semibold ${!category ? "text-brand-coral-dark underline underline-offset-4" : "text-muted-foreground"}`}>All events</button>{categories.map((item: EventCategory) => <button key={item.slug} type="button" onClick={() => { setCategory(item.slug); setPage(1); }} className={`text-sm font-semibold ${category === item.slug ? "text-brand-coral-dark underline underline-offset-4" : "text-muted-foreground hover:text-primary"}`}>{item.name}</button>)}</nav>}{featured && <div className="mt-12"><Feature event={featured} /></div>}<div className="mt-14 flex items-end justify-between gap-5"><div><h2 className="font-display text-3xl font-bold">{browsing ? "All events" : "Matching events"}</h2><p className="mt-2 text-sm text-muted-foreground">{data?.count ?? 0} event{data?.count === 1 ? "" : "s"} found.</p></div>{isFetching && <span className="text-xs font-semibold text-muted-foreground">Updating list…</span>}</div>{list.length === 0 && !featured && !isFetching ? <EmptyState icon={<CalendarDays className="size-12" />} title="No events found" description="Try a different search or check back soon." /> : <><ol className={`mt-4 transition-opacity ${isFetching ? "opacity-55" : "opacity-100"}`}>{list.map((event) => <EventRow key={event.id} event={event} />)}</ol><Pagination page={page} totalPages={totalPages} onPageChange={setPage} className="mt-12" /></>}</section></main>;
 }
 
 export default EventsView;

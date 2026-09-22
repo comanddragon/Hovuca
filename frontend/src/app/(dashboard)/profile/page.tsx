@@ -18,6 +18,10 @@ import { Camera, KeyRound, User } from "lucide-react";
 const profileSchema = z.object({
   first_name: z.string().min(1, "Required"),
   last_name: z.string().min(1, "Required"),
+  date_of_birth: z.string().optional().refine(
+    (value) => !value || new Date(`${value}T00:00:00`) <= new Date(),
+    "Birthday cannot be in the future",
+  ),
   phone_number: z.string().optional(),
 });
 
@@ -33,7 +37,7 @@ const passwordSchema = z.object({
 type ProfileData = z.infer<typeof profileSchema>;
 type PasswordData = z.infer<typeof passwordSchema>;
 
-export default function ProfilePage() {
+export function AccountSettingsPage() {
   const { user } = useAuthStore();
   const { data: profile, isLoading } = useMe();
   const { mutate: updateProfile, isPending: updating } = useUpdateProfile();
@@ -63,9 +67,10 @@ export default function ProfilePage() {
     useEffect(() => {
         if (profile && !initialized.current) {
             resetProfile({
-                first_name: profile.first_name ?? "",
-                last_name: profile.last_name ?? "",
-                phone_number: profile.phone_number ?? "",
+            first_name: profile.first_name ?? "",
+            last_name: profile.last_name ?? "",
+            date_of_birth: profile.date_of_birth ?? "",
+            phone_number: profile.phone_number ?? "",
             });
             initialized.current = true;
         }
@@ -85,7 +90,7 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <SectionHeader title="My Profile" description="Manage your personal information and security." />
+      <SectionHeader title="Account settings" description="Manage your personal information, learning age, and security." />
 
       {/* Profile header card */}
       <div className="flex items-center gap-5 rounded-xl border border-border bg-card p-6">
@@ -170,6 +175,15 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-1.5">
+                <Label htmlFor="date_of_birth">Birthday</Label>
+                <Input id="date_of_birth" type="date" max={new Date().toISOString().slice(0, 10)} {...profileForm.register("date_of_birth")} />
+                <p className="text-xs text-muted-foreground">This selects age-appropriate learning modules.</p>
+                {profileForm.formState.errors.date_of_birth && (
+                  <p className="text-xs text-destructive">{profileForm.formState.errors.date_of_birth.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
                 <Label>Phone number</Label>
                 <Input placeholder="+1 555 000 0000" {...profileForm.register("phone_number")} />
               </div>
@@ -224,4 +238,8 @@ export default function ProfilePage() {
       </Tabs>
     </div>
   );
+}
+
+export default function ProfilePage() {
+  return <AccountSettingsPage />;
 }

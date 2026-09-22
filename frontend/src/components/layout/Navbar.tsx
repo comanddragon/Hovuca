@@ -148,6 +148,10 @@ export function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     // ✅ track by label, not href — fixes the "all empty-href dropdowns open together" bug
     const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+    const closeMobileNavigation = () => {
+        setMobileOpen(false);
+        setMobileExpanded(null);
+    };
 
     useEffect(() => {
         const updateNavbar = () => setScrolled(window.scrollY > 96);
@@ -163,6 +167,7 @@ export function Navbar() {
             { href: "/projects", label: "Our impact" },
             { href: "/blog", label: "Field stories" },
             { href: "/resources", label: "Resources" },
+            { href: "/events", label: "Events" },
             { href: "/courses", label: "Courses" },
             { href: "/volunteers", label: "Get involved" },
             { href: "/contact", label: "Contact" },
@@ -172,11 +177,12 @@ export function Navbar() {
 
         return (
             <>
+            {mobileOpen && <button type="button" aria-label="Close navigation" onClick={closeMobileNavigation} className="fixed inset-0 z-40 cursor-default xl:hidden" />}
             <header
                 className={cn(
                     "z-50 text-brand-white transition-[width,top,right,background-color,box-shadow] duration-500 ease-out",
                     scrolled
-                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] rounded-full border border-brand-white/25 bg-primary/78 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl xl:w-[940px] 2xl:w-[980px]"
+                        ? "fixed right-3 top-3 w-[calc(100%-1.5rem)] border border-brand-white/25 bg-primary/78 shadow-[0_16px_48px_var(--brand-shadow-forest)] backdrop-blur-xl xl:w-[940px] xl:rounded-full 2xl:w-[980px]"
                         : isHome
                             ? "absolute inset-x-0 top-0 bg-[linear-gradient(to_bottom,var(--brand-nav-overlay-top)_0%,var(--brand-nav-overlay-mid)_58%,transparent_100%)] pb-6"
                             : "relative inset-x-0 top-0 bg-primary"
@@ -259,6 +265,16 @@ export function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                     ))}
+                                    <DropdownMenuSeparator className="my-1 bg-brand-white/20" />
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={isAuthenticated ? "/dashboard/settings" : authPath("/login", pathname)}
+                                            className="cursor-pointer rounded-md px-3 py-2.5 font-semibold text-brand-white hover:text-brand-gold-light"
+                                        >
+                                            <User aria-hidden="true" className="mr-2 h-4 w-4" />
+                                            {isAuthenticated ? "My account" : "Sign in"}
+                                        </Link>
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         )}
@@ -301,6 +317,14 @@ export function Navbar() {
                                     {link.label}
                                 </Link>
                             ))}
+                            <Link
+                                href={isAuthenticated ? "/dashboard/settings" : authPath("/login", pathname)}
+                                onClick={() => setMobileOpen(false)}
+                                className="mt-3 flex items-center gap-2 border-t border-brand-white/20 px-2 pt-4 text-sm font-semibold text-brand-white hover:text-brand-gold-light"
+                            >
+                                <User aria-hidden="true" className="h-4 w-4" />
+                                {isAuthenticated ? "My account" : "Sign in"}
+                            </Link>
                             <Link
                                 href="/donate"
                                 onClick={() => setMobileOpen(false)}
@@ -492,6 +516,15 @@ export function Navbar() {
                                 </div>
                             );
                         })}
+
+                        <Link
+                            href={isAuthenticated ? "/dashboard/settings" : authPath("/login", pathname)}
+                            onClick={() => setMobileOpen(false)}
+                            className="mt-2 flex items-center gap-2 border-t border-primary/10 px-3 pt-4 text-sm font-display font-semibold text-primary hover:text-brand-coral"
+                        >
+                            <User aria-hidden="true" className="h-4 w-4" />
+                            {isAuthenticated ? "My account" : "Sign in"}
+                        </Link>
 
                         {!isAuthenticated && (
                             <div className="mt-2 flex gap-2">

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import {
   BarChart3, Bell, BookOpen, ClipboardList,
-  Heart, LayoutDashboard, Settings, Users, Target, User,
+  Heart, LayoutDashboard, Settings, Users, Target,
 } from "lucide-react";
 
 const allLinks = [
@@ -15,12 +15,11 @@ const allLinks = [
   { href: "/dashboard/tasks", label: "My Tasks", icon: ClipboardList, roles: ["volunteer", "staff", "admin"] },
   { href: "/dashboard/donations", label: "My Donations", icon: Heart, roles: ["donor", "admin", "staff"] },
   { href: "/dashboard/notifications", label: "Notifications", icon: Bell, roles: ["admin", "staff", "volunteer", "student", "donor"] },
-  { href: "/profile", label: "Profile", icon: User, roles: ["admin", "staff", "volunteer", "student", "donor"] },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings, roles: ["admin", "staff", "volunteer", "student", "donor"] },
   // Admin only
   { href: "/dashboard/users", label: "Users", icon: Users, roles: ["admin", "staff"] },
   { href: "/dashboard/programs", label: "Programs", icon: Target, roles: ["admin", "staff"] },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3, roles: ["admin"] },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings, roles: ["admin"] },
 ];
 
 export function DashboardSidebar() {
