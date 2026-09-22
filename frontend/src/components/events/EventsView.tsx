@@ -12,7 +12,7 @@ import { EmptyState, PageLoader, Pagination } from "@/components/shared";
 const PAGE_SIZE = 9;
 
 function Format({ type }: { type: EventList["event_type"] }) {
-  const item = { in_person: ["In person", MapPin], online: ["Online", Wifi], hybrid: ["Hybrid", Globe2] }[type];
+  const item = ({ in_person: ["In person", MapPin], online: ["Online", Wifi], hybrid: ["Hybrid", Globe2] } as const)[type];
   const Icon = item[1];
   return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary"><Icon aria-hidden="true" className="size-3.5" />{item[0]}</span>;
 }

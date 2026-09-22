@@ -51,6 +51,7 @@ class OrganizationAdmin(ModelAdmin):
         "phone",
         "founded_year",
         "branch_count",
+        "donor_count",
         "is_active",
         "created_at",
     ]
@@ -91,11 +92,30 @@ class OrganizationAdmin(ModelAdmin):
         ),
     )
 
+    def get_queryset(self, request):
+        from django.db.models import Count, Q
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(
+                _branch_count=Count(
+                    "branches", filter=Q(branches__deleted_at__isnull=True), distinct=True
+                ),
+                _donor_count=Count(
+                    "donors", filter=Q(donors__deleted_at__isnull=True), distinct=True
+                ),
+            )
+        )
+
+    @admin.display(description="Branches", ordering="_branch_count")
     def branch_count(self, obj):
-        count = obj.branches.filter(deleted_at__isnull=True).count()
+        count = getattr(obj, "_branch_count", obj.branches.filter(deleted_at__isnull=True).count())
         return format_html("<b>{}</b>", count)
 
-    branch_count.short_description = "Branches"
+    @admin.display(description="Donors", ordering="_donor_count")
+    def donor_count(self, obj):
+        count = getattr(obj, "_donor_count", obj.donors.filter(deleted_at__isnull=True).count())
+        return format_html("<b>{}</b>", count)
 
     @admin.display(description="Logo preview")
     def logo_preview(self, obj):

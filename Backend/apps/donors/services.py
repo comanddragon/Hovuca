@@ -4,6 +4,7 @@ apps/donors/services.py
 Business logic for the donors app, kept separate from views.
 """
 
+import uuid
 from django.db import transaction
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
@@ -27,11 +28,19 @@ def get_donor_organizations_queryset(params: dict):
         grant_count=Count("grants", filter=Q(grants__deleted_at__isnull=True))
     )
 
+    organization = params.get("organization")
     status = params.get("status")
     tier = params.get("tier")
     type_ = params.get("type")
     country = params.get("country")
     search = params.get("search")
+
+    if organization:
+        try:
+            uuid.UUID(str(organization))
+            qs = qs.filter(organization_id=organization)
+        except ValueError:
+            qs = qs.filter(organization__slug=organization)
 
     if status:
         qs = qs.filter(status=status)
@@ -132,12 +141,22 @@ def _sync_donor_after_grant(donor: DonorOrganization) -> None:
 # ---------------------------------------------------------------------------
 
 
-def get_donor_summary() -> dict:
+def get_donor_summary(organization=None) -> dict:
     """
     Return a high-level stats summary for the donors dashboard.
+    Optionally filtered by organization UUID or slug.
     """
     orgs = DonorOrganization.objects.filter(deleted_at__isnull=True)
     grants = Grant.objects.filter(deleted_at__isnull=True)
+
+    if organization:
+        try:
+            uuid.UUID(str(organization))
+            orgs = orgs.filter(organization_id=organization)
+            grants = grants.filter(donor_organization__organization_id=organization)
+        except ValueError:
+            orgs = orgs.filter(organization__slug=organization)
+            grants = grants.filter(donor_organization__organization__slug=organization)
 
     tier_counts = {
         row["tier"]: row["count"]

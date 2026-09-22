@@ -308,6 +308,6 @@ class DonorSummaryView(generics.GenericAPIView):
     serializer_class = DonorSummarySerializer
 
     def get(self, request):
-        data = services.get_donor_summary()
+        data = services.get_donor_summary(request.query_params.get("organization"))
         serializer = self.get_serializer(data)
         return Response(serializer.data)

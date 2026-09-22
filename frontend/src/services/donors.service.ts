@@ -25,6 +25,8 @@ export const donorKeys = {
         lists:    ()         => [...donorKeys.organizations.all(), "list"] as const,
         list:     (f: DonorOrganizationFilters) =>
             [...donorKeys.organizations.lists(), f] as const,
+        byOrganization: (orgIdOrSlug: string, f?: DonorOrganizationFilters) =>
+            [...donorKeys.organizations.all(), "organization", orgIdOrSlug, f] as const,
         detail:   (id: string) => [...donorKeys.organizations.all(), "detail", id] as const,
     },
 

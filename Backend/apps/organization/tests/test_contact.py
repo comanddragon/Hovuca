@@ -11,6 +11,8 @@ from apps.organization.tasks import send_contact_message_email
 
 class ContactMessageTests(APITestCase):
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
         self.url = reverse("contact-message-create")
         self.payload = {
             "full_name": "Test Enquirer", "email": "enquirer@example.com",

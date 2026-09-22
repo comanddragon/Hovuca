@@ -75,7 +75,19 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return OrganizationDetailSerializer
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        from django.db.models import Count, Q
+        qs = (
+            super()
+            .get_queryset()
+            .annotate(
+                branch_count=Count(
+                    "branches", filter=Q(branches__deleted_at__isnull=True), distinct=True
+                ),
+                donor_count=Count(
+                    "donors", filter=Q(donors__deleted_at__isnull=True), distinct=True
+                ),
+            )
+        )
         is_active = self.request.query_params.get("is_active")
         if is_active is not None:
             qs = qs.filter(is_active=is_active.lower() == "true")
@@ -89,6 +101,19 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         org = self.get_object()
         branches = org.branches.filter(deleted_at__isnull=True)
         serializer = BranchListSerializer(branches, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"], permission_classes=[AllowAny])
+    def donors(self, request, pk=None):
+        from apps.donors.api.serializers import DonorOrganizationListSerializer
+
+        org = self.get_object()
+        donors = org.donors.filter(deleted_at__isnull=True).order_by("-total_funded", "name")
+        page = self.paginate_queryset(donors)
+        if page is not None:
+            serializer = DonorOrganizationListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = DonorOrganizationListSerializer(donors, many=True)
         return Response(serializer.data)
 
 

@@ -122,6 +122,9 @@ class BranchDetailSerializer(serializers.ModelSerializer):
 
 
 class OrganizationListSerializer(serializers.ModelSerializer):
+    branch_count = serializers.IntegerField(read_only=True)
+    donor_count = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Organization
         fields = [
@@ -130,6 +133,8 @@ class OrganizationListSerializer(serializers.ModelSerializer):
             "slug",
             "logo",
             "website",
+            "branch_count",
+            "donor_count",
             "is_active",
             "created_at",
         ]
@@ -138,6 +143,8 @@ class OrganizationListSerializer(serializers.ModelSerializer):
 
 class OrganizationDetailSerializer(serializers.ModelSerializer):
     branches = BranchListSerializer(many=True, read_only=True)
+    branch_count = serializers.IntegerField(read_only=True)
+    donor_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Organization
@@ -153,6 +160,8 @@ class OrganizationDetailSerializer(serializers.ModelSerializer):
             "address",
             "founded_year",
             "is_active",
+            "branch_count",
+            "donor_count",
             "branches",
             "created_at",
             "updated_at",

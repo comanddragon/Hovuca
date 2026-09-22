@@ -82,7 +82,13 @@ export interface Organization {
     phone: string;
     address: string;
     founded_year: number | null;
+    branch_count?: number;
+    donor_count?: number;
     is_active: boolean;
+}
+
+export interface OrganizationDetail extends Organization {
+    branches?: Branch[];
 }
 
 export interface Branch {
@@ -639,6 +645,8 @@ export type DonorStatus = "active" | "lapsed" | "prospect" | "inactive";
 
 export interface DonorOrganization {
     id: string;
+    organization?: string | null;
+    organization_name?: string | null;
     name: string;
     slug: string;
     website: string | null;
@@ -774,6 +782,7 @@ export interface DonorSummary {
 // ─── Filter shapes (consumed by the service) ──────────────────────────────────
 
 export interface DonorOrganizationFilters {
+    organization?: string;
     status?: DonorStatus;
     tier?: DonorTier;
     type?: DonorType;
