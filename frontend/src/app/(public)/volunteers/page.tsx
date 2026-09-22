@@ -3,11 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import VolunteerApplication from "@/components/volunteers/VolunteerApplication";
+import { constructMetadata, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 
-export const metadata: Metadata = {
-    title: "Volunteer with us",
-    description: "Apply to volunteer with HOVUCA. Share your information, skills and availability to support community-led work in Cameroon.",
-};
+export const metadata: Metadata = constructMetadata({
+    title: "Volunteer With Us",
+    description:
+        "Apply to volunteer with HOVUCA. Share your skills, experience, and availability to support community-led child protection and youth empowerment in Cameroon.",
+    path: "/volunteers",
+    keywords: [
+        "volunteer HOVUCA",
+        "volunteer Cameroon NGO",
+        "humanitarian volunteer Africa",
+        "youth work volunteer",
+        "community engagement Cameroon",
+    ],
+});
 
 const contributions = [
     { title: "Learning & mentorship", description: "Tell us about your experience in teaching, mentoring or helping young people develop practical skills." },
@@ -24,8 +35,14 @@ const questions = [
 ];
 
 export default function VolunteersPage() {
+    const breadcrumbs = getBreadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Volunteer", path: "/volunteers" },
+    ]);
+
     return (
         <div className="bg-background text-[var(--brand-forest)]">
+            <JsonLd data={breadcrumbs} />
             <section aria-labelledby="volunteer-heading" className="grid lg:min-h-[620px] lg:grid-cols-[0.9fr_1.1fr]">
                 <div className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-[max(2.5rem,calc((100vw-1280px)/2))] lg:pr-12 lg:py-20">
                     <h1 id="volunteer-heading" className="max-w-xl font-display text-5xl font-bold leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-7xl">Your skills.<br />Our shared future.</h1>

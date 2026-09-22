@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-export const metadata: Metadata = { title: "About", description: "Learn about HOVUCA’s mission, vision, principles, and work for vulnerable children in Cameroon." };
+import { constructMetadata, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
+
+export const metadata: Metadata = constructMetadata({
+    title: "About Us — Mission, Vision & Principles",
+    description: "Learn about HOVUCA’s mission, vision, principles, and work alongside vulnerable children, girls, and youth in Cameroon.",
+    path: "/about",
+    keywords: ["about HOVUCA", "HOVUCA mission", "NGO Cameroon", "child rights advocacy", "principles", "history"],
+});
 const principles = [
     {
         "title": "Best Interest of the Child",
@@ -51,7 +59,13 @@ const objectives = [
     "Advocate for the rights of children and empower girls and adolescent girls to uphold their rights."
 ];
 export default function AboutPage() {
+    const breadcrumbs = getBreadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "About Us", path: "/about" },
+    ]);
+
     return <div className="bg-white text-[var(--brand-forest)]">
+        <JsonLd data={breadcrumbs} />
         <section className="grid lg:grid-cols-[2fr_3fr]"><div className="bg-[var(--brand-forest)] px-6 py-20 text-[var(--brand-paper)] sm:px-12 lg:pl-[max(3rem,calc((100vw-1280px)/2+1.5rem))]"><h1 className="max-w-2xl font-display text-[clamp(2.35rem,10vw,3rem)] font-bold leading-[1.06] tracking-tight sm:text-7xl lg:text-[clamp(2.5rem,3.8vw,3.25rem)]">Every child deserves protection. And possibility.</h1><p className="mt-8 max-w-lg text-lg leading-8 text-[var(--brand-paper)]/80">We are Hope for Vulnerable Children Association. We work with children, families, and communities to protect rights and open opportunities.</p><a href="#mission" className="mt-8 inline-flex min-h-12 items-center gap-3 border-b border-[var(--brand-paper)]/60 font-semibold">Discover what drives us <ArrowDown aria-hidden="true" className="size-4" /></a></div><div className="relative min-h-96"><Image src="/heros/hero1.webp" alt="Community gathering in support of children" fill priority sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" /><span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[var(--brand-forest)] to-transparent lg:inset-y-0 lg:left-0 lg:right-auto lg:h-auto lg:w-[42%] lg:bg-gradient-to-r" /></div></section>
         <section id="mission" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-16 md:py-24"><h2 className="max-w-3xl font-display text-4xl font-bold leading-tight sm:text-5xl">Research, education, advocacy, and community partnership.</h2><div className="mt-12 grid gap-10 md:grid-cols-2"><div className="border-t border-[var(--brand-forest)]/25 pt-6"><h3 className="font-display text-3xl font-bold">Our mission</h3><p className="mt-5 text-lg leading-8 text-[var(--brand-body-muted)]">Our mission is to use research, education, advocacy and community partnerships to enhance child protection systems and facilitate vulnerable children’s access to basic facilities.</p><p className="mt-5 leading-7 text-[var(--brand-body-muted)]">We are committed to breaking barriers for the girl child, enabling equal rights, equal opportunities, and equal standing in every community we serve.</p></div><div className="border-t border-[var(--brand-forest)]/25 pt-6"><h3 className="font-display text-3xl font-bold">Our vision</h3><p className="mt-5 text-lg leading-8 text-[var(--brand-body-muted)]">Our vision is to create an environment where children, especially girls and those in rural communities, have the right to protection, survival, development, and a voice.</p><p className="mt-5 leading-7 text-[var(--brand-body-muted)]">We imagine a world where every child grows up with dignity, safety, and the tools they need to become the changemakers of tomorrow.</p></div></div></section>
         <section id="principles" className="bg-[var(--brand-sage-light)]"><div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[1fr_1.5fr]"><div><h2 className="font-display text-4xl font-bold sm:text-5xl">Our principles</h2><p className="mt-5 max-w-md leading-7 text-[var(--brand-body-muted)]">The commitments that guide how we work, make decisions, and take responsibility for our actions.</p></div><div className="border-t border-[var(--brand-forest)]/25">{principles.map(principle => <details key={principle.title} className="group border-b border-[var(--brand-forest)]/25 py-5"><summary className="cursor-pointer font-display text-xl font-bold leading-8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-forest)]">{principle.title}</summary><p className="mt-4 pr-6 leading-7 text-[var(--brand-body-muted)]">{principle.text}</p></details>)}</div></div></section>
