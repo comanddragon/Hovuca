@@ -4,12 +4,14 @@ import Image from "next/image";
 import React from 'react';
 import Link from "next/link";
 import { useEffect } from "react";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, Handshake, HeartPulse, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
 import DonorCarousel from "@/components/home/DonorCarousel";
 import HomeProjects from "@/components/home/HomeProjects";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 import { NewsletterSignup } from "@/components/shared/NewsletterSignup";
 import { useArticles, usePrograms, useResources } from "@/hooks";
+import { CommunityPattern } from "@/components/illustrations/CommunityPattern";
+import { ResourceLibrary } from "@/components/illustrations/ResourceLibrary";
 
 const evidenceLinks = [
     { number: "01", label: "Programs", href: "/programs" },
@@ -67,6 +69,8 @@ const fallbackStories = [
         category: { name: "Partnership" },
     },
 ];
+
+const programIcons = [ShieldCheck, Sparkles, HeartPulse];
 
 function SectionKicker({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
     return (
@@ -130,6 +134,7 @@ export function HomeView() {
                         sizes="100vw"
                         className="home-hero-photo object-cover object-[54%_center] lg:object-center"
                     />
+                    <CommunityPattern className="pointer-events-none absolute right-8 top-16 hidden w-56 text-brand-white/70 lg:block" />
 
                     <div className="home-hero-panel absolute inset-x-5 bottom-0 rounded-t-xl bg-brand-white px-6 py-6 text-primary sm:inset-x-auto sm:left-8 sm:w-[440px] lg:left-[clamp(1.5rem,2.6vw,2.5rem)] lg:w-[min(32vw,460px)] lg:min-w-[390px] lg:px-8 lg:py-7">
                         <h1
@@ -177,7 +182,7 @@ export function HomeView() {
                     </p>
                 </section>
 
-                <section className="min-w-0 overflow-hidden border-y border-primary/15 bg-brand-white py-6">
+                <section className="min-w-0 overflow-hidden bg-brand-white py-6">
                     <p className="mb-8 text-center text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">Partners in the work</p>
                     <DonorCarousel />
                 </section>
@@ -206,20 +211,27 @@ export function HomeView() {
                             </div>
                         )}
                         {programs.map((program, index) => (
-                            <Link
+                            (() => {
+                                const ProgramIcon = programIcons[index % programIcons.length];
+
+                                return (
+                            <article
                                 key={program.id}
-                                href={programsArePreviews ? "/programs" : `/programs/${program.slug}`}
-                                className="group flex min-h-[300px] flex-col border-b border-primary/25 px-0 py-9 text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-gold lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
+                                className="flex min-h-[300px] flex-col border-b border-primary/25 px-0 py-9 text-primary lg:border-b-0 lg:border-r lg:px-8 lg:last:border-r-0 lg:first:pl-0"
                             >
-                                <span className="text-sm text-brand-coral-dark">0{index + 1}</span>
+                                <span className="flex items-center justify-between">
+                                    <span className="flex size-14 items-center justify-center rounded-full bg-brand-coral text-brand-white">
+                                        <ProgramIcon aria-hidden="true" className="size-6" strokeWidth={1.8} />
+                                    </span>
+                                    <span className="text-sm text-brand-coral-dark">0{index + 1}</span>
+                                </span>
                                 <h3 className="mt-auto max-w-sm text-3xl font-bold leading-[1.07] tracking-[-0.025em]">
                                     {program.title}
                                 </h3>
                                 <p className="mt-5 max-w-sm text-sm leading-6 text-muted-foreground">{program.excerpt}</p>
-                                <span className="mt-8 inline-flex items-center gap-3 text-xs font-semibold text-brand-coral-dark">
-                                    Discover the program <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                </span>
-                            </Link>
+                            </article>
+                                );
+                            })()
                         ))}
                     </div>
                 </div>
@@ -299,9 +311,10 @@ export function HomeView() {
             </section>
 
             <section className="home-deferred-section home-resources grid bg-primary text-brand-white lg:grid-cols-[0.78fr_1.22fr]" aria-labelledby="resources-heading" data-home-reveal="resources">
-                <div className="home-resource-intro flex min-h-[440px] flex-col justify-between border-b border-brand-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
+                <div className="home-resource-intro relative flex min-h-[440px] flex-col justify-between overflow-hidden border-b border-brand-white/20 px-6 py-14 lg:border-b-0 lg:border-r lg:px-12 lg:py-16">
+                    <ResourceLibrary className="pointer-events-none absolute -bottom-7 -right-8 w-72 text-brand-gold-light/35 sm:-bottom-10 sm:right-0 sm:w-80" />
                     <SectionKicker light>{resourcesArePreviews ? "Resource previews" : "Knowledge for action"}</SectionKicker>
-                    <div>
+                    <div className="relative">
                         <h2 id="resources-heading" className="max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                             Resources made to be used.
                         </h2>
@@ -351,21 +364,39 @@ export function HomeView() {
             </section>
 
             <section className="home-deferred-section home-involved grid overflow-hidden lg:grid-cols-2" aria-labelledby="involved-heading" data-home-reveal="involved">
-                <div className="home-involved-panel home-involved-panel-start bg-brand-gold px-6 py-16 text-primary lg:px-12 lg:py-20">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.28em]">Get involved</p>
-                    <h2 id="involved-heading" className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
+                <div className="home-involved-panel home-involved-panel-start relative isolate overflow-hidden bg-brand-gold px-6 py-16 text-primary lg:px-12 lg:py-20">
+                    <div className="pointer-events-none absolute inset-0 z-0 md:left-auto md:w-[42%]">
+                        <Image src="/images/home/program-skills.webp" alt="" fill sizes="(max-width: 767px) 100vw, 50vw" className="object-cover object-center opacity-25 mix-blend-multiply md:opacity-85" />
+                    </div>
+                    <div className="absolute inset-y-0 right-[38%] z-[1] hidden w-24 bg-brand-gold/80 md:block" aria-hidden="true" />
+                    <div className="relative z-10 max-w-xl">
+                    <span className="flex size-14 items-center justify-center rounded-full bg-primary text-brand-white shadow-lg shadow-primary/15">
+                        <UsersRound aria-hidden="true" className="size-7" strokeWidth={1.8} />
+                    </span>
+                    <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.28em]">Get involved</p>
+                    <h2 id="involved-heading" className="mt-5 text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Bring your skills to the work.
                     </h2>
-                    <p className="mt-7 max-w-xl text-base leading-7 text-brand-teal-muted">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
+                    <p className="mt-7 text-base leading-7 text-brand-teal-muted">Volunteer alongside programs rooted in local knowledge and shared responsibility.</p>
                     <Link href="/volunteers" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-primary px-6 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">Volunteer with us <ArrowRight className="h-4 w-4" /></Link>
+                    </div>
                 </div>
-                <div className="home-involved-panel home-involved-panel-end bg-brand-coral-dark px-6 py-16 text-brand-white lg:px-12 lg:py-20">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-brand-white/75">Work together</p>
-                    <h2 className="mt-5 max-w-xl text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
+                <div className="home-involved-panel home-involved-panel-end relative isolate overflow-hidden bg-brand-coral-dark px-6 py-16 text-brand-white lg:px-12 lg:py-20">
+                    <div className="pointer-events-none absolute inset-0 z-0 md:left-auto md:w-[42%]">
+                        <Image src="/images/home/hero-discussion.webp" alt="" fill sizes="(max-width: 767px) 100vw, 50vw" className="object-cover object-center opacity-25 md:opacity-65" />
+                    </div>
+                    <div className="absolute inset-y-0 right-[38%] z-[1] hidden w-24 bg-brand-coral-dark/85 md:block" aria-hidden="true" />
+                    <div className="relative z-10 max-w-xl">
+                    <span className="flex size-14 items-center justify-center rounded-full bg-brand-white text-brand-coral-dark shadow-lg shadow-primary/15">
+                        <Handshake aria-hidden="true" className="size-7" strokeWidth={1.8} />
+                    </span>
+                    <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.28em] text-brand-white/75">Work together</p>
+                    <h2 className="mt-5 text-4xl font-bold leading-[1.02] tracking-[-0.03em] md:text-6xl">
                         Build a lasting partnership.
                     </h2>
-                    <p className="mt-7 max-w-xl text-base leading-7 text-brand-white/80">Partner with HOVUCA to strengthen programs, knowledge and opportunity in Cameroon.</p>
+                    <p className="mt-7 text-base leading-7 text-brand-white/80">Partner with HOVUCA to strengthen programs, knowledge and opportunity in Cameroon.</p>
                     <Link href="/contact" data-home-action className="mt-9 inline-flex items-center gap-3 rounded-full border border-brand-white px-6 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Start a conversation <ArrowRight className="h-4 w-4" /></Link>
+                    </div>
                 </div>
             </section>
 

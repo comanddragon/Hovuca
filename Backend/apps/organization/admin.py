@@ -6,6 +6,7 @@ from core.admin import HovucaModelAdmin as ModelAdmin
 from core.admin import image_preview
 
 from .models import Branch, ContactMessage, Department, Organization
+from apps.donors.models import DonorOrganization
 
 
 @admin.register(ContactMessage)
@@ -33,6 +34,14 @@ class DepartmentInline(TabularInline):
     show_change_link = True
 
 
+class DonorOrganizationInline(TabularInline):
+    model = DonorOrganization
+    fields = ["name", "type", "tier", "status", "total_funded", "currency"]
+    readonly_fields = ["total_funded"]
+    extra = 0
+    show_change_link = True
+
+
 @admin.register(Organization)
 class OrganizationAdmin(ModelAdmin):
     list_display = [
@@ -49,7 +58,7 @@ class OrganizationAdmin(ModelAdmin):
     search_fields = ["name", "slug", "email"]
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ["id", "logo_preview", "created_at", "updated_at"]
-    inlines = [BranchInline]
+    inlines = [BranchInline, DonorOrganizationInline]
 
     fieldsets = (
         (

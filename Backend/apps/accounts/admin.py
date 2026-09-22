@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.urls import reverse
 from django.utils.html import format_html
 
 from core.admin import HovucaModelAdmin as ModelAdmin
@@ -22,13 +21,13 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         "last_login_ip",
         "created_at",
     ]
+    list_display_links = ("email", "full_name")
     list_filter = ["role", "is_active", "is_staff", "is_email_verified", "created_at"]
     search_fields = ["email", "first_name", "last_name", "phone_number"]
     ordering = ["-created_at"]
     readonly_fields = [
         "id",
         "avatar_preview",
-        "password_change_link",
         "created_at",
         "updated_at",
         "last_login_ip",
@@ -44,6 +43,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                     "email",
                     "first_name",
                     "last_name",
+                    "date_of_birth",
                     "phone_number",
                     "avatar",
                     "avatar_preview",
@@ -53,7 +53,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         (
             "Security",
             {
-                "fields": ("password_change_link",),
+                "fields": ("password",),
             },
         ),
         (
@@ -93,6 +93,9 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                     "email",
                     "first_name",
                     "last_name",
+                    "date_of_birth",
+                    "phone_number",
+                    "avatar",
                     "role",
                     "password1",
                     "password2",
@@ -123,11 +126,6 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             max_width=40,
             max_height=40,
         )
-
-    @admin.display(description="Password")
-    def password_change_link(self, obj):
-        url = reverse("admin:auth_user_password_change", args=[obj.pk])
-        return format_html('<a class="button" href="{}">Change password</a>', url)
 
     def role_badge(self, obj):
         colors = {

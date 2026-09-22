@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import DonationMethods from "@/components/donations/DonationMethods";
 import { constructMetadata, getBreadcrumbSchema, SITE_CONFIG, SITE_URL } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CommunityPattern } from "@/components/illustrations/CommunityPattern";
 
 export const metadata: Metadata = constructMetadata({
     title: "Donate & Support Our Work",
@@ -73,6 +74,7 @@ export default function DonatePage() {
                         sizes="(max-width: 1024px) 100vw, 50vw"
                         className="object-cover"
                     />
+                    <CommunityPattern className="pointer-events-none absolute bottom-6 left-6 w-40 text-brand-white/80 sm:w-52" />
                 </div>
             </section>
 

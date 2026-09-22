@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.events.models import Event, EventCategory, EventImage, EventRegistration
+from apps.programs.api.serializers import ProjectListSerializer
 
 
 # ---------------------------------------------------------------------------
@@ -72,6 +73,7 @@ class EventRegistrationWriteSerializer(serializers.ModelSerializer):
 
 class EventListSerializer(serializers.ModelSerializer):
     category = EventCategorySerializer(read_only=True)
+    project = ProjectListSerializer(read_only=True)
     organizer_name = serializers.CharField(
         source="organizer.get_full_name", read_only=True
     )
@@ -89,6 +91,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "cover_image",
             "cover_image_alt",
             "category",
+            "project",
             "organizer_name",
             "event_type",
             "location_name",
@@ -170,6 +173,7 @@ class EventWriteSerializer(serializers.ModelSerializer):
             "cover_image_alt",
             "category",
             "program",
+            "project",
             "event_type",
             "location_name",
             "location_address",

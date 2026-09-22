@@ -110,11 +110,12 @@ class GrantWriteSerializer(serializers.ModelSerializer):
 
 class DonorOrganizationListSerializer(serializers.ModelSerializer):
     grant_count = serializers.IntegerField(read_only=True)
+    organization_name = serializers.CharField(source="organization.name", read_only=True, default=None)
 
     class Meta:
         model = DonorOrganization
         fields = [
-            "id", "name", "slug", "abbreviation", "type", "logo",
+            "id", "organization", "organization_name", "name", "slug", "abbreviation", "type", "logo",
             "country", "tier", "status", "total_funded", "currency", "website",
             "first_funded_at", "last_funded_at", "grant_count", "created_at",
         ]
@@ -126,11 +127,12 @@ class DonorOrganizationDetailSerializer(serializers.ModelSerializer):
     contacts = DonorContactSerializer(many=True, read_only=True)
     recent_grants = serializers.SerializerMethodField()
     grant_count = serializers.SerializerMethodField()
+    organization_name = serializers.CharField(source="organization.name", read_only=True, default=None)
 
     class Meta:
         model = DonorOrganization
         fields = [
-            "id", "name", "slug", "abbreviation", "type", "logo", "description",
+            "id", "organization", "organization_name", "name", "slug", "abbreviation", "type", "logo", "description",
             "website", "email", "phone",
             "country", "city", "address",
             "tier", "status", "focus_areas",
@@ -158,7 +160,7 @@ class DonorOrganizationWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = DonorOrganization
         fields = [
-            "name", "abbreviation", "type", "logo", "description",
+            "organization", "name", "abbreviation", "type", "logo", "description",
             "website", "email", "phone",
             "country", "city", "address",
             "tier", "status", "focus_areas",

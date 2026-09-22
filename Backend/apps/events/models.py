@@ -87,6 +87,14 @@ class Event(BaseModel):
         blank=True,
         related_name="events",
     )
+    project = models.ForeignKey(
+        "programs.Project",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="events",
+        help_text="Optional project this event or activity supports.",
+    )
     category = models.ForeignKey(
         EventCategory,
         on_delete=models.SET_NULL,

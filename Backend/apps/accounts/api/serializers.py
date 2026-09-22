@@ -137,6 +137,11 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ["first_name", "last_name", "date_of_birth", "phone_number", "avatar"]
 
+    def validate_date_of_birth(self, value):
+        if value and value > timezone.localdate():
+            raise serializers.ValidationError("Birthday cannot be in the future.")
+        return value
+
 
 # ---------------------------------------------------------------------------
 # Change password

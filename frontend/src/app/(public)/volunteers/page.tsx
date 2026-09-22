@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import VolunteerApplication from "@/components/volunteers/VolunteerApplication";
 import { constructMetadata, getBreadcrumbSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CommunityPattern } from "@/components/illustrations/CommunityPattern";
 
 export const metadata: Metadata = constructMetadata({
     title: "Volunteer With Us",
@@ -54,6 +55,7 @@ export default function VolunteersPage() {
                 </div>
                 <div className="relative min-h-80 sm:min-h-[460px] lg:min-h-full">
                     <Image src="/assets/plates/hero-photo.webp" alt="Young people participating in a community discussion" fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
+                    <CommunityPattern className="pointer-events-none absolute bottom-6 right-6 w-40 text-brand-white/80 sm:w-52" />
                 </div>
             </section>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
@@ -30,22 +30,14 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const roles = [
-  { value: "student", label: "Student" },
-  { value: "volunteer", label: "Volunteer" },
-  { value: "donor", label: "Donor" },
-];
-
 export default function RegisterPage() {
   const router = useRouter();
   const { mutate: register, isPending } = useRegister();
 
-    const { register: rhf, handleSubmit, formState: { errors }, setValue, control } = useForm<FormData>({
+    const { register: rhf, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: { role: "student" },
     });
-
-    const selectedRole = useWatch({ control, name: "role" });
 
     useEffect(() => {
         const requestedRole = new URLSearchParams(window.location.search).get("role");
@@ -62,37 +54,25 @@ export default function RegisterPage() {
 
   return (
     <AuthPageShell title="A place to begin." description="Create an account to learn, volunteer, and support practical opportunity with HOVUCA.">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
+      <div className="w-full max-w-md lg:max-w-xl">
+        <div className="mb-8 text-center lg:mb-4">
           <Link href="/" className="inline-flex items-center gap-2">
             <Logo/>
             <span className="font-display text-2xl font-bold text-foreground">Hovuca.</span>
           </Link>
-          <h1 className="mt-6 font-display text-2xl font-bold text-foreground">Create your account</h1>
+          <h1 className="mt-4 font-display text-2xl font-bold text-foreground lg:mt-3">Create your account</h1>
           <p className="mt-1 text-sm text-muted-foreground">Join our community and start making impact</p>
         </div>
 
-        <div className="rounded-2xl border border-primary/20 bg-card backdrop-blur-md p-8 shadow-2xl">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Role selector */}
+        <div className="rounded-2xl border border-primary/15 bg-card p-8 lg:p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 lg:space-y-3">
             <div className="space-y-1.5">
-              <Label className="text-foreground">I am joining as</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {roles.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setValue("role", value as FormData["role"])}
-                    className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                      selectedRole === value
-                        ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-primary/20 text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+              <Label htmlFor="role" className="text-foreground">I am joining as</Label>
+              <select id="role" className="h-10 w-full rounded-lg border border-primary/30 bg-card px-3 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20" {...rhf("role")}>
+                <option value="student">Student</option>
+                <option value="volunteer">Volunteer</option>
+                <option value="donor">Donor</option>
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -130,64 +110,53 @@ export default function RegisterPage() {
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="date_of_birth" className="text-foreground">Birthday <span className="text-muted-foreground">(optional)</span></Label>
-              <Input
-                id="date_of_birth"
-                type="date"
-                autoComplete="bday"
-                max={new Date().toISOString().slice(0, 10)}
-                className="bg-card border-primary/30 text-foreground focus:border-primary/60 focus:ring-primary/20"
-                {...rhf("date_of_birth")}
-              />
-              {errors.date_of_birth && <p className="text-xs text-destructive">{errors.date_of_birth.message}</p>}
+            <div className="grid gap-3 lg:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="date_of_birth" className="text-foreground">Birthday <span className="text-muted-foreground">(optional)</span></Label>
+                <Input id="date_of_birth" type="date" autoComplete="bday" max={new Date().toISOString().slice(0, 10)} className="bg-card border-primary/30 text-foreground focus:border-primary/60 focus:ring-primary/20" {...rhf("date_of_birth")} />
+                {errors.date_of_birth && <p className="text-xs text-destructive">{errors.date_of_birth.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="phone_number" className="text-foreground">Phone <span className="text-muted-foreground">(optional)</span></Label>
+                <Input id="phone_number" type="tel" placeholder="+1 555 000 0000" className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20" {...rhf("phone_number")} />
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="phone_number" className="text-foreground">Phone <span className="text-muted-foreground">(optional)</span></Label>
-              <Input
-                id="phone_number"
-                type="tel"
-                placeholder="+1 555 000 0000"
-                className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
-                {...rhf("phone_number")}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-foreground">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Min. 8 characters"
-                className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
-                {...rhf("password")}
-              />
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="password_confirm" className="text-foreground">Confirm password</Label>
-              <Input
-                id="password_confirm"
-                type="password"
-                placeholder="Repeat password"
-                className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
-                {...rhf("password_confirm")}
-              />
-              {errors.password_confirm && <p className="text-xs text-destructive">{errors.password_confirm.message}</p>}
+            <div className="grid gap-3 lg:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-foreground">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Min. 8 characters"
+                  className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
+                  {...rhf("password")}
+                />
+                {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password_confirm" className="text-foreground">Confirm password</Label>
+                <Input
+                  id="password_confirm"
+                  type="password"
+                  placeholder="Repeat password"
+                  className="bg-card border-primary/30 text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:ring-primary/20"
+                  {...rhf("password_confirm")}
+                />
+                {errors.password_confirm && <p className="text-xs text-destructive">{errors.password_confirm.message}</p>}
+              </div>
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-brand-coral hover:bg-brand-coral-dark text-foreground font-semibold   transition-all duration-300"
+              className="w-full bg-brand-coral font-semibold text-brand-white transition-all duration-300 hover:bg-brand-coral-dark"
               disabled={isPending}
             >
               {isPending ? "Creating account…" : "Create account"}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-muted-foreground lg:mt-4">
             Already have an account?{" "}
             <Link
               href="/login"

@@ -34,6 +34,14 @@ class DonorOrganization(BaseModel):
         INACTIVE = "inactive", "Inactive"
 
     # Identity
+    organization = models.ForeignKey(
+        "organization.Organization",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="donors",
+        help_text="Organization supported by this donor.",
+    )
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True, max_length=280)
     abbreviation = models.CharField(max_length=30, blank=True)

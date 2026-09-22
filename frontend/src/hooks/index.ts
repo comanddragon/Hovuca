@@ -428,10 +428,11 @@ export function useCourses(params?: Record<string, string>) {
 }
 
 export function useCourse(slug: string) {
+    const { isAuthenticated, isHydrated, user } = useAuthStore();
     return useQuery({
-        queryKey: keys.course(slug),
+        queryKey: [...keys.course(slug), isAuthenticated ? user?.date_of_birth ?? "birthday-missing" : "anonymous"],
         queryFn: () => coursesService.getCourse(slug),
-        enabled: !!slug,
+        enabled: isHydrated && !!slug,
     });
 }
 

@@ -56,18 +56,18 @@ class DonorEngagementInline(TabularInline):
 @admin.register(DonorOrganization)
 class DonorOrganizationAdmin(ModelAdmin):
     list_display = (
-        "logo_thumbnail", "name", "abbreviation", "type", "tier_badge",
+        "logo_thumbnail", "name", "organization", "abbreviation", "type", "tier_badge",
         "status", "country", "total_funded", "currency",
         "grant_count_display", "relationship_owner", "last_funded_at",
     )
     list_display_links = ("name",)
-    list_filter = ("status", "tier", "type", "country")
+    list_filter = ("organization", "status", "tier", "type", "country")
     search_fields = ("name", "abbreviation", "email", "city", "country")
     readonly_fields = (
         "slug", "total_funded", "first_funded_at", "last_funded_at",
         "created_at", "updated_at", "logo_thumbnail",
     )
-    autocomplete_fields = ("relationship_owner",)
+    autocomplete_fields = ("organization", "relationship_owner")
     prepopulated_fields = {}  # slug is auto-generated in model.save()
     ordering = ("-total_funded", "name")
     inlines = [DonorContactInline, GrantInline, DonorEngagementInline]
@@ -76,7 +76,7 @@ class DonorOrganizationAdmin(ModelAdmin):
     fieldsets = (
         ("Identity", {
             "fields": (
-                "name", "slug", "abbreviation", "type",
+                "organization", "name", "slug", "abbreviation", "type",
                 "logo", "logo_thumbnail", "description",
             ),
         }),

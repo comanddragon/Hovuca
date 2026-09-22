@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CheckCircle2, ChevronDown, Clock3, Layers3, LockKeyhole, UsersRound } from "lucide-react";
 
 import { useChapter, useCourse, useEnroll, useEnrollments, useMarkChapterComplete } from "@/hooks";
 import { useAuthStore } from "@/store/auth.store";
@@ -52,6 +52,9 @@ export function CourseDetailClientView() {
   const { mutate: enroll, isPending: enrolling } = useEnroll();
   const { mutate: markChapterComplete, isPending: markingChapter } = useMarkChapterComplete();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  // `undefined` preserves the useful initial default (the active module is
+  // open), while `null` lets a learner intentionally close every outline.
+  const [expandedModuleId, setExpandedModuleId] = useState<string | null | undefined>(undefined);
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [completedChapterId, setCompletedChapterId] = useState<string | null>(null);
   const { data: selectedChapter, isLoading: chapterLoading, isError: chapterError } = useChapter(selectedChapterId);
@@ -80,6 +83,7 @@ export function CourseDetailClientView() {
   const isEnrolled = Boolean(enrollment);
   const chapterCount = modules.reduce((total, module) => total + (module.chapter_count || module.chapters?.length || 0), 0);
   const selectedMinutes = chapters.reduce((total, chapter) => total + chapter.duration_minutes, 0);
+  const audience = courseAudience(modules);
   const selectedChapterSummary = chapters.find((chapter) => chapter.id === selectedChapterId);
   const canReadSelectedChapter = isEnrolled || Boolean(isAuthenticated && selectedChapterSummary?.is_preview);
 
@@ -104,7 +108,23 @@ export function CourseDetailClientView() {
           <p className={styles.eyebrow}>Field handbook · {course.subject?.name ?? "Community learning"}</p>
           <h1 id="course-title" className={styles.heroTitle}>{course.title}</h1>
           <p className={styles.heroSummary}>{course.description}</p>
+          <div className={styles.heroFacts} aria-label="Course overview">
+            <span><Layers3 aria-hidden="true" size={16} /> {modules.length} modules</span>
+            <span><BookOpenCheck aria-hidden="true" size={16} /> {chapterCount} sessions</span>
+            <span><Clock3 aria-hidden="true" size={16} /> {course.estimated_hours} hours</span>
+          </div>
         </div>
+      </section>
+
+      <section className={styles.courseSnapshot} aria-label="Course snapshot">
+        <dl className={styles.snapshotFacts}>
+          <div><dt>Level</dt><dd>{course.difficulty}</dd></div>
+          <div><dt>Audience</dt><dd>{audience}</dd></div>
+          <div><dt>Format</dt><dd>{course.is_free ? "Free access" : "Access by request"}</dd></div>
+        </dl>
+        {course.modules_are_age_filtered && course.learner_age !== null && course.learner_age !== undefined && (
+          <p className={styles.tailoredNote}><UsersRound aria-hidden="true" size={18} /> Learning path selected for age {course.learner_age}.</p>
+        )}
       </section>
 
       <div className={styles.handbookGrid}>
@@ -114,24 +134,58 @@ export function CourseDetailClientView() {
             <nav className={styles.moduleNav}>
               {modules.map((module, index) => {
                 const isActive = module.id === activeModule?.id;
+                const isExpanded = expandedModuleId === undefined
+                  ? module.id === activeModule?.id
+                  : module.id === expandedModuleId;
+                const moduleChapters = [...(module.chapters ?? [])].sort((a, b) => a.order - b.order);
                 return (
-                  <button
-                    key={module.id}
-                    type="button"
-                    className={`${styles.moduleButton} ${isActive ? styles.moduleButtonActive : ""}`}
-                    aria-current={isActive ? "page" : undefined}
-                    onClick={() => setActiveModuleId(module.id)}
-                  >
-                    <span className={styles.moduleNumber}>{String(index + 1).padStart(2, "0")}</span>
-                    <span className={styles.moduleName}>{displayModuleTitle(module.title)}</span>
-                  </button>
+                  <div key={module.id} className={`${styles.moduleItem} ${isActive ? styles.moduleItemActive : ""}`}>
+                    <button
+                      type="button"
+                      className={styles.moduleButton}
+                      aria-current={isActive ? "page" : undefined}
+                      aria-expanded={isExpanded}
+                      aria-controls={`module-${module.id}-chapters`}
+                      onClick={() => {
+                        setActiveModuleId(module.id);
+                        setExpandedModuleId(isExpanded ? null : module.id);
+                      }}
+                    >
+                      <span className={styles.moduleNumber}>{String(index + 1).padStart(2, "0")}</span>
+                      <span className={styles.moduleName}>{displayModuleTitle(module.title)}</span>
+                      <ChevronDown aria-hidden="true" size={15} className={`${styles.moduleChevron} ${isExpanded ? styles.moduleChevronOpen : ""}`} />
+                    </button>
+                    {isExpanded && (
+                      <ol id={`module-${module.id}-chapters`} className={styles.moduleChapterList}>
+                        {moduleChapters.length ? moduleChapters.map((chapter, chapterIndex) => {
+                          const canOpen = isEnrolled || Boolean(isAuthenticated && chapter.is_preview);
+                          return (
+                            <li key={chapter.id}>
+                              <button
+                                type="button"
+                                className={`${styles.moduleChapterButton} ${selectedChapterId === chapter.id ? styles.moduleChapterButtonActive : ""}`}
+                                disabled={!canOpen}
+                                onClick={() => {
+                                  setActiveModuleId(module.id);
+                                  setSelectedChapterId(chapter.id);
+                                }}
+                              >
+                                <span>{String(chapterIndex + 1).padStart(2, "0")}</span>
+                                <span>{chapter.title}</span>
+                                {canOpen ? <ArrowRight aria-hidden="true" size={13} /> : <LockKeyhole aria-label="Enroll to access" size={13} />}
+                              </button>
+                            </li>
+                          );
+                        }) : <li className={styles.moduleChapterEmpty}>Sessions are being prepared.</li>}
+                      </ol>
+                    )}
+                  </div>
                 );
               })}
             </nav>
           ) : (
             <p className={styles.railNote}>The first modules are being prepared.</p>
           )}
-          <p className={styles.railNote}>Choose a module to update the active folio. Your place stays visible as you move through the handbook.</p>
         </aside>
 
         <main id="handbook-content" className={styles.chapterStage}>
@@ -150,6 +204,11 @@ export function CourseDetailClientView() {
                 </div>
                 <h2 className={styles.moduleTitle}>{displayModuleTitle(activeModule.title)}</h2>
                 <h3 className={styles.chapterTitle}>{leadChapter?.title ?? "Module overview"}</h3>
+                <div className={styles.moduleMetrics} aria-label="Selected module details">
+                  <span>{chapters.length} {chapters.length === 1 ? "session" : "sessions"}</span>
+                  <span>{selectedMinutes ? formatMinutes(selectedMinutes) : "Self-paced"}</span>
+                  <span>Ages {ageBand(activeModule)}</span>
+                </div>
 
                 <div className={styles.lessonPhotoWrap}>
                   <Image
@@ -251,7 +310,7 @@ export function CourseDetailClientView() {
             <div className={styles.fact}><dt>Modules</dt><dd>{modules.length}</dd></div>
             <div className={styles.fact}><dt>Sessions</dt><dd>{chapterCount}</dd></div>
             <div className={styles.fact}><dt>Time</dt><dd>{course.estimated_hours} hours</dd></div>
-            <div className={styles.fact}><dt>Ages</dt><dd>{courseAudience(modules)}</dd></div>
+            <div className={styles.fact}><dt>Ages</dt><dd>{audience}</dd></div>
             {course.instructor && <div className={styles.fact}><dt>Instructor</dt><dd>{course.instructor.full_name}</dd></div>}
           </dl>
 

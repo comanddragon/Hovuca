@@ -85,7 +85,7 @@ class EventViewSet(viewsets.ModelViewSet):
     PATCH  /api/v1/events/{slug}/images/{id}/     [staff/admin]
 
     Filters: ?category=<slug>  ?event_type=<str>  ?status=<str>
-             ?search=<str>  ?is_featured=true  ?program=<slug>
+             ?search=<str>  ?is_featured=true  ?program=<slug>  ?project=<slug>
     """
 
     lookup_field = "slug"
@@ -111,7 +111,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = (
             Event.objects.filter(deleted_at__isnull=True)
-            .select_related("organizer", "category", "program")
+            .select_related("organizer", "category", "program", "project")
             .prefetch_related("registrations", "images")
         )
 
@@ -128,6 +128,7 @@ class EventViewSet(viewsets.ModelViewSet):
         search = self.request.query_params.get("search")
         is_featured = self.request.query_params.get("is_featured")
         program = self.request.query_params.get("program")
+        project = self.request.query_params.get("project")
 
         if category:
             qs = qs.filter(category__slug=category)
@@ -143,6 +144,8 @@ class EventViewSet(viewsets.ModelViewSet):
             qs = qs.filter(is_featured=is_featured.lower() == "true")
         if program:
             qs = qs.filter(program__slug=program)
+        if project:
+            qs = qs.filter(project__slug=project)
 
         return qs.distinct().order_by("start_date")
 

@@ -308,6 +308,8 @@ export interface Course {
     estimated_hours: number;
     enrollment_count: number;
     modules?: Module[];
+    learner_age?: number | null;
+    modules_are_age_filtered?: boolean;
     created_at: string;
 }
 
@@ -492,6 +494,7 @@ export interface EventList {
     max_attendees: number | null;
     location_name: string;
     category: EventCategory | null;
+    project: Project | null;
     organizer_name: string | null;
     attendee_count: number;
     is_full: boolean;
@@ -540,6 +543,7 @@ export interface EventWrite {
     max_attendees?: number | null;
     category?: number | null;
     program?: number | null;
+    project?: string | null;
     is_featured?: boolean;
     meta_title?: string;
     meta_description?: string;

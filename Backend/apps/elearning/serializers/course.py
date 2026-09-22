@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
 from apps.elearning.models.course import Subject, Course
+from apps.elearning.audience import learner_age
 
 
 # ---------------------------------------------------------------------------
@@ -75,6 +76,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     enrollment_count = serializers.ReadOnlyField(source="total_enrollments")
     # Modules injected by ModuleSerializer (avoid circular import — set via context or view)
     modules = serializers.SerializerMethodField()
+    learner_age = serializers.SerializerMethodField()
+    modules_are_age_filtered = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -94,6 +97,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
             "is_free",
             "enrollment_count",
             "modules",
+            "learner_age",
+            "modules_are_age_filtered",
             "created_at",
             "updated_at",
         ]
@@ -105,6 +110,13 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return ModuleDetailSerializer(
             obj.modules.all(), many=True, context=self.context
         ).data
+
+    def get_learner_age(self, obj):
+        return learner_age(self.context.get("request").user) if self.context.get("request") else None
+
+    def get_modules_are_age_filtered(self, obj):
+        request = self.context.get("request")
+        return bool(request and learner_age(request.user) is not None)
 
     def create(self, validated_data):
         subject_id = validated_data.pop("subject_id")

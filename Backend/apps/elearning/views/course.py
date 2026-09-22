@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -7,6 +8,8 @@ from core.pagination import StandardPagination
 from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.course import Subject, Course
+from apps.elearning.models.module import Module
+from apps.elearning.audience import modules_for_learner
 from apps.elearning.serializers.course import (
     SubjectSerializer,
     CourseListSerializer,
@@ -109,6 +112,15 @@ class CourseViewSet(viewsets.ModelViewSet):
             qs = qs.filter(title__icontains=search) | qs.filter(description__icontains=search)
         if instructor_id:
             qs = qs.filter(instructor_id=instructor_id)
+
+        if self.action == "retrieve":
+            modules = modules_for_learner(
+                Module.objects.filter(deleted_at__isnull=True).order_by("order"),
+                user,
+            ).prefetch_related("chapters")
+            qs = qs.prefetch_related(
+                Prefetch("modules", queryset=modules)
+            )
         return qs
 
     def perform_destroy(self, instance):

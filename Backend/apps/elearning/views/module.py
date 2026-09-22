@@ -5,6 +5,7 @@ from core.pagination import StandardPagination
 from core.permissions import IsAdmin, IsStaffOrAdmin
 
 from apps.elearning.models.module import Module
+from apps.elearning.audience import modules_for_learner
 from apps.elearning.serializers.module import (
     ModuleListSerializer,
     ModuleDetailSerializer,
@@ -50,7 +51,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
         course_id = self.request.query_params.get("course")
         if course_id:
             qs = qs.filter(course_id=course_id)
-        return qs
+        return modules_for_learner(qs, self.request.user)
 
     def perform_destroy(self, instance):
         instance.soft_delete()

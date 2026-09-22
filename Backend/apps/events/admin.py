@@ -59,16 +59,16 @@ class EventRegistrationInline(TabularInline):
 @admin.register(Event)
 class EventAdmin(ModelAdmin):
     list_display = (
-        "title", "category", "event_type", "status",
+        "title", "project", "category", "event_type", "status",
         "start_date", "end_date", "is_featured", "attendee_count", "view_count",
     )
-    list_filter = ("status", "event_type", "is_featured", "category", "program")
+    list_filter = ("status", "event_type", "is_featured", "category", "program", "project")
     search_fields = ("title", "slug", "location_name", "description")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("cover_preview", "view_count", "attendee_count", "is_full", "created_at", "updated_at")
     date_hierarchy = "start_date"
     ordering = ("-start_date",)
-    autocomplete_fields = ("organizer", "category", "program")
+    autocomplete_fields = ("organizer", "category", "program", "project")
     inlines = [EventImageInline, EventRegistrationInline]
 
     fieldsets = (
@@ -76,7 +76,7 @@ class EventAdmin(ModelAdmin):
             "fields": ("title", "slug", "excerpt", "description", "cover_image", "cover_image_alt", "cover_preview"),
         }),
         ("Organisation", {
-            "fields": ("organizer", "program", "category"),
+            "fields": ("organizer", "program", "project", "category"),
         }),
         ("Scheduling", {
             "fields": ("start_date", "end_date"),
