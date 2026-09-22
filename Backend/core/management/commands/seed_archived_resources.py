@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils.dateparse import parse_datetime
 
-from apps.blogs.models import Resource
+from apps.content.models import Resource
 
 logger = logging.getLogger(__name__)
 

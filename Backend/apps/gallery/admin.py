@@ -1,7 +1,9 @@
 from django.contrib import admin
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
 from apps.gallery.models import GalleryAlbum, GalleryImage
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview, video_preview
 
 # ---------------------------------------------------------------------------
 # Inline
@@ -27,10 +29,10 @@ class GalleryAlbumAdmin(ModelAdmin):
         "title", "is_published", "is_featured", "taken_at",
         "image_count", "event", "program", "created_by",
     )
-    list_filter = ("is_published", "is_featured", "program")
+    list_filter = ("is_published", "is_featured", "event", "program", "project")
     search_fields = ("title", "slug", "description")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("image_count", "effective_cover", "created_at", "updated_at")
+    readonly_fields = ("cover_preview", "image_count", "created_at", "updated_at")
     date_hierarchy = "taken_at"
     ordering = ("-taken_at", "-created_at")
     autocomplete_fields = ("created_by", "event", "program")
@@ -38,7 +40,7 @@ class GalleryAlbumAdmin(ModelAdmin):
 
     fieldsets = (
         ("Content", {
-            "fields": ("title", "slug", "description", "cover_image", "effective_cover"),
+            "fields": ("title", "slug", "description", "cover_image", "cover_preview"),
         }),
         ("Linkage", {
             "fields": ("event", "program", "project"),
@@ -53,6 +55,10 @@ class GalleryAlbumAdmin(ModelAdmin):
     )
 
     actions = ["publish_albums", "unpublish_albums", "feature_albums", "unfeature_albums"]
+
+    @admin.display(description="Cover preview")
+    def cover_preview(self, obj):
+        return image_preview(obj.effective_cover, alt=f"Cover for {obj.title}")
 
     @admin.action(description="Publish selected albums")
     def publish_albums(self, request, queryset):
@@ -86,15 +92,15 @@ class GalleryImageAdmin(ModelAdmin):
         "title_or_id", "album", "media_type", "order",
         "is_featured", "view_count", "uploaded_by",
     )
-    list_filter = ("media_type", "is_featured", "album")
+    list_filter = ("media_type", "is_featured", "album", "created_at")
     search_fields = ("title", "caption", "alt_text", "album__title")
-    readonly_fields = ("view_count", "thumbnail", "created_at", "updated_at")
+    readonly_fields = ("media_preview", "thumbnail_preview", "view_count", "created_at", "updated_at")
     ordering = ("album", "order", "created_at")
     autocomplete_fields = ("album", "uploaded_by")
 
     fieldsets = (
         ("Media", {
-            "fields": ("album", "image", "thumbnail", "media_type"),
+            "fields": ("album", "image", "media_type", "media_preview", "thumbnail_preview"),
         }),
         ("Metadata", {
             "fields": ("title", "caption", "alt_text", "tags"),
@@ -113,6 +119,16 @@ class GalleryImageAdmin(ModelAdmin):
     def title_or_id(self, obj):
         return obj.title or f"Image #{obj.pk}"
     title_or_id.short_description = "Title"
+
+    @admin.display(description="Media preview")
+    def media_preview(self, obj):
+        if obj.media_type == GalleryImage.MediaType.VIDEO:
+            return video_preview(obj.image, label=obj.title or "Gallery video")
+        return image_preview(obj.image, alt=obj.alt_text or obj.title or "Gallery image")
+
+    @admin.display(description="Thumbnail preview")
+    def thumbnail_preview(self, obj):
+        return image_preview(obj.thumbnail, alt=obj.alt_text or obj.title or "Gallery thumbnail")
 
     @admin.action(description="Mark selected images as featured")
     def feature_images(self, request, queryset):

@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.db.models import Count, Q
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
 from apps.donors.models import DonorContact, DonorEngagement, DonorOrganization, Grant
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import document_preview, image_preview
 
 # ---------------------------------------------------------------------------
 # Inlines
@@ -117,12 +119,7 @@ class DonorOrganizationAdmin(ModelAdmin):
 
     @admin.display(description="Logo")
     def logo_thumbnail(self, obj):
-        if obj.logo:
-            return format_html(
-                '<img src="{}" style="height:36px;width:auto;object-fit:contain;border-radius:4px;" />',
-                obj.logo.url,
-            )
-        return "—"
+        return image_preview(obj.logo, alt=f"Logo for {obj.name}")
 
     @admin.display(description="Tier", ordering="tier")
     def tier_badge(self, obj):
@@ -218,7 +215,7 @@ class GrantAdmin(ModelAdmin):
         "donor_organization__name", "internal_owner__email",
     )
     autocomplete_fields = ("donor_organization", "contact", "internal_owner", "program", "project")
-    readonly_fields = ("report_submitted_at", "created_at", "updated_at")
+    readonly_fields = ("agreement_document_preview", "report_submitted_at", "created_at", "updated_at")
     date_hierarchy = "disbursed_date"
     ordering = ("-disbursed_date", "-created_at")
     save_on_top = True
@@ -239,6 +236,7 @@ class GrantAdmin(ModelAdmin):
         ("Documents & Reporting", {
             "fields": (
                 "agreement_document",
+                "agreement_document_preview",
                 "report_submitted", "report_submitted_at",
             ),
         }),
@@ -264,6 +262,10 @@ class GrantAdmin(ModelAdmin):
                 "internal_owner", "program", "project",
             )
         )
+
+    @admin.display(description="Agreement preview")
+    def agreement_document_preview(self, obj):
+        return document_preview(obj.agreement_document, label=obj.title)
 
     @admin.display(description="Status", ordering="status")
     def status_badge(self, obj):

@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from core.pagination import StandardPagination
 from core.permissions import IsAdmin, IsStaffOrAdmin, IsOwnerOrAdmin
 
-from apps.blogs.models import Article, Category, Tag, Comment, Like, Bookmark, NewsletterSubscriber, Resource
+from apps.content.models import Article, Category, Tag, Comment, Like, Bookmark, NewsletterSubscriber, Resource
 from .serializers import (
     ArticleListSerializer,
     ArticleDetailSerializer,

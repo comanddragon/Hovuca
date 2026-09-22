@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import User
-from apps.blogs.models import Article
+from apps.content.models import Article
 from apps.donations.models import Donation
 from apps.programs.models import Program, Project
 from apps.volunteers.models import VolunteerProfile

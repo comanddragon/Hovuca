@@ -5,7 +5,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.blogs.importing import ArchivedArticle, scrape_archive
+from apps.content.importing import ArchivedArticle, scrape_archive
 
 
 class Command(BaseCommand):

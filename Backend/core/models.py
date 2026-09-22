@@ -63,3 +63,27 @@ class BaseModel(models.Model):
     @property
     def is_deleted(self):
         return self.deleted_at is not None
+
+
+class ApplicationLog(models.Model):
+    """Persisted operational warnings and errors for superuser review."""
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    level = models.CharField(max_length=16, db_index=True)
+    logger = models.CharField(max_length=255, db_index=True)
+    message = models.TextField()
+    request_id = models.CharField(max_length=128, blank=True, db_index=True)
+    traceback = models.TextField(blank=True)
+
+    class Meta:
+        db_table = "core_application_logs"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["level", "created_at"]),
+            models.Index(fields=["logger", "created_at"]),
+        ]
+        verbose_name = "application log"
+        verbose_name_plural = "application logs"
+
+    def __str__(self):
+        return f"{self.level}: {self.logger} ({self.created_at:%Y-%m-%d %H:%M:%S})"

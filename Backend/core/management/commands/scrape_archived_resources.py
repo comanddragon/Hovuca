@@ -6,7 +6,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.blogs.importing import ArchivedResource, scrape_resources, scrape_uploads
+from apps.content.importing import ArchivedResource, scrape_resources, scrape_uploads
 
 
 class Command(BaseCommand):

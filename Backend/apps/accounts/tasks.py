@@ -57,7 +57,7 @@ def send_welcome_email(self, user_id: str, frontend_url: str = ""):
             "frontend_url": frontend_url,
         })
         _send(to=user.email, subject="Welcome to HOVUCA 🎉", html=html)
-        logger.info("Welcome email sent to %s", user.email)
+        logger.info("Welcome email sent for user_id=%s", user.id)
 
     except Exception as exc:
         logger.error("send_welcome_email failed for %s: %s", user_id, exc)
@@ -91,7 +91,7 @@ def send_password_reset_email(self, user_id: str, reset_url: str):
             "frontend_url": reset_url.split("/reset-password")[0],
         })
         _send(to=user.email, subject="Reset your HOVUCA password", html=html)
-        logger.info("Password reset email sent to %s", user.email)
+        logger.info("Password reset email sent for user_id=%s", user.id)
 
     except Exception as exc:
         logger.error("send_password_reset_email failed for %s: %s", user_id, exc)
@@ -124,7 +124,7 @@ def send_email_verification(self, user_id: str, verify_url: str):
             "frontend_url": verify_url.split("/verify")[0],
         })
         _send(to=user.email, subject="Verify your HOVUCA email address", html=html)
-        logger.info("Verification email sent to %s", user.email)
+        logger.info("Verification email sent for user_id=%s", user.id)
 
     except Exception as exc:
         logger.error("send_email_verification failed for %s: %s", user_id, exc)
@@ -148,10 +148,10 @@ def send_password_changed_email(self, email: str, frontend_url: str = ""):
             "frontend_url": frontend_url,
         })
         _send(to=email, subject="Your HOVUCA password was changed", html=html)
-        logger.info("Password changed email sent to %s", email)
+        logger.info("Password changed email sent")
 
     except Exception as exc:
-        logger.error("send_password_changed_email failed for %s: %s", email, exc)
+        logger.error("send_password_changed_email failed: %s", exc)
         raise self.retry(exc=exc)
 
 

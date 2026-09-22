@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
+
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview
 
 from .models import Donation, DonationCampaign, DonationPaymentSettings
 
@@ -57,6 +60,7 @@ class DonationCampaignAdmin(ModelAdmin):
         "raised_amount",
         "progress_bar",
         "donor_count",
+        "banner_preview",
         "start_date",
         "end_date",
     ]
@@ -78,7 +82,7 @@ class DonationCampaignAdmin(ModelAdmin):
         (
             "Campaign",
             {
-                "fields": ("id", "program", "title", "slug", "description", "banner"),
+                "fields": ("id", "program", "title", "slug", "description", "banner", "banner_preview"),
             },
         ),
         (
@@ -119,6 +123,7 @@ class DonationCampaignAdmin(ModelAdmin):
 
     status_badge.short_description = "Status"
 
+    @admin.display(description="Progress")
     def progress_bar(self, obj):
         pct = min(obj.progress_percentage, 100)
         color = "#10B981" if pct >= 100 else "#3B82F6"
@@ -130,8 +135,6 @@ class DonationCampaignAdmin(ModelAdmin):
             color=color,
         )
 
-    progress_bar.short_description = "Progress"
-
     def donor_count(self, obj):
         return (
             obj.donations.filter(status=Donation.Status.COMPLETED)
@@ -141,6 +144,10 @@ class DonationCampaignAdmin(ModelAdmin):
         )
 
     donor_count.short_description = "Donors"
+
+    @admin.display(description="Banner preview")
+    def banner_preview(self, obj):
+        return image_preview(obj.banner, alt=obj.title)
 
     @admin.action(description="Activate selected campaigns")
     def activate_campaigns(self, request, queryset):
@@ -165,7 +172,7 @@ class DonationAdmin(ModelAdmin):
         "created_at",
     ]
     list_filter = ["status", "gateway", "is_anonymous", "receipt_sent", "created_at"]
-    search_fields = ["donor__email", "gateway_transaction_id", "campaign__title"]
+    search_fields = ["gateway_transaction_id", "campaign__title"]
     readonly_fields = [
         "id",
         "gateway_transaction_id",
@@ -213,18 +220,17 @@ class DonationAdmin(ModelAdmin):
 
     actions = ["mark_completed", "mark_refunded", "send_receipts"]
 
+    @admin.display(description="Donor")
     def donor_display(self, obj):
         if obj.is_anonymous:
             return format_html('<em style="color:#6B7280;">{}</em>', "Anonymous")
         return str(obj.donor) if obj.donor else "—"
 
-    donor_display.short_description = "Donor"
-
+    @admin.display(description="Amount")
     def amount_display(self, obj):
         return format_html("<b>{} {}</b>", obj.amount, obj.currency)
 
-    amount_display.short_description = "Amount"
-
+    @admin.display(description="Status")
     def status_badge(self, obj):
         colors = {
             "pending": "#F59E0B",
@@ -239,7 +245,8 @@ class DonationAdmin(ModelAdmin):
             obj.get_status_display(),
         )
 
-    status_badge.short_description = "Status"
+    def get_search_fields(self, request):
+        return *super().get_search_fields(request), "donor__email"
 
     @admin.action(description="Mark selected donations as Completed")
     def mark_completed(self, request, queryset):

@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
+
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview
 
 from .models import Program, Project, Topic
 
@@ -37,7 +40,7 @@ class ProgramAdmin(ModelAdmin):
     list_filter = ["status", "organization", "created_at"]
     search_fields = ["title", "slug", "description"]
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ["id", "created_at", "updated_at"]
+    readonly_fields = ["id", "banner_preview", "created_at", "updated_at"]
     date_hierarchy = "created_at"
     inlines = [ProjectInline]
 
@@ -52,7 +55,7 @@ class ProgramAdmin(ModelAdmin):
                     "slug",
                     "excerpt",
                     "description",
-                    "banner",
+                    "banner", "banner_preview",
                 ),
             },
         ),
@@ -72,6 +75,10 @@ class ProgramAdmin(ModelAdmin):
     )
 
     actions = ["mark_active", "mark_completed", "mark_cancelled"]
+
+    @admin.display(description="Banner preview")
+    def banner_preview(self, obj):
+        return image_preview(obj.banner, alt=obj.title)
 
     def status_badge(self, obj):
         colors = {
@@ -127,7 +134,7 @@ class ProjectAdmin(ModelAdmin):
     list_filter = ["status", "program__organization", "program"]
     search_fields = ["title", "slug", "description", "lead__email"]
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ["id", "created_at", "updated_at"]
+    readonly_fields = ["id", "cover_preview", "created_at", "updated_at"]
     autocomplete_fields = ["lead"]
     date_hierarchy = "created_at"
 
@@ -135,7 +142,7 @@ class ProjectAdmin(ModelAdmin):
         (
             "Details",
             {
-                "fields": ("id", "program", "title", "slug", "progress_percentage", "cover_image", "cover_image_alt", "excerpt", "description", "lead"),
+                "fields": ("id", "program", "title", "slug", "progress_percentage", "cover_image", "cover_image_alt", "cover_preview", "excerpt", "description", "lead"),
             },
         ),
         (
@@ -168,3 +175,7 @@ class ProjectAdmin(ModelAdmin):
         )
 
     status_badge.short_description = "Status"
+
+    @admin.display(description="Cover preview")
+    def cover_preview(self, obj):
+        return image_preview(obj.cover_image, alt=obj.cover_image_alt or obj.title)

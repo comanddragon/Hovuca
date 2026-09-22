@@ -1,37 +1,3 @@
-"""
-QuizConsumer
-============
-WebSocket endpoint: /ws/quiz/<quiz_id>/
-
-Powers two real-time features:
-  1. Live leaderboard — pushed to all connected participants whenever
-     a new attempt is completed (triggered by Django tasks / quiz submit view).
-  2. Quiz session timer — server-authoritative countdown broadcast to
-     all participants in the same quiz room.
-
-Channel group: quiz_<quiz_id>
-
-Message types sent to the client:
-    { "type": "leaderboard",    "entries": [ { rank, user, score, passed } ] }
-    { "type": "participant_count", "count": <int> }
-    { "type": "timer_tick",     "seconds_remaining": <int> }
-    { "type": "quiz_ended" }
-    { "type": "error",          "message": "..." }
-
-Messages accepted from the client:
-    { "action": "ping" }
-    { "action": "request_leaderboard" }   → immediate leaderboard push
-
-Publishing a leaderboard update from elsewhere (e.g. quiz submit view):
-    from channels.layers import get_channel_layer
-    from asgiref.sync import async_to_sync
-
-    async_to_sync(get_channel_layer().group_send)(
-        f"quiz_{quiz_id}",
-        {"type": "leaderboard_update", "quiz_id": str(quiz_id)},
-    )
-"""
-
 import json
 import logging
 
@@ -142,7 +108,7 @@ class QuizConsumer(AsyncWebsocketConsumer):
 
     async def timer_tick(self, event):
         """
-        Triggered by a a scheduler task for timed quizzes.
+        Triggered by a scheduler task for timed quizzes.
         Broadcasts seconds remaining to all participants.
         """
         await self.send_json(

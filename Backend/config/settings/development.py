@@ -1,4 +1,4 @@
-from .base import *  # noqa: F401, F403
+from .base import *
 
 DEBUG = True
 
@@ -40,23 +40,54 @@ LOGGING = {
     "formatters": {
         "color": {
             "()": "core.logging.ColorFormatter",
-            "format": "%(asctime)s %(levelname)-8s %(name)s: %(message)s",
-            "datefmt": "%H:%M:%S",
+            "format": "%(asctime)s %(levelname)-8s [%(request_id)s] %(name)s: %(message)s",
+            "datefmt": "%a %Y-%m-%d %H:%M:%S",
         },
+    },
+    "filters": {
+        "request_context": {"()": "core.logging.RequestContextFilter"},
+        "redact_sensitive_data": {"()": "core.logging.SensitiveDataFilter"},
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
             "formatter": "color",
+            "filters": ["request_context", "redact_sensitive_data"],
+        },
+        "database": {
+            "class": "core.logging.DatabaseLogHandler",
+            "level": config("DATABASE_LOG_LEVEL", default="WARNING"),
+            "filters": ["request_context", "redact_sensitive_data"],
         },
     },
     "root": {
-        "handlers": ["console"],
+        "handlers": ["console", "database"],
         "level": "INFO",
     },
     "loggers": {
-        "apps.blogs.management.commands": {
-            "handlers": ["console"],
+        "django": {
+            "handlers": ["console", "database"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["console", "database"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "gunicorn.access": {
+            "handlers": ["console", "database"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "gunicorn.error": {
+            "handlers": ["console", "database"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "apps.content.management.commands": {
+            "handlers": ["console", "database"],
             "level": "DEBUG",
             "propagate": False,
         },

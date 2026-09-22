@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "nodejs";
-
 function allowedOrigins() {
     const origins = new Set<string>();
     for (const value of [process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.hovuca.org", process.env.API_URL]) {
@@ -22,7 +20,20 @@ export async function GET(request: NextRequest) {
     }
 
     const range = request.headers.get("range");
-    const response = await fetch(upstream, { headers: range ? { range } : undefined, redirect: "error", cache: "force-cache" });
+    let response: Response;
+    try {
+        // Let the worker runtime use its native fetch semantics. In particular,
+        // OpenNext's Cloudflare runtime does not support every Node cache mode.
+        response = await fetch(upstream, {
+            headers: range ? { range } : undefined,
+            redirect: "follow",
+        });
+    } catch {
+        return NextResponse.json(
+            { detail: "The document preview could not be retrieved." },
+            { status: 502 },
+        );
+    }
     const headers = new Headers();
     for (const name of ["accept-ranges", "content-length", "content-range", "content-type", "etag", "last-modified"]) {
         const value = response.headers.get(name);

@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
 from apps.events.models import Event, EventCategory, EventImage, EventRegistration
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview
 
 # ---------------------------------------------------------------------------
 # EventCategory
@@ -63,7 +65,7 @@ class EventAdmin(ModelAdmin):
     list_filter = ("status", "event_type", "is_featured", "category", "program")
     search_fields = ("title", "slug", "location_name", "description")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("view_count", "attendee_count", "is_full", "created_at", "updated_at")
+    readonly_fields = ("cover_preview", "view_count", "attendee_count", "is_full", "created_at", "updated_at")
     date_hierarchy = "start_date"
     ordering = ("-start_date",)
     autocomplete_fields = ("organizer", "category", "program")
@@ -71,7 +73,7 @@ class EventAdmin(ModelAdmin):
 
     fieldsets = (
         ("Content", {
-            "fields": ("title", "slug", "excerpt", "description", "cover_image", "cover_image_alt"),
+            "fields": ("title", "slug", "excerpt", "description", "cover_image", "cover_image_alt", "cover_preview"),
         }),
         ("Organisation", {
             "fields": ("organizer", "program", "category"),
@@ -103,6 +105,10 @@ class EventAdmin(ModelAdmin):
 
     actions = ["make_published", "make_cancelled", "make_draft"]
 
+    @admin.display(description="Cover preview")
+    def cover_preview(self, obj):
+        return image_preview(obj.cover_image, alt=obj.cover_image_alt or obj.title)
+
     @admin.action(description="Publish selected events")
     def make_published(self, request, queryset):
         updated = queryset.update(status=Event.Status.PUBLISHED)
@@ -126,10 +132,15 @@ class EventAdmin(ModelAdmin):
 
 @admin.register(EventImage)
 class EventImageAdmin(ModelAdmin):
-    list_display = ("event", "order", "alt_text")
+    list_display = ("image_preview", "event", "order", "alt_text")
     list_filter = ("event",)
     search_fields = ("event__title", "alt_text")
     ordering = ("event", "order")
+    readonly_fields = ("image_preview",)
+
+    @admin.display(description="Preview")
+    def image_preview(self, obj):
+        return image_preview(obj.image, alt=obj.alt_text or f"Image for {obj.event}")
 
 
 # ---------------------------------------------------------------------------
@@ -140,7 +151,7 @@ class EventImageAdmin(ModelAdmin):
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(ModelAdmin):
     list_display = ("user", "event", "status", "checked_in_at", "created_at")
-    list_filter = ("status", "event")
+    list_filter = ("status", "event", "created_at")
     search_fields = ("user__email", "user__first_name", "user__last_name", "event__title")
     readonly_fields = ("created_at", "updated_at")
     ordering = ("-created_at",)

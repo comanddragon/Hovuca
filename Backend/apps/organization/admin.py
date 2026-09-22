@@ -1,15 +1,17 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
-from .models import Branch, Department, Organization
-from .models import ContactMessage
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview
+
+from .models import Branch, ContactMessage, Department, Organization
 
 
 @admin.register(ContactMessage)
 class ContactMessageAdmin(ModelAdmin):
     list_display = ["subject", "full_name", "topic", "status", "created_at"]
-    list_filter = ["topic", "status"]
+    list_filter = ["topic", "status", "created_at"]
     search_fields = ["full_name", "email", "subject", "message"]
     readonly_fields = ["full_name", "email", "phone", "topic", "subject", "message", "contact_consent", "created_at", "updated_at"]
 
@@ -46,7 +48,7 @@ class OrganizationAdmin(ModelAdmin):
     list_filter = ["is_active", "founded_year"]
     search_fields = ["name", "slug", "email"]
     prepopulated_fields = {"slug": ("name",)}
-    readonly_fields = ["id", "created_at", "updated_at"]
+    readonly_fields = ["id", "logo_preview", "created_at", "updated_at"]
     inlines = [BranchInline]
 
     fieldsets = (
@@ -59,6 +61,7 @@ class OrganizationAdmin(ModelAdmin):
                     "slug",
                     "description",
                     "logo",
+                    "logo_preview",
                     "founded_year",
                     "is_active",
                 ),
@@ -84,6 +87,10 @@ class OrganizationAdmin(ModelAdmin):
         return format_html("<b>{}</b>", count)
 
     branch_count.short_description = "Branches"
+
+    @admin.display(description="Logo preview")
+    def logo_preview(self, obj):
+        return image_preview(obj.logo, alt=f"Logo for {obj.name}")
 
 
 @admin.register(Branch)

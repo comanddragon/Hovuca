@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
-from .models import VolunteerProfile, VolunteerTask, VolunteerApplication
+from core.admin import HovucaModelAdmin as ModelAdmin
+
+from .models import VolunteerApplication, VolunteerProfile, VolunteerTask
 
 
 @admin.register(VolunteerApplication)

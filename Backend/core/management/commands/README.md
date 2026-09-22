@@ -50,7 +50,7 @@ dependency order:
 DJANGO_SETTINGS_MODULE=config.settings.production python manage.py seed_production
 ```
 
-The parser libraries remain in their owning apps (`apps.blogs.importing`,
+The parser libraries remain in their owning apps (`apps.content.importing`,
 `apps.donors.importing`, and `apps.programs.importing`) because they are domain
 code, not executable entry points. CSE source documents and generated assets
 remain in `Backend/scripts/course/`; the runnable CSE importer is the

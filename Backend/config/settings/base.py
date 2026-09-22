@@ -11,15 +11,6 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 INSTALLED_APPS = [
     "unfold",  # before django.contrib.admin
-    "unfold.contrib.filters",  # optional, if special filters are needed
-    "unfold.contrib.forms",  # optional, if special form elements are needed
-    "unfold.contrib.inlines",  # optional, if special inlines are needed
-    "unfold.contrib.import_export",  # optional, if django-import-export package is used
-    "unfold.contrib.guardian",  # optional, if django-guardian package is used
-    "unfold.contrib.simple_history",  # optional, if django-simple-history package is used
-    "unfold.contrib.location_field",  # optional, if django-location-field package is used
-    "unfold.contrib.constance",  # optional, if django-constance package is used
-    "unfold.contrib.hijack",  # optional, if django-hijack package is used
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -38,7 +29,7 @@ INSTALLED_APPS = [
     "channels",
     "core",
     "apps.accounts",
-    "apps.blogs",
+    "apps.content.apps.ContentConfig",
     "apps.organization",
     "apps.programs",
     "apps.volunteers",
@@ -54,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.middleware.RequestIDMiddleware",
     "core.middleware.SecurityResponseHeadersMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -332,10 +324,42 @@ TASKS = {
     },
 }
 
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+# Containers should write logs to stdout/stderr and let the hosting platform
+# collect, retain, and search them. Keep request bodies, authorization headers,
+# passwords, and tokens out of log messages.
+LOG_LEVEL = config("LOG_LEVEL", default="INFO")
+DATABASE_LOG_LEVEL = config("DATABASE_LOG_LEVEL", default="WARNING")
 
-
-
-# Payment providers. Individual storefronts can override these through a
-# provider-account model later; these defaults preserve the existing gateways.
-
-# Branding vars injected into every templates/emails/*.html render.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "request_context": {"()": "core.logging.RequestContextFilter"},
+        "redact_sensitive_data": {"()": "core.logging.SensitiveDataFilter"},
+    },
+    "formatters": {
+        "json": {"()": "core.logging.JsonFormatter"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+            "filters": ["request_context", "redact_sensitive_data"],
+        },
+        "database": {
+            "class": "core.logging.DatabaseLogHandler",
+            "level": DATABASE_LOG_LEVEL,
+            "filters": ["request_context", "redact_sensitive_data"],
+        },
+    },
+    "root": {"handlers": ["console", "database"], "level": LOG_LEVEL},
+    "loggers": {
+        "django": {"handlers": ["console", "database"], "level": LOG_LEVEL, "propagate": False},
+        "django.server": {"handlers": ["console", "database"], "level": "INFO", "propagate": False},
+        "gunicorn.access": {"handlers": ["console", "database"], "level": "INFO", "propagate": False},
+        "gunicorn.error": {"handlers": ["console", "database"], "level": LOG_LEVEL, "propagate": False},
+    },
+}

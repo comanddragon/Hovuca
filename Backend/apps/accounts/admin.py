@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.urls import reverse
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin
+
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import image_preview
 
 from .models import User
 
@@ -10,6 +12,7 @@ from .models import User
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
     list_display = [
+        "avatar_thumbnail",
         "email",
         "full_name",
         "role_badge",
@@ -24,6 +27,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     ordering = ["-created_at"]
     readonly_fields = [
         "id",
+        "avatar_preview",
         "password_change_link",
         "created_at",
         "updated_at",
@@ -42,6 +46,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                     "last_name",
                     "phone_number",
                     "avatar",
+                    "avatar_preview",
                 ),
             },
         ),
@@ -105,6 +110,19 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         return obj.get_full_name()
 
     full_name.short_description = "Name"
+
+    @admin.display(description="Avatar preview")
+    def avatar_preview(self, obj):
+        return image_preview(obj.avatar, alt=f"Avatar for {obj.get_full_name()}")
+
+    @admin.display(description="Avatar")
+    def avatar_thumbnail(self, obj):
+        return image_preview(
+            obj.avatar,
+            alt=f"Avatar for {obj.get_full_name()}",
+            max_width=40,
+            max_height=40,
+        )
 
     @admin.display(description="Password")
     def password_change_link(self, obj):

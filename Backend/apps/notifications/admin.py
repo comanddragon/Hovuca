@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin
+
+from core.admin import HovucaModelAdmin as ModelAdmin
 
 from .models import Notification
 

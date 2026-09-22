@@ -35,4 +35,4 @@ RUN DJANGO_SECRET_KEY=collectstatic-only-not-a-runtime-secret-0000000000000000 \
 EXPOSE 8000
 
 # Run migrations and start gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-1} --threads 2 --timeout 120 --access-logfile -"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-1} --threads 2 --timeout 120 --access-logfile - --error-logfile - --log-level ${GUNICORN_LOG_LEVEL:-info} --capture-output"]

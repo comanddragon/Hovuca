@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.blogs.models import Article, Category, Tag, Comment, Resource
+from apps.content.models import Article, Category, Tag, Comment, Resource
 from apps.programs.models import Topic
 
 

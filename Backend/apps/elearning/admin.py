@@ -1,14 +1,22 @@
+from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin, StackedInline, TabularInline
-from django import forms
-from core.widgets import AdminCKEditor5Widget
+from unfold.admin import StackedInline, TabularInline
 
 from apps.elearning.models.chapter import Chapter
 from apps.elearning.models.course import Course, Subject
 from apps.elearning.models.enrollment import ChapterProgress, Enrollment
 from apps.elearning.models.module import Module
 from apps.elearning.models.quiz import Choice, Question, Quiz, QuizAttempt
+from core.admin import (
+    HovucaModelAdmin as ModelAdmin,
+)
+from core.admin import (
+    document_preview,
+    image_preview,
+    video_preview,
+)
+from core.widgets import AdminCKEditor5Widget
 
 
 class ChapterAdminForm(forms.ModelForm):
@@ -91,7 +99,7 @@ class CourseAdmin(ModelAdmin):
     list_filter = ["is_published", "is_free", "difficulty", "subject", "created_at"]
     search_fields = ["title", "slug", "description", "instructor__email"]
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ["id", "enrollment_count", "created_at", "updated_at"]
+    readonly_fields = ["id", "thumbnail_preview", "enrollment_count", "created_at", "updated_at"]
     autocomplete_fields = ["instructor"]
     inlines = [ModuleInline]
     date_hierarchy = "created_at"
@@ -108,6 +116,7 @@ class CourseAdmin(ModelAdmin):
                     "slug",
                     "description",
                     "thumbnail",
+                    "thumbnail_preview",
                 ),
             },
         ),
@@ -154,6 +163,10 @@ class CourseAdmin(ModelAdmin):
         return obj.enrollments.filter(deleted_at__isnull=True).count()
 
     enrollment_count.short_description = "Enrollments"
+
+    @admin.display(description="Course image preview")
+    def thumbnail_preview(self, obj):
+        return image_preview(obj.thumbnail, alt=obj.title)
 
     @admin.action(description="Publish selected courses")
     def publish_courses(self, request, queryset):
@@ -213,7 +226,7 @@ class ChapterAdmin(ModelAdmin):
     ]
     list_filter = ["content_type", "is_preview", "module__course"]
     search_fields = ["title", "module__title", "module__course__title"]
-    readonly_fields = ["id", "created_at", "updated_at"]
+    readonly_fields = ["id", "content_file_preview", "content_url_preview", "created_at", "updated_at"]
 
     fieldsets = (
         (
@@ -237,6 +250,8 @@ class ChapterAdmin(ModelAdmin):
                     "content_url",
                     "content_body",
                     "content_file",
+                    "content_file_preview",
+                    "content_url_preview",
                 ),
             },
         ),
@@ -263,6 +278,18 @@ class ChapterAdmin(ModelAdmin):
         )
 
     content_type_badge.short_description = "Type"
+
+    @admin.display(description="Uploaded content preview")
+    def content_file_preview(self, obj):
+        if obj.content_type == Chapter.ContentType.VIDEO:
+            return video_preview(obj.content_file, label=obj.title)
+        return document_preview(obj.content_file, label=obj.title)
+
+    @admin.display(description="Video URL preview")
+    def content_url_preview(self, obj):
+        if obj.content_type != Chapter.ContentType.VIDEO:
+            return "—"
+        return video_preview(obj.content_url, label=obj.title)
 
 
 # ---------------------------------------------------------------------------

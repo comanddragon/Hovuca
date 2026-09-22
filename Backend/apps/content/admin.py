@@ -1,13 +1,24 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
-from django.urls import reverse
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import TabularInline
 
+from core.admin import HovucaModelAdmin as ModelAdmin
+from core.admin import document_preview, image_preview
 from core.widgets import AdminCKEditor5Widget
 
-from .models import Article, Bookmark, Category, Comment, Like, NewsletterSubscriber, Resource, Tag
+from .models import (
+    Article,
+    Bookmark,
+    Category,
+    Comment,
+    Like,
+    NewsletterSubscriber,
+    Resource,
+    Tag,
+)
 
 
 class ArticleAdminForm(forms.ModelForm):
@@ -20,15 +31,20 @@ class ArticleAdminForm(forms.ModelForm):
 @admin.register(Resource)
 class ResourceAdmin(ModelAdmin):
     list_display = ["title", "category", "published_at", "is_active"]
-    list_filter = ["category", "is_active"]
+    list_filter = ["category", "is_active", "published_at"]
     search_fields = ["title", "description"]
     prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ["file_preview", "created_at", "updated_at"]
+
+    @admin.display(description="Document preview")
+    def file_preview(self, obj):
+        return document_preview(obj.file, label=obj.title)
 
 
 @admin.register(NewsletterSubscriber)
 class NewsletterSubscriberAdmin(ModelAdmin):
     list_display = ["email", "is_active", "source", "created_at"]
-    list_filter = ["is_active", "source"]
+    list_filter = ["is_active", "source", "created_at"]
     search_fields = ["email"]
     readonly_fields = ["created_at", "updated_at"]
 
@@ -96,6 +112,7 @@ class ArticleAdmin(ModelAdmin):
         "status_badge",
         "is_featured",
         "view_count",
+        "cover_image_preview",
         "like_count_display",
         "reading_time_minutes",
         "published_at",
@@ -129,6 +146,7 @@ class ArticleAdmin(ModelAdmin):
                     "body",
                     "cover_image",
                     "cover_image_alt",
+                    "cover_image_preview",
                 ),
             },
         ),
@@ -187,6 +205,10 @@ class ArticleAdmin(ModelAdmin):
             '<img src="{}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;" />',
             obj.cover_image.url,
         )
+
+    @admin.display(description="Cover preview")
+    def cover_image_preview(self, obj):
+        return image_preview(obj.cover_image, alt=obj.cover_image_alt or obj.title)
 
     @admin.display(description="Edit")
     def edit_link(self, obj):
@@ -274,6 +296,7 @@ class CommentAdmin(ModelAdmin):
 @admin.register(Like)
 class LikeAdmin(ModelAdmin):
     list_display = ["user", "article", "created_at"]
+    list_filter = ["article", "created_at"]
     search_fields = ["user__email", "article__title"]
     readonly_fields = ["created_at"]
 
@@ -281,5 +304,6 @@ class LikeAdmin(ModelAdmin):
 @admin.register(Bookmark)
 class BookmarkAdmin(ModelAdmin):
     list_display = ["user", "article", "created_at"]
+    list_filter = ["article", "created_at"]
     search_fields = ["user__email", "article__title"]
     readonly_fields = ["created_at"]

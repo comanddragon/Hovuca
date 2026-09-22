@@ -25,9 +25,10 @@ const nextConfig: NextConfig = {
             // Next.js currently emits small inline bootstrap scripts. Restrict
             // all other script origins while retaining framework compatibility.
             // Cloudflare injects its Web Analytics beacon for the proxied
-            // production domain; allow that exact script, not its whole host.
+            // production domain. Cloudflare versions the beacon beneath this
+            // host, so a path-restricted source would reject future versions.
             isProduction
-                ? "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com/beacon.min.js"
+                ? "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com"
                 : "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https://images.unsplash.com https://media.hovuca.org" +

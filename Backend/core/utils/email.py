@@ -18,7 +18,7 @@ def send_templated_email(
     template: str,
     context: dict,
     recipient_list: list[str],
-    from_email: str = None,
+    from_email: str | None = None,
     fail_silently: bool = False,
 ) -> bool:
     """
@@ -49,14 +49,16 @@ def send_templated_email(
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=fail_silently)
-        logger.debug("Email sent: subject='%s' to=%s", subject, recipient_list)
+        logger.debug(
+            "Email sent: subject='%s' recipient_count=%d", subject, len(recipient_list)
+        )
         return True
 
     except Exception as exc:
         logger.error(
-            "send_templated_email failed: subject='%s' to=%s error=%s",
+            "send_templated_email failed: subject='%s' recipient_count=%d error=%s",
             subject,
-            recipient_list,
+            len(recipient_list),
             exc,
         )
         if not fail_silently:
@@ -68,7 +70,7 @@ def send_plain_email(
     subject: str,
     body: str,
     recipient_list: list[str],
-    from_email: str = None,
+    from_email: str | None = None,
     fail_silently: bool = False,
 ) -> bool:
     """Send a simple plain-text email without a template."""

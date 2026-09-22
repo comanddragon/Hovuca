@@ -15,8 +15,8 @@ from django.utils.text import slugify
 from lxml import html
 
 from apps.accounts.models import User
-from apps.blogs.importing import ARCHIVE_PREFIX
-from apps.blogs.models import Article, Category, Tag
+from apps.content.importing import ARCHIVE_PREFIX
+from apps.content.models import Article, Category, Tag
 from apps.programs.models import Topic
 import re
 

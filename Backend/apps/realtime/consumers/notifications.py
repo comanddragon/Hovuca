@@ -1,38 +1,3 @@
-"""
-NotificationConsumer
-====================
-WebSocket endpoint: /ws/notifications/
-
-Each authenticated user joins their own private channel group:
-    notification_<user_id>
-
-Django tasks (or any Django code) can push notifications to a user
-by calling the class-method `NotificationConsumer.push()` or by
-publishing directly to the channel layer group:
-
-    from channels.layers import get_channel_layer
-    from asgiref.sync import async_to_sync
-
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"notification_{user_id}",
-        {
-            "type": "notify",          # maps to self.notify()
-            "payload": { ... },
-        }
-    )
-
-Message types sent to the client:
-    { "type": "notification", "data": { ...notification fields... } }
-    { "type": "unread_count",  "count": <int> }
-    { "type": "error",         "message": "..." }
-
-Messages accepted from the client:
-    { "action": "mark_read",     "notification_id": "<uuid>" }
-    { "action": "mark_all_read" }
-    { "action": "ping" }           → responds with { "type": "pong" }
-"""
-
 import json
 import logging
 

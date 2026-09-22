@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.accounts.models import User
-from apps.blogs.models import Article, Category, Comment, Tag
+from apps.content.models import Article, Category, Comment, Tag
 from apps.programs.models import Topic
 
 
