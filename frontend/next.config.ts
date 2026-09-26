@@ -70,6 +70,7 @@ const nextConfig: NextConfig = {
         dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
     },
   reactCompiler: true,
+    allowedDevOrigins: ['192.168.1.182'],
 };
 
 export default nextConfig;
