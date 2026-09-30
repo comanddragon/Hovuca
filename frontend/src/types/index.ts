@@ -138,6 +138,12 @@ export interface Project {
     description: string;
     cover_image: string | null;
     cover_image_alt: string;
+    evidence_type: "proposal" | "plan" | "research" | "";
+    source_year: number | null;
+    location: string;
+    reporting_period: string;
+    source_documents?: string[];
+    evidence_notes?: string;
     lead: UserPublic | null;
     status: ProjectStatus;
     progress_percentage: string;

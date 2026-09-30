@@ -43,6 +43,14 @@ def _short_date(value, format_string: str) -> str:
 
 def dashboard_callback(request, context):
     """Add a concise overview of HOVUCA's work to the admin index context."""
+    required_permissions = (
+        "donations.view_donation", "programs.view_program", "programs.view_project",
+        "volunteers.view_volunteerprofile", "accounts.view_user", "blogs.view_article",
+    )
+    context["dashboard_available"] = request.user.has_perms(required_permissions)
+    if not context["dashboard_available"]:
+        return context
+
     today = timezone.localdate()
     hour = timezone.localtime().hour
     greeting = (
@@ -70,6 +78,23 @@ def dashboard_callback(request, context):
         donors=Count("donor_id", distinct=True),
     )
 
+    currency_totals = list(
+        current.values("currency").annotate(amount=Sum("amount")).order_by("currency")
+    )
+    previous_totals = {
+        row["currency"]: row["amount"]
+        for row in previous.values("currency").annotate(amount=Sum("amount"))
+    }
+    money_kpis = [
+        {
+            "label": f"Donations received ({row['currency']})",
+            "value": _money(row["amount"], row["currency"]),
+            "icon": "volunteer_activism",
+            **_change(row["amount"], previous_totals.get(row["currency"], 0)),
+        }
+        for row in currency_totals
+    ]
+
     daily_rows = {
         row["day"]: row
         for row in current.annotate(day=TruncDate("created_at"))
@@ -84,7 +109,7 @@ def dashboard_callback(request, context):
             {
                 "label": "Donations",
                 "data": [
-                    float(daily_rows.get(day, {}).get("amount") or 0)
+                    daily_rows.get(day, {}).get("donations", 0)
                     for day in chart_days
                 ],
                 "borderColor": "#16a34a",
@@ -178,13 +203,7 @@ def dashboard_callback(request, context):
         {
             "dashboard_greeting": greeting,
             "dashboard_period": f"{_short_date(period_start, '%b %d')} – {_short_date(today, '%b %d, %Y')}",
-            "dashboard_kpis": [
-                {
-                    "label": "Donations received",
-                    "value": _money(current_summary["amount"]),
-                    "icon": "volunteer_activism",
-                    **_change(current_summary["amount"], previous_summary["amount"]),
-                },
+            "dashboard_kpis": money_kpis + [
                 {
                     "label": "Completed donations",
                     "value": f"{current_summary['donations']:,}",

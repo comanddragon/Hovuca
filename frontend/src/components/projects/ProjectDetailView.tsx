@@ -1,72 +1,60 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useProject } from "@/hooks";
-import { PageLoader, StatusBadge } from "@/components/shared";
-import { formatDate } from "@/lib/utils";
-import { Calendar, Users } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { useProject } from "@/hooks";
+import { formatDate } from "@/lib/utils";
+import type { Project } from "@/types";
+import { evidenceLabel, projectStatuses } from "./project-labels";
+import styles from "./projects.module.css";
 
-export function ProjectDetailView() {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: project, isLoading } = useProject(slug);
+export function ProjectDetailView({ initialProject }: { initialProject?: Project }) {
+    const { slug } = useParams<{ slug: string }>();
+    const { data: project, isLoading, isError, refetch, isFetching, error } = useProject(slug, initialProject);
+    const missing = (error as { response?: { status?: number } } | null)?.response?.status === 404;
+    if (isLoading) return <div className={`${styles.archive} ${styles.message}`} role="status">Loading project summary…</div>;
+    if (isError || !project) return <div className={`${styles.archive} ${styles.message}`} role="alert">
+        <h1>{missing ? "Project not found" : "We couldn’t load this project."}</h1>
+        <p>{missing ? "This record may have moved or is no longer available." : "Please try again to read the project summary."}</p>
+        {!missing && <button className={styles.button} disabled={isFetching} onClick={() => refetch()}>Try again</button>}
+        <Link className={styles.readLink} href="/projects"><ArrowLeft size={18} aria-hidden="true" />Browse all projects</Link>
+    </div>;
 
-  if (isLoading) return <PageLoader />;
-  if (!project) return <div className="p-8 text-center text-muted-foreground">Project not found.</div>;
-
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      {/* Hero */}
-      <div className="relative h-56 mb-8 overflow-hidden rounded-2xl">
-        {project.cover_image ? (
-          <Image src={project.cover_image} alt={project.title} fill unoptimized loading="eager" className="object-cover" />
-        ) : (
-          <div className="h-56 bg-gradient-to-br from-primary/20 to-primary/5" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black/60 to-transparent" />
-        <div className="absolute bottom-0 left-0 p-6">
-          <div className="mb-2"><StatusBadge status={project.status} /></div>
-          <h1 className="font-display text-3xl font-bold text-brand-white sm:text-4xl">{project.title}</h1>
-        </div>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main */}
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <h2 className="mb-3 font-display text-xl font-bold text-foreground">About this Project</h2>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{project.description}</p>
-          </div>
-        </div>
-
-        {/* Sidebar stats */}
-        <div className="space-y-4">
-          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-            <h3 className="font-display font-semibold text-foreground">Project Details</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Start date</p>
-                  <p className="font-medium text-foreground">{formatDate(project.start_date)}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">End date</p>
-                  <p className="font-medium text-foreground">{formatDate(project.end_date)}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="h-4 w-4 shrink-0" />
-              </div>
+    return <article className={styles.archive}>
+        <header className={styles.detailHero}>
+            <div className={styles.container}>
+                <Link className={styles.backLink} href="/projects"><ArrowLeft size={18} aria-hidden="true" />All projects</Link>
+                <h1>{project.title}</h1>
+                {project.excerpt && <p className={styles.abstract}>{project.excerpt}</p>}
+                <div className={styles.heroMeta}><span>{evidenceLabel(project)}</span>{project.source_year && <span>{project.source_year}</span>}</div>
             </div>
-          </div>
+        </header>
+        {project.cover_image && <div className={`${styles.container} ${styles.cover}`}><Image src={project.cover_image} alt={project.cover_image_alt || project.title} width={1280} height={720} sizes="(max-width: 1280px) 100vw, 1280px" /></div>}
+        <div className={`${styles.container} ${styles.detailGrid}`}>
+            <div className={styles.prose}>
+                <h2 id="project-overview">Project overview</h2>
+                {project.description ? <ReactMarkdown skipHtml>{project.description}</ReactMarkdown> : <p>A full project description will be added when available.</p>}
+                {project.evidence_notes && <section className={styles.evidenceNote} aria-labelledby="evidence-heading"><h2 id="evidence-heading">About the evidence</h2><p>{project.evidence_notes}</p></section>}
+            </div>
+            <aside className={styles.facts} aria-label="Project facts and sources">
+                <h2>Project record</h2>
+                <dl>
+                    {project.location && <><dt>Location</dt><dd>{project.location}</dd></>}
+                    {project.reporting_period && <><dt>Documented period</dt><dd>{project.reporting_period}</dd></>}
+                    <dt>Record type</dt><dd>{evidenceLabel(project)}</dd>
+                    <dt>{project.evidence_type === "proposal" || project.evidence_type === "plan" ? "Recorded project status" : "Status"}</dt><dd>{projectStatuses[project.status]}</dd>
+                    {project.start_date && <><dt>{project.evidence_type === "proposal" ? "Proposed start" : "Start date"}</dt><dd>{formatDate(project.start_date)}</dd></>}
+                    {project.end_date && <><dt>{project.evidence_type === "proposal" ? "Proposed end" : "End date"}</dt><dd>{formatDate(project.end_date)}</dd></>}
+                </dl>
+                {!!project.source_documents?.length && <section className={styles.sources}><h3>Source documents</h3><ul>{project.source_documents.map(source => <li key={source}>{source.split("/").pop()}</li>)}</ul><p>Summarised from HOVUCA’s project archive.</p></section>}
+                <Link className={styles.readLink} href="/contact">Ask about this project <ArrowUpRight size={18} aria-hidden="true" /></Link>
+            </aside>
         </div>
-      </div>
-    </div>
-  );
+        <div className={`${styles.container} ${styles.detailEnd}`}><Link className={styles.readLink} href="/projects"><ArrowLeft size={18} aria-hidden="true" />Continue exploring projects</Link></div>
+    </article>;
 }
 
 export default ProjectDetailView;

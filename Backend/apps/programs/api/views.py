@@ -1,3 +1,4 @@
+from django.db.models import F, Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -84,7 +85,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = (
         Project.objects.filter(deleted_at__isnull=True)
         .select_related("program", "lead")
-        .order_by("-created_at")
+        .order_by(F("source_year").desc(nulls_last=True), "-created_at")
     )
     pagination_class = StandardPagination
 
@@ -103,16 +104,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        program_slug = self.request.query_params.get("program")  # ← renamed for clarity
+        program_slug = self.request.query_params.get("program")
         status_filter = self.request.query_params.get("status")
         search = self.request.query_params.get("search")
+        evidence_type = self.request.query_params.get("evidence_type")
 
         if program_slug:
             qs = qs.filter(program__slug=program_slug)  # ← was program_id=program_id
         if status_filter:
             qs = qs.filter(status=status_filter)
+        if evidence_type:
+            qs = qs.filter(evidence_type=evidence_type)
         if search:
-            qs = qs.filter(title__icontains=search)
+            qs = qs.filter(Q(title__icontains=search) | Q(excerpt__icontains=search) | Q(description__icontains=search) | Q(location__icontains=search))
         return qs
 
     def perform_destroy(self, instance):

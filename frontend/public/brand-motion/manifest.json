@@ -1,0 +1,66 @@
+{
+  "palette": {
+    "violet": "#8064a2",
+    "green": "#9abb54",
+    "red": "#bd4d50",
+    "earth": "#935d33"
+  },
+  "source": "/Hovuca.png",
+  "note": "Original motion motifs inspired by the existing raster logo; not an exact vector trace.",
+  "assets": [
+    {
+      "name": "community-orbit",
+      "use": "Page or section loading",
+      "svg": "community-orbit.svg",
+      "lottie": "community-orbit.json",
+      "loop": true,
+      "duration": 2,
+      "size": 128
+    },
+    {
+      "name": "care-heart",
+      "use": "Donation processing or care",
+      "svg": "care-heart.svg",
+      "lottie": "care-heart.json",
+      "loop": true,
+      "duration": 2,
+      "size": 128
+    },
+    {
+      "name": "growing-together",
+      "use": "Program loading or progress",
+      "svg": "growing-together.svg",
+      "lottie": "growing-together.json",
+      "loop": true,
+      "duration": 2,
+      "size": 128
+    },
+    {
+      "name": "learning-pages",
+      "use": "Course or document loading",
+      "svg": "learning-pages.svg",
+      "lottie": "learning-pages.json",
+      "loop": true,
+      "duration": 2,
+      "size": 128
+    },
+    {
+      "name": "community-dots",
+      "use": "Compact inline loading",
+      "svg": "community-dots.svg",
+      "lottie": "community-dots.json",
+      "loop": true,
+      "duration": 2,
+      "size": 128
+    },
+    {
+      "name": "success-embrace",
+      "use": "Form or donation confirmation; play once",
+      "svg": "success-embrace.svg",
+      "lottie": "success-embrace.json",
+      "loop": false,
+      "duration": 2,
+      "size": 128
+    }
+  ]
+}

@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { ChangePasswordPayload, DonationPayload, RegisterPayload, UpdateProfilePayload } from "@/types";
 import { useArticleStore } from "@/store/article.store";
 import type {
+    Project,
     EventCategory,
     EventDetail,
     EventWrite,
@@ -371,11 +372,13 @@ export function useProjects(params?: Record<string, string | number | boolean | 
     });
 }
 
-export function useProject(id: string) {
+export function useProject(id: string, initialData?: Project) {
     return useQuery({
         queryKey: keys.project(id),
         queryFn: () => programsService.getProject(id),
         enabled: !!id,
+        initialData,
+        staleTime: initialData ? 60_000 : 0,
     });
 }
 

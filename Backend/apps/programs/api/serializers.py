@@ -31,6 +31,10 @@ class ProjectListSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "created_at",
+            "evidence_type",
+            "source_year",
+            "location",
+            "reporting_period",
         ]
         read_only_fields = fields
 
@@ -60,6 +64,12 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "end_date",
             "created_at",
             "updated_at",
+            "evidence_type",
+            "source_year",
+            "location",
+            "reporting_period",
+            "source_documents",
+            "evidence_notes",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 

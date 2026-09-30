@@ -11,10 +11,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     ArrowLeft, X, ChevronLeft, ChevronRight,
     ImageIcon, Calendar, Star, Download,
-    Grid3x3, LayoutList, Eye, Tag,
+    Eye, Tag,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { GalleryImage } from "@/types";
+import "./gallery.css";
 
 // ─── Lightbox ─────────────────────────────────────────────────────────────────
 function Lightbox({
@@ -62,6 +63,7 @@ function Lightbox({
                     <div className="flex items-center gap-2">
                         <a
                             href={image.image}
+                            aria-label="Download photo"
                             download
                             target="_blank"
                             rel="noreferrer"
@@ -72,6 +74,8 @@ function Lightbox({
                         </a>
                         <button
                             className="rounded-full bg-brand-white/10 p-2 text-brand-white hover:bg-brand-white/20 transition-colors"
+                            aria-label="Close photo viewer"
+                            autoFocus
                             onClick={onClose}
                         >
                             <X className="h-4 w-4" />
@@ -82,6 +86,7 @@ function Lightbox({
                 {/* Prev */}
                 <button
                     className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/25 transition-colors z-10"
+                    aria-label="Previous photo"
                     onClick={(e) => { e.stopPropagation(); onPrev(); }}
                 >
                     <ChevronLeft className="h-5 w-5" />
@@ -113,6 +118,7 @@ function Lightbox({
                 {/* Next */}
                 <button
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-brand-white/10 p-3 text-brand-white hover:bg-brand-white/25 transition-colors z-10"
+                    aria-label="Next photo"
                     onClick={(e) => { e.stopPropagation(); onNext(); }}
                 >
                     <ChevronRight className="h-5 w-5" />
@@ -139,20 +145,6 @@ function Lightbox({
                     </div>
                 )}
 
-                {/* Thumbnail strip */}
-                <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 max-w-lg overflow-x-auto pb-1">
-                    {images.map((img, i) => (
-                        <button
-                            key={img.id}
-                            onClick={(e) => { e.stopPropagation(); /* handled by parent state */ }}
-                            className={`relative shrink-0 h-10 w-14 rounded overflow-hidden transition-all ${
-                                i === index ? "ring-2 ring-brand-white opacity-100" : "opacity-40 hover:opacity-70"
-                            }`}
-                        >
-                            <Image src={img.thumbnail || img.image} alt="" fill sizes="56px" className="object-cover" />
-                        </button>
-                    ))}
-                </div>
             </motion.div>
         </AnimatePresence>
     );
@@ -163,7 +155,6 @@ export function GalleryDetailView() {
     const { slug } = useParams<{ slug: string }>();
     const { data: album, isLoading } = useGalleryAlbum(slug);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-    const [view, setView] = useState<"grid" | "masonry">("grid");
 
     const images = album?.images ?? [];
     const cover = album?.effective_cover || album?.cover_image;
@@ -274,97 +265,42 @@ export function GalleryDetailView() {
 
             {/* ── TOOLBAR ───────────────────────────────────────────────── */}
             <div className="sticky top-16 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between">
+                <div className="w-full px-4 sm:px-6 py-3 flex items-center justify-between">
                     <p className="text-sm text-muted-foreground font-light">
                         <span className="font-medium text-foreground">{images.length}</span> photos
                     </p>
-                    <div className="flex items-center gap-1 rounded-lg border border-border p-1">
-                        <button
-                            onClick={() => setView("grid")}
-                            className={`rounded-md p-1.5 transition-colors ${view === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                        >
-                            <Grid3x3 className="h-4 w-4" />
-                        </button>
-                        <button
-                            onClick={() => setView("masonry")}
-                            className={`rounded-md p-1.5 transition-colors ${view === "masonry" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                        >
-                            <LayoutList className="h-4 w-4" />
-                        </button>
-                    </div>
+<p className="text-xs text-muted-foreground">Select a photo to view</p>
                 </div>
             </div>
 
             {/* ── PHOTO GRID ────────────────────────────────────────────── */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 pb-24">
+            <div className="gallery-section py-6 pb-24">
                 {images.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center">
                         <ImageIcon className="h-12 w-12 text-muted-foreground/30 mb-4" />
                         <p className="text-muted-foreground font-light">No photos in this album yet.</p>
                     </div>
-                ) : view === "grid" ? (
-                    /* Uniform grid */
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {images.map((image, i) => (
-                            <motion.button
-                                key={image.id}
-                                initial={{ opacity: 0, scale: 0.96 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.35, delay: (i % 8) * 0.04 }}
-                                viewport={{ once: false, margin: "-40px" }}
-                                whileHover={{ scale: 1.02 }}
-                                onClick={() => openLightbox(i)}
-                                className="group relative aspect-square overflow-hidden rounded-xl bg-muted"
-                            >
-                                <Image
-                                    src={image.thumbnail || image.image}
-                                    alt={image.alt_text || image.title || ""}
-                                    fill
-                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                />
-
-                                {/* Hover overlay */}
-                                <div className="absolute inset-0 bg-brand-black/0 group-hover:bg-brand-black/40 transition-colors duration-300 flex items-center justify-center">
-                                    <Eye className="h-6 w-6 text-brand-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                                </div>
-
-                                {/* Featured star */}
-                                {image.is_featured && (
-                                    <div className="absolute top-2 right-2 rounded-full bg-accent/80 p-1">
-                                        <Star className="h-2.5 w-2.5 text-brand-white" />
-                                    </div>
-                                )}
-
-                                {/* Caption on hover */}
-                                {image.title && (
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black/70 to-transparent px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <p className="text-brand-white text-xs font-medium line-clamp-1">{image.title}</p>
-                                    </div>
-                                )}
-                            </motion.button>
-                        ))}
-                    </div>
                 ) : (
-                    /* Masonry-style: 3 columns with varying heights */
-                    <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 space-y-3">
+                    /* Natural proportions in responsive masonry columns */
+                    <div className="gallery-masonry gallery-photo-masonry">
                         {images.map((image, i) => (
                             <motion.button
                                 key={image.id}
-                                initial={{ opacity: 0, y: 16 }}
+                                initial={false}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, delay: (i % 6) * 0.05 }}
-                                viewport={{ once: false, margin: "-40px" }}
+                                viewport={{ once: true, margin: "-40px" }}
                                 onClick={() => openLightbox(i)}
-                                className="group relative w-full break-inside-avoid overflow-hidden rounded-xl bg-muted block mb-3"
-                                style={{ aspectRatio: i % 3 === 0 ? "4/5" : i % 3 === 1 ? "1/1" : "4/3" }}
+                                aria-label={`View ${image.title || `photo ${i + 1}`}`}
+                                className="gallery-photo group relative w-full break-inside-avoid overflow-hidden bg-muted block"
                             >
                                 <Image
-                                    src={image.thumbnail || image.image}
+                                    src={image.image}
                                     alt={image.alt_text || image.title || ""}
-                                    fill
-                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    width={1200}
+                                    height={800}
+                                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1535px) 33vw, 25vw"
+                                    className="gallery-natural-image"
                                 />
                                 <div className="absolute inset-0 bg-brand-black/0 group-hover:bg-brand-black/35 transition-colors duration-300 flex items-center justify-center">
                                     <Eye className="h-5 w-5 text-brand-white opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { ProjectDetailView } from "@/components/projects/ProjectDetailView";
 import { constructMetadata, getBreadcrumbSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { cache } from "react";
+import { notFound } from "next/navigation";
+import type { Project } from "@/types";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -10,22 +13,23 @@ interface PageProps {
 const RAW_API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const API_URL = RAW_API_URL.startsWith("http") ? RAW_API_URL : `http://127.0.0.1:8000${RAW_API_URL}`;
 
-async function fetchProject(slug: string) {
+const fetchProject = cache(async (slug: string): Promise<{ project?: Project; missing?: boolean }> => {
   try {
-    const res = await fetch(`${API_URL}/projects/${slug}/`, {
-      next: { revalidate: 3600 },
+    const res = await fetch(`${API_URL.replace(/\/$/, "")}/projects/${encodeURIComponent(slug)}/`, {
+      next: { revalidate: 60 },
       headers: { Accept: "application/json" },
     });
-    if (!res.ok) return null;
-    return await res.json();
+    if (res.status === 404) return { missing: true };
+    if (!res.ok) return {};
+    return { project: await res.json() as Project };
   } catch {
-    return null;
+    return {};
   }
-}
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await fetchProject(slug);
+  const { project } = await fetchProject(slug);
 
   if (project) {
     return constructMetadata({
@@ -47,7 +51,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await fetchProject(slug);
+  const { project, missing } = await fetchProject(slug);
+  if (missing) notFound();
 
   const breadcrumbs = getBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -58,7 +63,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <>
       <JsonLd data={breadcrumbs} />
-      <ProjectDetailView />
+      <ProjectDetailView initialProject={project} />
     </>
   );
 }

@@ -89,6 +89,15 @@ class Project(BaseModel):
         blank=True,
     )
     cover_image_alt = models.CharField(max_length=255, blank=True)
+    evidence_type = models.CharField(
+        max_length=20, blank=True,
+        choices=[("proposal", "Funding proposal"), ("plan", "Implementation plan"), ("research", "Research report")],
+    )
+    source_year = models.PositiveSmallIntegerField(null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    reporting_period = models.CharField(max_length=255, blank=True)
+    source_documents = models.JSONField(default=list, blank=True)
+    evidence_notes = models.TextField(blank=True)
     lead = models.ForeignKey(
         "accounts.User",
         null=True,

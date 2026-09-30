@@ -131,7 +131,7 @@ class ProjectAdmin(ModelAdmin):
         "end_date",
         "created_at",
     ]
-    list_filter = ["status", "program__organization", "program"]
+    list_filter = ["status", "program__organization", "program", "evidence_type", "source_year"]
     search_fields = ["title", "slug", "description", "lead__email"]
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ["id", "cover_preview", "created_at", "updated_at"]
@@ -148,7 +148,14 @@ class ProjectAdmin(ModelAdmin):
         (
             "Schedule & Budget",
             {
-                "fields": ("status", "budget", "start_date", "end_date"),
+                "fields": ("status", "budget", "raised_amount", "start_date", "end_date"),
+            },
+        ),
+        (
+            "Source & Evidence",
+            {
+                "fields": ("evidence_type", "source_year", "location", "reporting_period", "source_documents", "evidence_notes"),
+                "description": "Record the documents and reporting context supporting this project.",
             },
         ),
         (
