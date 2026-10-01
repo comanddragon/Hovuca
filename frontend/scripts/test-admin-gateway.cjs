@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* Exercise the real gateway handlers without an external backend or tokens. */
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
