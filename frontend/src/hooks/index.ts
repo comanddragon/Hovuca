@@ -256,6 +256,7 @@ export function useCreateArticle() {
             void qc.invalidateQueries({ queryKey: ["admin-articles"] });
             void qc.invalidateQueries({ queryKey: ["articles"] });
             toast.success("Article created.");
+            void qc.invalidateQueries({ queryKey: ["admin-workspace"] });
         },
         onError: () => toast.error("Failed to create article."),
     });
@@ -271,6 +272,7 @@ export function useUpdateArticle(slug: string) {
             void qc.invalidateQueries({ queryKey: ["admin-articles"] });
             void qc.invalidateQueries({ queryKey: ["articles"] });
             toast.success("Article saved.");
+            void qc.invalidateQueries({ queryKey: ["admin-workspace"] });
         },
         onError: () => toast.error("Failed to save article."),
     });

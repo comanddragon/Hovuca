@@ -1,7 +1,8 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store/auth.store";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+// Authentication lives in HttpOnly cookies owned by the same-origin gateway.
+const BASE_URL = "/api";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -27,6 +28,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    if (!originalRequest) return Promise.reject(error);
+    if (error.response?.status === 401 && originalRequest._retry) {
+      // Revoked/inactive accounts can still have a refresh cookie. A failed
+      // retry must end the display session instead of leaving an admin shell.
+      useAuthStore.getState().logout();
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {

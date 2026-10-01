@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { AdminError, AdminSkeleton } from "@/components/admin/AdminStates";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdminArticles, useCategories } from "@/hooks";
@@ -16,13 +18,14 @@ import { Search, Newspaper, Plus, Pencil, Eye } from "lucide-react";
 const STATUSES: ArticleStatus[] = ["draft", "review", "published", "archived"];
 const PAGE_SIZE = 20;
 
-export default function AdminBlogPage() {
+function AdminBlogList() {
+    const params = useSearchParams();
     const [search, setSearch] = useState("");
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState(() => { const value = params.get("status") ?? ""; return STATUSES.includes(value as ArticleStatus) ? value : ""; });
     const [category, setCategory] = useState("");
     const [page, setPage] = useState(1);
 
-    const { data, isLoading } = useAdminArticles({
+    const { data, isLoading, isError, error, refetch } = useAdminArticles({
         ...(search && { search }),
         ...(status && { status }),
         ...(category && { category }),
@@ -33,6 +36,8 @@ export default function AdminBlogPage() {
 
     const { totalPages } = usePagination(data?.count, PAGE_SIZE, page);
     const articles = data?.results ?? [];
+
+    if (isError) return <AdminError error={error} retry={() => refetch()} />;
 
     return (
         <div className="space-y-6">
@@ -179,4 +184,8 @@ export default function AdminBlogPage() {
             )}
         </div>
     );
+}
+
+export default function AdminBlogPage() {
+    return <Suspense fallback={<AdminSkeleton />}><AdminBlogList /></Suspense>;
 }

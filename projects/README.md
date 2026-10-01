@@ -15,6 +15,8 @@ python projects/export_projects.py
 Backend/.venv/Scripts/python.exe Backend/manage.py migrate programs --settings=config.settings.development
 Backend/.venv/Scripts/python.exe Backend/manage.py seed_document_projects --dry-run --settings=config.settings.development
 Backend/.venv/Scripts/python.exe Backend/manage.py seed_document_projects --settings=config.settings.development
+Backend/.venv/Scripts/python.exe Backend/manage.py seed_document_activities --dry-run --settings=config.settings.development
+Backend/.venv/Scripts/python.exe Backend/manage.py seed_document_activities --settings=config.settings.development
 ```
 
 The importer is atomic, updates records by program and slug, preserves unrelated records and media, rejects cross-program slug collisions, and refuses ambiguous organizations. Use `--organization UUID` when necessary. A failed row rolls back the whole import. Development settings use the database configured in the backend environment; they do not create a separate SQLite catalogue. Production deployments must run the migration before deploying the new serializer, then run the seed command against their intended database.
@@ -29,3 +31,7 @@ The importer is atomic, updates records by program and slug, preserves unrelated
 - Source titles are retained verbatim in the CSV. Public titles are concise editorial titles; summaries are paraphrases.
 
 `extract_sources.py` reads DOCX paragraphs and tables in document order and PDF pages into `extracted/`. It requires `pypdf`; the exporter and seeder do not. The extraction manifest provides source hashes and coverage for local review.
+
+## Activities
+
+`project_activities.json` contains 86 reviewed activity records. The exporter writes `document_project_activities.csv`; the separate atomic importer links these to existing projects and updates by project and activity slug. Activities have descriptive source periods rather than invented calendar times. There are 78 planned activities and 8 activities reported in the research documents. The existence of a baseline report does not change the status of other activities in its parent proposal. Activities are editable in Django admin and included in the project detail API. Repeat imports preserve unrelated activities and do not create duplicates.

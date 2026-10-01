@@ -37,6 +37,15 @@ export function ProjectDetailView({ initialProject }: { initialProject?: Project
             <div className={styles.prose}>
                 <h2 id="project-overview">Project overview</h2>
                 {project.description ? <ReactMarkdown skipHtml>{project.description}</ReactMarkdown> : <p>A full project description will be added when available.</p>}
+                {!!project.activities?.length && <section className={styles.activities} aria-labelledby="activities-heading">
+                    <h2 id="activities-heading">Project activities</h2>
+                    <p>Activities are labelled according to what the source documents establish.</p>
+                    <ol>{project.activities.map(activity => <li key={activity.id}>
+                        <h3>{activity.title}</h3>
+                        <div className={styles.activityMeta}><span>{activity.evidence_status === "reported" ? "Reported in source" : "Planned in source"}</span>{activity.period && <span>{activity.period}</span>}</div>
+                        <p>{activity.description}</p>
+                    </li>)}</ol>
+                </section>}
                 {project.evidence_notes && <section className={styles.evidenceNote} aria-labelledby="evidence-heading"><h2 id="evidence-heading">About the evidence</h2><p>{project.evidence_notes}</p></section>}
             </div>
             <aside className={styles.facts} aria-label="Project facts and sources">

@@ -1,1 +1,3 @@
-export { default } from "@/app/(dashboard)/dashboard/analytics/page";
+import { AdminOverview } from "@/components/admin/AdminOverview";
+
+export default function AdminAnalyticsPage() { return <AdminOverview reports />; }

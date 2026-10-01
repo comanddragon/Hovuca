@@ -85,6 +85,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = (
         Project.objects.filter(deleted_at__isnull=True)
         .select_related("program", "lead")
+        .prefetch_related("activities")
         .order_by(F("source_year").desc(nulls_last=True), "-created_at")
     )
     pagination_class = StandardPagination

@@ -129,6 +129,17 @@ export interface Program {
     created_at: string;
 }
 
+export interface ProjectActivity {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    period: string;
+    evidence_status: "planned" | "reported";
+    order: number;
+    source_documents: string[];
+}
+
 export interface Project {
     id: string;
     program: Program | string;
@@ -144,6 +155,7 @@ export interface Project {
     reporting_period: string;
     source_documents?: string[];
     evidence_notes?: string;
+    activities?: ProjectActivity[];
     lead: UserPublic | null;
     status: ProjectStatus;
     progress_percentage: string;

@@ -17,6 +17,7 @@ if (process.env.NEXT_PUBLIC_MEDIA_URL) {
 }
 
 const nextConfig: NextConfig = {
+    distDir: process.env.NEXT_DIST_DIR || ".next",
     poweredByHeader: false,
     async headers() {
         const isProduction = process.env.NODE_ENV === "production";

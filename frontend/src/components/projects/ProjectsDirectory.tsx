@@ -50,8 +50,8 @@ export default function ProjectsDirectory() {
         {isError ? <div role="alert" className={styles.message}><h3>We couldn’t load the projects.</h3><p>Please try again to explore the archive.</p><button className={styles.button} onClick={() => refetch()} disabled={isFetching}>Try again</button></div> : isLoading ? <div aria-hidden="true" className={styles.skeleton}><div /><div /><div /></div> : !data?.results.length ? <div className={styles.message}><h3>{filtered ? "No projects match these filters." : "Projects will appear here when published."}</h3>{filtered && <><p>Try another title, topic or place, or clear your filters.</p><button onClick={reset} className={styles.button}>Show all projects</button></>}</div> : <div aria-busy={isFetching} className={styles.results}>{data.results.map(project => <article key={project.id} className={styles.row}>
             <div className={styles.year}>{project.source_year ?? (project.start_date ? project.start_date.slice(0, 4) : "—")}</div>
             <div className={styles.rowBody}>
-                <div className={styles.recordMeta}><span>{evidenceLabel(project)}</span>{project.location && <span>{project.location}</span>}</div>
                 <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
+                <div className={styles.recordMeta}><span>{evidenceLabel(project)}</span>{project.location && <span>{project.location}</span>}</div>
                 <p>{project.excerpt}</p>
                 <Link className={styles.readLink} href={`/projects/${project.slug}`}>Read project summary <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only">: {project.title}</span></Link>
             </div>

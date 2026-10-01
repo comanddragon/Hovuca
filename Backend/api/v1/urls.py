@@ -2,6 +2,7 @@ from django.urls import path, include
 
 # api/v1/urls.py
 urlpatterns = [
+    path("admin/", include("core.admin_api")),
     path("auth/", include("apps.accounts.api.urls")),        # auth/, users/
     path("", include("apps.organization.api.urls")),
     path("", include("apps.programs.api.urls")),

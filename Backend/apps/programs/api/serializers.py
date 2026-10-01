@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.accounts.api.serializers import UserPublicSerializer
-from apps.programs.models import Program, Project
+from apps.programs.models import Program, Project, ProjectActivity
 
 
 # ---------------------------------------------------------------------------
@@ -39,8 +39,16 @@ class ProjectListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class ProjectActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectActivity
+        fields = ["id", "slug", "title", "description", "period", "evidence_status", "order", "source_documents"]
+        read_only_fields = fields
+
+
 class ProjectDetailSerializer(serializers.ModelSerializer):
     lead = UserPublicSerializer(read_only=True)
+    activities = ProjectActivitySerializer(many=True, read_only=True)
     lead_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
 
     class Meta:
@@ -70,6 +78,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "reporting_period",
             "source_documents",
             "evidence_notes",
+            "activities",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 

@@ -5,7 +5,7 @@ from unfold.admin import TabularInline
 from core.admin import HovucaModelAdmin as ModelAdmin
 from core.admin import image_preview
 
-from .models import Program, Project, Topic
+from .models import Program, Project, ProjectActivity, Topic
 
 
 @admin.register(Topic)
@@ -117,8 +117,26 @@ class ProgramAdmin(ModelAdmin):
         self.message_user(request, "Programs marked as Cancelled.")
 
 
+class ProjectActivityInline(TabularInline):
+    model = ProjectActivity
+    fields = ["title", "slug", "evidence_status", "period", "order"]
+    extra = 0
+    show_change_link = True
+
+
+@admin.register(ProjectActivity)
+class ProjectActivityAdmin(ModelAdmin):
+    list_display = ["title", "project", "evidence_status", "period", "order"]
+    list_filter = ["evidence_status", "project__program"]
+    search_fields = ["title", "description", "project__title"]
+    autocomplete_fields = ["project"]
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ["id", "created_at", "updated_at"]
+
+
 @admin.register(Project)
 class ProjectAdmin(ModelAdmin):
+    inlines = [ProjectActivityInline]
     list_display = [
         "title",
         "program",

@@ -121,3 +121,28 @@ class Project(BaseModel):
 
     def __str__(self):
         return f"{self.program.title} / {self.title}"
+
+
+class ProjectActivity(BaseModel):
+    """An archived activity; a descriptive period does not imply a scheduled event."""
+
+    class EvidenceStatus(models.TextChoices):
+        PLANNED = "planned", "Planned in source"
+        REPORTED = "reported", "Reported in source"
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="activities")
+    slug = models.SlugField(max_length=280)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    period = models.CharField(max_length=255, blank=True)
+    evidence_status = models.CharField(max_length=20, choices=EvidenceStatus.choices, default=EvidenceStatus.PLANNED)
+    source_documents = models.JSONField(default=list, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        db_table = "project_activities"
+        ordering = ["order", "title"]
+        constraints = [models.UniqueConstraint(fields=["project", "slug"], name="unique_project_activity_slug")]
+
+    def __str__(self):
+        return f"{self.project.title} / {self.title}"

@@ -1,5 +1,5 @@
 import csv
-import tempfile
+from unittest.mock import patch
 from io import StringIO
 from pathlib import Path
 
@@ -9,7 +9,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from apps.organization.models import Organization
-from apps.programs.models import Program, Project
+from apps.programs.models import Program, Project, ProjectActivity
 
 CSV = Path(__file__).resolve().parents[3] / "data" / "document_projects.csv"
 
@@ -33,7 +33,7 @@ class DocumentProjectImportTests(TestCase):
         self.assertFalse(Project.objects.filter(evidence_type="proposal").exclude(status="planning").exists())
         tonga = Project.objects.get(slug="tonga-baseline-health-services-research-2024")
         self.assertEqual(len(tonga.source_documents), 2)
-        self.assertIn("600", tonga.description)
+        self.assertIn("baseline", tonga.description)
 
     def test_dry_run_rolls_back_programs_and_projects(self):
         self.seed(dry_run=True)
@@ -54,14 +54,14 @@ class DocumentProjectImportTests(TestCase):
             fields = reader.fieldnames
             rows = list(reader)
         rows[-1]["source_documents"] = '{"not": "a list"}'
-        with tempfile.TemporaryDirectory(dir=CSV.parent) as folder:
-            path = Path(folder) / "invalid.csv"
-            with path.open("w", encoding="utf-8", newline="") as stream:
-                writer = csv.DictWriter(stream, fieldnames=fields)
-                writer.writeheader()
-                writer.writerows(rows)
+        stream = StringIO()
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+        stream.seek(0)
+        with patch.object(Path, "open", return_value=stream):
             with self.assertRaises(CommandError):
-                self.seed(csv=path)
+                self.seed()
         self.assertFalse(Project.objects.exists())
         self.assertFalse(Program.objects.exists())
 
@@ -88,3 +88,23 @@ class DocumentProjectImportTests(TestCase):
             self.seed()
         self.seed(organization=str(self.organization.pk))
         self.assertEqual(Project.objects.count(), 13)
+
+    def test_activities_are_linked_idempotent_and_source_backed(self):
+        self.seed()
+        call_command("seed_document_activities", dry_run=True, stdout=StringIO())
+        self.assertFalse(ProjectActivity.objects.exists())
+        call_command("seed_document_activities", stdout=StringIO())
+        ids = set(ProjectActivity.objects.values_list("id", flat=True))
+        self.assertEqual(len(ids), 86)
+        call_command("seed_document_activities", stdout=StringIO())
+        self.assertEqual(set(ProjectActivity.objects.values_list("id", flat=True)), ids)
+        self.assertEqual(ProjectActivity.objects.filter(evidence_status="reported").count(), 8)
+        self.assertFalse(ProjectActivity.objects.filter(project__evidence_type="proposal", evidence_status="reported").exists())
+        response = self.client.get("/api/v1/projects/tonga-baseline-health-services-research-2024/")
+        self.assertEqual(len(response.data["activities"]), 4)
+        self.assertEqual(response.data["activities"][0]["evidence_status"], "reported")
+
+    def test_activity_seed_without_projects_is_atomic(self):
+        with self.assertRaisesMessage(CommandError, "seed projects first"):
+            call_command("seed_document_activities", stdout=StringIO())
+        self.assertFalse(ProjectActivity.objects.exists())

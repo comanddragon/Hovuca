@@ -15,6 +15,7 @@ __pycache__/
 /Backend/locustfile.py
 node_modules/
 .next/
+.next-admin-preview/
 frontend/.env
 frontend/.files/*
 frontend/public/donors/
