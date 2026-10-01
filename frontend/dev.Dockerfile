@@ -1,14 +1,15 @@
-FROM node:22-alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN apk add --no-cache libc6-compat
 
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+COPY package.json bun.lock ./
+
+RUN bun install --frozen-lockfile
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["bun", "run", "dev"]
